@@ -1,0 +1,31 @@
+.root {
+  @apply rounded-full py-3 px-10 text-2xl font-bold uppercase;
+}
+
+.solid {
+  @apply bg-gray-dark;
+}
+
+.solid > span {
+  @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+}
+
+.outline {
+  @apply bg-gradient-to-r from-primary to-secondary;
+}
+
+.outline > span {
+  @apply text-gray-dark;
+}
+
+@screen laptop-L {
+  .root {
+    @apply px-8 py-2 text-base;
+  }
+}
+
+@screen laptop {
+  .root {
+    @apply px-4 py-2 text-xs;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@lib/*": ["./lib/*"],
+      "@customTypes/*": ["./types/*"],
+      "@components": ["./components"],
+      "@components/*": ["./components/*"],
+      "@public/*": ["./public/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/socket/index.js", "pages/league/index.js", "pages/leagues/[name]/draft/[fantasyname].js"],
+  "exclude": ["node_modules"]
+}

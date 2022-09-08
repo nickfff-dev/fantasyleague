@@ -1,0 +1,59 @@
+.root {
+  @apply mt-14 flex items-center justify-between bg-gray-light py-2 px-6 text-white;
+}
+
+.logo {
+  @apply flex items-center gap-1 font-xix;
+}
+
+.logo > img {
+  @apply h-20 w-20;
+}
+
+.logo > h1 {
+  @apply text-5xl;
+}
+
+.burger {
+  @apply hidden;
+}
+
+.nav_links {
+  @apply flex gap-14 text-2xl uppercase;
+}
+
+.btns {
+  @apply flex gap-5;
+}
+
+@screen laptop-L {
+  .root {
+    @apply mt-10;
+  }
+
+  .logo > img {
+    @apply h-12 w-12;
+  }
+
+  .logo > h1 {
+    @apply text-3xl;
+  }
+
+  .nav_links {
+    @apply gap-10 text-base;
+  }
+}
+
+@screen laptop {
+  .logo > img {
+    @apply h-10 w-10;
+  }
+
+  .logo > h1 {
+    @apply text-base;
+  }
+
+  .nav_links {
+    @apply gap-6 text-sm;
+  }
+}

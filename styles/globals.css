@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'dubai';
+    font-weight: 200;
+    src: url('../public/fonts/DubaiW23-Light.woff2') format('woff2'), url('../public/fonts/DubaiW23-Light.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'dubai';
+    font-weight: 400;
+    src: url('../public/fonts/DubaiW23-Regular.woff2') format('woff2'),
+      url('../public/fonts/DubaiW23-Regular.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'dubai';
+    font-weight: 600;
+    src: url('../public/fonts/DubaiW23-Medium.woff2') format('woff2'), url('../public/fonts/DubaiW23-Medium.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'dubai';
+    font-weight: 700;
+    src: url('../public/fonts/DubaiW23-Bold.woff2') format('woff2'), url('../public/fonts/DubaiW23-Bold.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'xix';
+    src: url('../public/fonts/xix.woff2') format('woff2'), url('../public/fonts/xix.woff') format('woff');
+  }
+}

@@ -1,0 +1,140 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+// AUTH MODELS
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  userName      String?   @unique
+  email         String?   @unique
+  emailVerified DateTime?
+  birthDate     DateTime?
+  country       String?
+  province      String?
+  image         String?
+  admin         Boolean   @default(false)
+  accounts      Account[]
+  sessions      Session[]
+
+  // leagues       Leagues[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// FANTASY MODELS
+
+model League {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  draftTime  String
+  startDate  String
+  endDate    String
+  duration   Int?      @db.Int
+  buyIn      String?   @db.VarChar(255)
+  buyInFee   Int?      @db.Int
+  inviteOnly String
+  inviteCode String?   @db.VarChar(255)
+  owner      String
+  maxPlayers Int
+  minPlayers Int
+  region     String
+  teams      Teams[]
+  players    Players[]
+  fixtures   Fixture[]
+  members   Participant[]
+}
+
+model Teams {
+  id            Int          @id @default(autoincrement())
+  name          String       @db.VarChar(255)
+  slug          String?      @db.VarChar(255)
+  top           String       @db.VarChar(100)
+  jungle        String       @db.VarChar(100)
+  mid           String       @db.VarChar(100)
+  adc           String       @db.VarChar(100)
+  support      String       @db.VarChar(100)
+  points        Int          @db.Int
+  leagueId      Int?
+  League        League?      @relation(fields: [leagueId], references: [id])
+}
+
+model Players {
+  id            Int          @id @default(autoincrement())
+  name          String       @db.VarChar(255)
+  slug          String?      @db.VarChar(255)
+  team          String?      @db.VarChar(100)
+  position      String       @db.VarChar(100)
+  points        Int?         @db.Int
+  leagueId      Int?
+  League League? @relation(fields: [leagueId], references: [id])
+}
+
+model Participant {
+  id       Int       @id @default(autoincrement())
+  username String    @db.VarChar(255)
+  top           String?      @db.VarChar(100)
+  jungle        String?    @db.VarChar(100)
+  mid           String?     @db.VarChar(100)
+  adc           String?      @db.VarChar(100)
+  support       String?       @db.VarChar(100)
+  team          String?     @db.VarChar(100)
+  points        Int?      @db.Int
+  draftOrder    Int?      @db.Int
+  leaguename   String?      @db.VarChar(255)
+  leagueId Int?  
+  fantasyname String? @db.VarChar(255) 
+  League League? @relation(fields: [leagueId], references: [id])
+}
+
+
+model Fixture {
+  id           Int    @id @default(autoincrement())
+  MatchId      String
+  DateTime_UTC String
+  Team1        String
+  Team2        String
+  Tab          String
+  leagueId     Int?
+  League League? @relation(fields: [leagueId], references: [id])
+}

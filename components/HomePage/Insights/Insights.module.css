@@ -1,0 +1,13 @@
+.root {
+  @apply p-4 text-white;
+}
+
+.root > h1 {
+  @apply text-3xl font-bold uppercase;
+}
+
+@screen laptop {
+  .root > h1 {
+    @apply text-2xl;
+  }
+}

@@ -1,0 +1,27 @@
+.root > h1 {
+  @apply text-lg uppercase;
+}
+
+.container {
+  @apply grid grid-cols-2 gap-y-2 rounded-lg bg-gray-light px-6 py-4 text-2xl;
+}
+
+.container > h1 > span {
+  @apply bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-transparent;
+}
+
+@screen laptop-L {
+  .container {
+    @apply text-lg;
+  }
+}
+
+@screen laptop {
+  .root > h1 {
+    @apply text-base;
+  }
+
+  .container {
+    @apply text-base;
+  }
+}
