@@ -5,70 +5,35 @@ import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import io, { Socket } from 'Socket.IO-client'
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import Pusher, { Members, PresenceChannel } from 'pusher-js'
 
 
-Pusher.logToConsole = true
 
 
- 
-const pusher = new Pusher("6d15bc2bcdde5b28f1ce", {
-  cluster: "mt1",
- 
-}
-)
+
+let socket
 
 const Draft = ({focusonleague, focusonparticipant, participants, teams, players} :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[] }) => { 
 
 
   
+  useEffect(() => { 
+    socketInitializer()
+  }, [])
+ 
 
-  const reusmeb = () => { 
-    const presenceChannel = pusher.subscribe(`presence${focusonleague.name.charAt(0).toUpperCase() + focusonleague.name.slice(1)}`);
-    presenceChannel.bind("pusher:subscription_succeeded", () => {
-      console.log(presenceChannel)
-      
-    
-     });
-  }
-
-
-  useEffect(() => {
-
-    
-    authDraftMmeber()
-    reusmeb()
-    
-   }, [])
-
-  const authDraftMmeber = async () => { 
-    pusher.connection.bind("connected", () => {
-      var socketId = pusher.connection.socket_id;
-      localStorage.setItem(`${focusonparticipant.fantasyname} socketId`, socketId)
-    fetch("/api/pusher/user-auth", {
-        method: "POST",
-        body: JSON.stringify({
-          socketId: localStorage.getItem(`${focusonparticipant.fantasyname} socketId`),
-          userId: focusonparticipant.id,
-          leagueId: focusonleague.id,
-          fantasyname: focusonparticipant.fantasyname,
-          channel: `presence${focusonleague.name.charAt(0).toUpperCase() + focusonleague.name.slice(1)}`,
-          callback: reusmeb
-
-          
-        }),
-    }).then((res) => res.json().then((data) => (
-        console.log(data)
-    )))
-      
-    
-      
-     
   
-    });
+  const socketInitializer = async () => {
+    await fetch('/api/socket')
+    socket = io()
 
-
+    socket.on('connect', () => {
+      console.log('connected')
+    })
   }
+
+
+
+  
 
   const [username, setUsername] = useState(focusonparticipant.fantasyname)
   const [users, setUsers] = useState<any>([])
@@ -81,10 +46,7 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
   
   return (
     <>
-      <button onClick={
-        authDraftMmeber
-
-      }> click me</button>
+ 
     <div className={s.root} style={{color: "#ffd204"}}>
       {focusonparticipant.draftOrder ? (<>
         <h1> Draft</h1>
