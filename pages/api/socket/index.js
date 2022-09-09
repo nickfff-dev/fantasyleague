@@ -1,15 +1,42 @@
 import { Server } from 'socket.io'
 
+const SocketHandler = (req, res) => {
+  const io = new Server(res.socket.server)
+  const users = [];
+    io.use((socket, next) => {
+      const username = socket.handshake.auth.username;
+      if (!username) {
+        return next(new Error("invalid username"));
+      }
+      socket.username = username;
+      next();
+    });
 
-const SocketHandler = (req, res) =>{
-if (res.socket.server.io) {
-    console.log('Socket is already running')
-  } else {
-    console.log('Socket is initializing')
-    const io = new Server(res.socket.server)
-    res.socket.server.io = io
+    io.on("connection", (socket) => {
+      // notify existing users
+      socket.broadcast.emit("user connected", {
+        userID: socket.id,
+        username: socket.username,
+      });
+    });
+
+    io.on("connection", (socket) => {
+
+  for (let [id, socket] of io.of("/").sockets) {
+    users.push({
+      userID: id,
+      username: socket.username,
+    });
   }
-  res.end()
+  socket.emit("users", users);
+  // ...
+});
+  
+  
+ 
+   res.end()
+
+
   }
 
 

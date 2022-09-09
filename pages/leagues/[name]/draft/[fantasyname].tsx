@@ -4,39 +4,47 @@ import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import io, { Socket } from 'Socket.IO-client'
+import useSocket  from "useSocket.js";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 
+const socket =  io();
 
 
+const Draft = ({focusonleague, focusonparticipant, participants, teams, players} :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[]}) => { 
 
-let socket
 
-const Draft = ({focusonleague, focusonparticipant, participants, teams, players} :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[] }) => { 
+  
 
+
+ 
+
+  const letmein = async () => { 
+    const username = focusonparticipant.fantasyname
+    socket.auth = { username };
+    socket.connect();
+
+}
 
   
   useEffect(() => { 
-    socketInitializer()
-  }, [])
- 
+    socket.on("user connected", (user: any) => {
+    
+      console.log("user mpya", user)
+         
+       })
+         socket.on("user", (user: any) => {
+        
+        console.log("user wote", user)
+           
+         })
+       socket.onAny((event: any, ...args: any) => {
+         console.log(event, args);
+       });
+       }
 
+  ,[])
   
-  const socketInitializer = async () => {
-    await fetch('/api/socket')
-    socket = io()
-
-    socket.on('connect', () => {
-      console.log('connected')
-    })
-  }
-
-
-
-  
-
-  const [username, setUsername] = useState(focusonparticipant.fantasyname)
-  const [users, setUsers] = useState<any>([])
   
 
 
@@ -46,6 +54,10 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
   
   return (
     <>
+      
+      <button onClick={letmein}>letmein</button>
+      
+
  
     <div className={s.root} style={{color: "#ffd204"}}>
       {focusonparticipant.draftOrder ? (<>
@@ -178,7 +190,7 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
 export const getStaticProps = async ({ params }: { params: any }) => { 
  
-
+  
   const name = params.name
   const fantasyname = params.fantasyname
 
