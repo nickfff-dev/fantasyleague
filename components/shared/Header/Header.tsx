@@ -18,9 +18,8 @@ import { Button } from '@components/ui';
 import Logo from '@public/images/logo.svg';
 import { type } from 'os';
 
+
 const navLinks = ['Home', 'Stats', 'Rules', 'My Leagues', 'Join a League', 'Create a League'];
-
-
 
 const Header = ({ 
   
@@ -28,8 +27,9 @@ const Header = ({
   const [isOpen, setOpen] = useState(false);
   const { data: session } = useSession();
 
-  
+  const username = session?.user?.name || 'Guest';
   const navClassNames = clsx([s.nav_links]);
+
 
   return (
     <div className={s.root}>
@@ -44,6 +44,18 @@ const Header = ({
       <nav className={navClassNames}>
         {navLinks.map((link) => {
           const slug = link.replaceAll(' ', '').toLowerCase();
+          if (slug === "myleagues") 
+          {
+           
+            return (
+              <Link href={`/${slug}/${session?.user?.name}`} key={slug}>
+              
+            
+                <a>{link}</a>
+              </Link>
+            );
+          
+            }
 
           return (
             <Link key={link} href={`/${slug}`}>
