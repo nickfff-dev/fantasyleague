@@ -8,6 +8,7 @@ import useSocket from "useSocket.js";
 import socket from "@lib/socket"
 
 import { DefaultEventsMap } from "@socket.io/component-emitter";
+import { User } from "next-auth";
 
 
 
@@ -16,32 +17,64 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
 
   
-
+  const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
+  const [watu , setWatu] = useState([{connected: true, self: true, userID:"", username: ""}])
 
  
 
   const letmein = async () => { 
+    setUsernamealreadyselected(true)
     const username = focusonparticipant.fantasyname
     socket.auth = { username };
     socket.connect();
+    
 
 }
 
   
-  useEffect(() => { 
-    socket.on("user connected", (user: any) => {
+  useEffect(() => {
     
-      console.log("user mpya", user)
-         
-       })
-         socket.on("user", (user: any) => {
-        
-        console.log("user wote", user)
+    socket.onAny((event, ...args) => {
+    console.log(event, args);
+    })
 
-         })
-       socket.onAny((event: any, ...args: any) => {
-         console.log(event, args);
-       });
+    return () => { 
+      socket.offAny()
+    }
+
+  }, [])
+  
+  useEffect(() => { 
+
+    const sessionID = sessionStorage.getItem("sessionID");
+    if (sessionID) {
+     setUsernamealreadyselected(true)
+      socket.auth = { sessionID };
+      socket.connect();
+    }
+
+    socket.on("session", ({ sessionID, userID }) => {
+   
+      socket.auth = { sessionID };
+   
+      sessionStorage.setItem("sessionID", sessionID);
+  
+      (socket as any).userID = userID;
+    });
+
+
+
+    socket.on("connect_error", (err) => {
+      if (err.message === "invalid username") {
+       setUsernamealreadyselected(false)
+      }
+    });
+
+
+
+    return () => { 
+      socket.off( "connect_error")
+    }
        }
 
   ,[])
@@ -49,13 +82,118 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
   
 
 
+  useEffect(() => {
+    socket.on("connect", () => { 
+
+      watu.forEach((user) => {
+        if (user.self) {
+          user.connected = true;
+
+        
+        }
+      })
+    })
+
+    socket.on("disconnect", () => { 
+
+      watu.forEach((user) => {
+        if (user.self) {
+          user.connected = false;
+        }
+      })
+    })
+
+    socket.on("users", (users) => {
+      users.forEach((user: any) => { 
+        for (
+          let i = 0; i < watu.length; i++
+        ){
+
+          const existingUser = watu[i];
+          if (existingUser.userID === user.userID) { 
+            existingUser.connected = user.connected;
+            return
+          }
+        }
+
+        user.self = user.userID === (socket as any).userID;
+
+       setWatu([...watu, user])
+
+
+
+      })
+
+      watu.sort((a, b) => { 
+        if (a.self) return -1;
+        if (b.self) return 1;
+        if (a.username < b.username) return -1;
+        return a.username > b.username ? 1 : 0;
+      })
+
+      
+    })
+
+    socket.on("user connected", (user) => {
+      
+      for (let i = 0; i < watu.length; i++){
+        const existingUser = watu[i];
+
+        if (existingUser.userID === user.userID) { 
+          existingUser.connected = true;
+          return;
+        }
+      }
+     
+      
+      setWatu([...watu, user])
+
+    })
+    
+
+
+
+    socket.on("user disconnected", (id) => { 
+
+      for (let i = 0; i < watu.length; i++){
+        const existingUser = watu[i];
+
+        if (existingUser.userID === id) { 
+          existingUser.connected = false;
+          break;
+        }
+      }
+
+     
+
+    })
+
+    return () => { 
+      socket.off("connect");
+    socket.off("disconnect");
+    socket.off("users");
+    socket.off("user connected");
+    socket.off("user disconnected");
+    }
+        
+     
+  }, [])
+
 
 
   
   
   return (
     <>
+      {watu?.map((user) => {
+        return (
+          <div key={user.userID}>
+            <span>{user.username}</span>
+            <span>{user.connected ? "Connected" : "Disconnected"}</span>
+          </div>
+        );
       
+       })}
       <button onClick={letmein}>letmein</button>
       
 
