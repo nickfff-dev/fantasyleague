@@ -9,21 +9,21 @@ import socket from "@lib/socket"
 
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { User } from "next-auth";
+import { json } from "stream/consumers";
 
 
 
 
-const Draft = ({focusonleague, focusonparticipant, participants, teams, players} :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[]}) => { 
+const Draft = ({focusonleague, focusonparticipant, participants, teams, players, } :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[]}) => { 
 
 
   
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
-  const [watu , setWatu] = useState([{connected: true, self: true, userID:"", username: ""}])
-
- 
+  const [watu , setWatu] = useState([{connected: false, self: true, userID:"", username: ""}])
+  const [message, setMessage] = useState("")
 
   const letmein = async () => { 
-    setUsernamealreadyselected(true)
+
     const username = focusonparticipant.fantasyname
     socket.auth = { username };
     socket.connect();
@@ -31,7 +31,22 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
 }
 
+useEffect(() => { 
+
+
+    socket.emit("ingia", focusonleague.name)
+
+
+  socket.on("message", (message) => {
+    console.log(message)
+    setMessage(message)
+  })
   
+  return () => { 
+
+    socket.off("message")
+  }
+},[])
   useEffect(() => {
     
     socket.onAny((event, ...args) => {
@@ -48,7 +63,7 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
     const sessionID = sessionStorage.getItem("sessionID");
     if (sessionID) {
-     setUsernamealreadyselected(true)
+
       socket.auth = { sessionID };
       socket.connect();
     }
@@ -66,7 +81,7 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
     socket.on("connect_error", (err) => {
       if (err.message === "invalid username") {
-       setUsernamealreadyselected(false)
+  
       }
     });
 
@@ -117,8 +132,9 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
         }
 
         user.self = user.userID === (socket as any).userID;
+        watu.push(user);
 
-       setWatu([...watu, user])
+       setWatu([...watu])
 
 
 
@@ -130,6 +146,8 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
         if (a.username < b.username) return -1;
         return a.username > b.username ? 1 : 0;
       })
+     
+
 
       
     })
@@ -144,9 +162,9 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
           return;
         }
       }
-     
+     watu.push(user)
       
-      setWatu([...watu, user])
+      setWatu([...watu])
 
     })
     
@@ -181,22 +199,28 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
 
 
+ 
+
+
+
   
   
   return (
     <>
       {watu?.map((user) => {
         return (
-          <div key={user.userID}>
-            <span>{user.username}</span>
-            <span>{user.connected ? "Connected" : "Disconnected"}</span>
+          <div key={user.userID} style={{color: "#ffd204"}}>
+            <span>{user.username} joined the draft </span>       
+            
           </div>
         );
       
        })}
       <button onClick={letmein}>letmein</button>
-      
-
+   
+      {
+        message ? (<p>{ message}</p>):(<p>what league?</p>)
+}
  
     <div className={s.root} style={{color: "#ffd204"}}>
       {focusonparticipant.draftOrder ? (<>
@@ -328,8 +352,10 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
 
 
 export const getStaticProps = async ({ params }: { params: any }) => { 
- 
   
+  
+  
+
   const name = params.name
   const fantasyname = params.fantasyname
 
@@ -360,7 +386,7 @@ export const getStaticProps = async ({ params }: { params: any }) => {
 
   return {
     props: {
-      focusonleague , focusonparticipant, participants, teams,players
+      focusonleague , focusonparticipant, participants, teams,players, 
      
     },
   }

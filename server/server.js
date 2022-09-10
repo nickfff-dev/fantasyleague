@@ -5,17 +5,29 @@ const { InMemorySessionStore } = require("./sessionStore");
 
 const app = require('express')()
 const server = require('http').Server(app)
+
 const cors = require('cors')
+const { instrument } = require("@socket.io/admin-ui");
 const io = require('socket.IO')(server
   , {
     cors: {
-      origin: "http://localhost:3000",
+      origin: ["http://localhost:3000", "https://admin.socket.io"],
+      credentials: true,
+    
     }
   }
 )
-const prisma = require('prisma').prisma 
-const port = parseInt(process.env.PORT, 10) || 5000
+instrument(io, {
+  auth: false
+});
+
+const prisma = require('prisma').prisma
+const port =  5000
 const hostname = 'localhost'
+
+
+
+
 
 
 
@@ -41,6 +53,8 @@ io.use((socket, next) => {
   socket.userID = randomId();
   socket.username = username;
   next();
+
+
 });
 
 
@@ -58,9 +72,23 @@ io.on("connection", (socket) => {
     userID: socket.userID,
   });
 
-  // join the "userID" room
-  socket.join(socket.userID);
- 
+  socket.emit("league")
+
+  // join the "league" room
+  socket.on("ingia", (room) => {
+
+   
+   
+        if (socket.rooms.has(room)) {
+          socket.emit("message",`already joined ${room}`);
+          return
+        } else { 
+          socket.join(room)
+          socket.to(room).emit("message", `${socket.username} has joined the room ${room} draft`)
+        }
+      
+    
+  })
 
   const users = [];
   sessionStore.findAllSessions().forEach((session) => {
@@ -93,6 +121,11 @@ io.on("connection", (socket) => {
       });
     }
   });
+
+
+
+
+   
 });
 
 

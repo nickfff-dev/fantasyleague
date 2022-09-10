@@ -23,6 +23,6 @@
       "@public/*": ["./public/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/socket/index.js", "pages/league/index.ts", "pages/leagues/[name]/draft/[fantasyname].ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/socket/index.js", "pages/league/index.js", "pages/leagues/[name]/draft/[fantasyname].js"],
   "exclude": ["node_modules"]
 }
