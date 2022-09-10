@@ -4,11 +4,12 @@ import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import io, { Socket } from 'Socket.IO-client'
-import useSocket  from "useSocket.js";
+import useSocket from "useSocket.js";
+import socket from "@lib/socket"
+
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 
-const socket =  io();
 
 
 const Draft = ({focusonleague, focusonparticipant, participants, teams, players} :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[]}) => { 
@@ -36,7 +37,7 @@ const Draft = ({focusonleague, focusonparticipant, participants, teams, players}
          socket.on("user", (user: any) => {
         
         console.log("user wote", user)
-           
+
          })
        socket.onAny((event: any, ...args: any) => {
          console.log(event, args);

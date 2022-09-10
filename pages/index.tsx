@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import { useEffect } from 'react'
-import io from 'socket.io-client'
 
 
 // components
@@ -8,18 +7,7 @@ import { HomePage } from '@components';
 
 const Home = () => {
   
-  // useEffect(() => { socketInitializer() } , [])
-  // const socketInitializer = async () => {
-  //   await fetch('/api/socket/socket')
-  //  let socket = io()
-
-  //   socket.on('connect', () => {
-  //     console.log('connected')
-      
-
-      
-  //   })
-  // }
+ 
 
   
   return (
