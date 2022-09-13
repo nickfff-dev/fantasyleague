@@ -65,16 +65,16 @@ model VerificationToken {
 // FANTASY MODELS
 
 model League {
-  id         Int       @id @default(autoincrement())
-  name       String    @unique
+  id         Int           @id @default(autoincrement())
+  name       String        @unique
   draftTime  String
   startDate  String
   endDate    String
-  duration   Int?      @db.Int
-  buyIn      String?   @db.VarChar(255)
-  buyInFee   Int?      @db.Int
+  duration   Int?          @db.Int
+  buyIn      String?       @db.VarChar(255)
+  buyInFee   Int?          @db.Int
   inviteOnly String
-  inviteCode String?   @db.VarChar(255)
+  inviteCode String?       @db.VarChar(255)
   owner      String
   maxPlayers Int
   minPlayers Int
@@ -82,59 +82,70 @@ model League {
   teams      Teams[]
   players    Players[]
   fixtures   Fixture[]
-  members   Participant[]
+  members    Participant[]
+  Draft      Draft[]
 }
 
 model Teams {
-  id            Int          @id @default(autoincrement())
-  name          String       @db.VarChar(255)
-  slug          String?      @db.VarChar(255)
-  top           String       @db.VarChar(100)
-  jungle        String       @db.VarChar(100)
-  mid           String       @db.VarChar(100)
-  adc           String       @db.VarChar(100)
-  support      String       @db.VarChar(100)
-  points        Int          @db.Int
-  leagueId      Int?
-  League        League?      @relation(fields: [leagueId], references: [id])
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(255)
+  slug     String? @db.VarChar(255)
+  top      String  @db.VarChar(100)
+  jungle   String  @db.VarChar(100)
+  mid      String  @db.VarChar(100)
+  adc      String  @db.VarChar(100)
+  support  String  @db.VarChar(100)
+  points   Int     @db.Int
+  leagueId Int?
+  League   League? @relation(fields: [leagueId], references: [id])
 }
 
 model Players {
-  id            Int          @id @default(autoincrement())
-  name          String       @db.VarChar(255)
-  slug          String?      @db.VarChar(255)
-  team          String?      @db.VarChar(100)
-  position      String       @db.VarChar(100)
-  points        Int?         @db.Int
-  leagueId      Int?
-  League League? @relation(fields: [leagueId], references: [id])
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(255)
+  slug     String? @db.VarChar(255)
+  team     String? @db.VarChar(100)
+  position String  @db.VarChar(100)
+  points   Int?    @db.Int
+  leagueId Int?
+  League   League? @relation(fields: [leagueId], references: [id])
 }
 
 model Participant {
-  id       Int       @id @default(autoincrement())
-  username String    @db.VarChar(255)
-  top           String?      @db.VarChar(100)
-  jungle        String?    @db.VarChar(100)
-  mid           String?     @db.VarChar(100)
-  adc           String?      @db.VarChar(100)
-  support       String?       @db.VarChar(100)
-  team          String?     @db.VarChar(100)
-  points        Int?      @db.Int
-  draftOrder    Int?      @db.Int
-  leaguename   String?      @db.VarChar(255)
-  leagueId Int?  
-  fantasyname String? @db.VarChar(255) 
-  League League? @relation(fields: [leagueId], references: [id])
+  id          Int     @id @default(autoincrement())
+  username    String  @db.VarChar(255)
+  top         String? @db.VarChar(100)
+  jungle      String? @db.VarChar(100)
+  mid         String? @db.VarChar(100)
+  adc         String? @db.VarChar(100)
+  support     String? @db.VarChar(100)
+  team        String? @db.VarChar(100)
+  points      Int?    @db.Int
+  draftOrder  Int?    @db.Int
+  leaguename  String? @db.VarChar(255)
+  leagueId    Int?
+  fantasyname String? @db.VarChar(255) @unique
+  League      League? @relation(fields: [leagueId], references: [id])
+  Draft       Draft?  @relation(fields: [draftName], references: [name])
+  draftName   String?
 }
 
-
 model Fixture {
-  id           Int    @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   MatchId      String
   DateTime_UTC String
   Team1        String
   Team2        String
   Tab          String
   leagueId     Int?
-  League League? @relation(fields: [leagueId], references: [id])
+  League       League? @relation(fields: [leagueId], references: [id])
+}
+
+model Draft {
+  name     String        @unique
+  date     String?
+  time     String?
+  leagueId Int?
+  members  Participant[]
+  League   League?       @relation(fields: [leagueId], references: [id])
 }

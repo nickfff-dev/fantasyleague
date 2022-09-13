@@ -36,7 +36,7 @@ const ConfirmDraft = ({ league, draftman }: { league: League, draftman: Particip
   return (
     <div className={s.container} style={{color: "white"}}>
       {
-        draftPosition === 0 ? <h1>Confirm Draft</h1> : <h1>Draft confirmed</h1> 
+        draftPosition === null ? <h1>Confirm Draft</h1> : <h1>Draft confirmed</h1> 
      }
       <br/>
       <p>participating in: {league.name }</p>  <br/>
@@ -47,7 +47,7 @@ const ConfirmDraft = ({ league, draftman }: { league: League, draftman: Particip
 
    
       {
-        draftPosition > 0 ? <p>draft position: {draftPosition} <br/> you have already confirmed </p> :       <button onClick={sendDraft}> click to Confirm Draft</button>
+        draftPosition !== null ? <p>draft position: {draftPosition} <br/> you have already confirmed </p> :       <button onClick={sendDraft}> click to Confirm Draft</button>
 }
 
      

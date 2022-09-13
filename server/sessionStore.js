@@ -1,7 +1,7 @@
 class SessionStore {
   findSession(id) {}
   saveSession(id, session) {}
-  findAllSessions() {}
+  findAllSessions() { }
 }
 
 

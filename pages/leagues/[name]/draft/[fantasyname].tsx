@@ -8,109 +8,149 @@ import useSocket from "useSocket.js";
 import socket from "@lib/socket"
 
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { User } from "next-auth";
-import { json } from "stream/consumers";
 
 
 
 
-const Draft = ({focusonleague, focusonparticipant, participants, teams, players, } :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[]}) => { 
+
+
+const Draft = ({ focusonleague, focusonparticipant, participants, teams, players, }: { focusonleague: League, focusonparticipant: Participant, participants: Participant[], teams: Teams[], players: Players[] }) => {
 
 
   
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
-  const [watu , setWatu] = useState([{connected: false, self: true, userID:"", username: ""}])
+  const [watu, setWatu] = useState([{ connected: false, self: true, userID: "", username: "", }])
   const [message, setMessage] = useState("")
+  const [usersinroom, setUsersinroom] = useState([{  userID: "", username: "", room: "",sessionID: "" }])
 
-  const letmein = async () => { 
+
+
+  const letmein = async () => {
 
     const username = focusonparticipant.fantasyname
     socket.auth = { username };
     socket.connect();
+  
+    
     
 
-}
-
-useEffect(() => { 
-
-
-    socket.emit("ingia", focusonleague.name)
-
-
-  socket.on("message", (message) => {
-    console.log(message)
-    setMessage(message)
-  })
-  
-  return () => { 
-
-    socket.off("message")
   }
-},[])
+
+  useEffect(() => { 
+    socket.on("draftposition", (data) => {
+      console.log(data)
+    
+    })
+    return () => { 
+      socket.off("draftposition")
+    }
+  }, [])
+
+
+  const assigndraftPick = () => {
+    socket.emit("createDraft", focusonleague.name)
+   }
+
+  useEffect(() => { 
+    socket.on("roommembers", (mwmbwesr) => {
+         console.log(mwmbwesr.length)
+     
+      setUsersinroom(mwmbwesr)
+    })
+    return () => { 
+      socket.off("roommembers")
+    }
+  },[])
+
+
+
+
+  useEffect(() => {
+
+    socket.on("message", (message) => {
+      console.log(message)
+      setMessage(message)
+    })
+  
+    return () => {
+
+      socket.off("message")
+    }
+  }, [])
   useEffect(() => {
     
     socket.onAny((event, ...args) => {
-    console.log(event, args);
+      console.log(event, args);
     })
 
+   
     return () => { 
       socket.offAny()
     }
-
   }, [])
   
-  useEffect(() => { 
+  useEffect(() => {
 
     const sessionID = sessionStorage.getItem("sessionID");
     if (sessionID) {
 
       socket.auth = { sessionID };
       socket.connect();
+      
     }
 
     socket.on("session", ({ sessionID, userID }) => {
    
       socket.auth = { sessionID };
+      
    
       sessionStorage.setItem("sessionID", sessionID);
   
       (socket as any).userID = userID;
+       
+      
+
+      
     });
 
 
 
     socket.on("connect_error", (err) => {
       if (err.message === "invalid username") {
+        console.log("invalid username")
   
       }
     });
 
 
 
-    return () => { 
-      socket.off( "connect_error")
+    return () => {
+      socket.off("connect_error")
     }
-       }
+  }
 
-  ,[])
+    , [])
   
   
 
 
   useEffect(() => {
-    socket.on("connect", () => { 
+    socket.on("connect", () => {
+
+      socket.emit("joinRoom",   focusonleague.name)
+     
 
       watu.forEach((user) => {
         if (user.self) {
           user.connected = true;
-
+         
         
         }
       })
     })
 
-    socket.on("disconnect", () => { 
-
+    socket.on("disconnect", () => {
+     
       watu.forEach((user) => {
         if (user.self) {
           user.connected = false;
@@ -119,13 +159,13 @@ useEffect(() => {
     })
 
     socket.on("users", (users) => {
-      users.forEach((user: any) => { 
+      users.forEach((user: any) => {
         for (
           let i = 0; i < watu.length; i++
-        ){
+        ) {
 
           const existingUser = watu[i];
-          if (existingUser.userID === user.userID) { 
+          if (existingUser.userID === user.userID) {
             existingUser.connected = user.connected;
             return
           }
@@ -134,13 +174,13 @@ useEffect(() => {
         user.self = user.userID === (socket as any).userID;
         watu.push(user);
 
-       setWatu([...watu])
+        setWatu([...watu])
 
 
 
       })
 
-      watu.sort((a, b) => { 
+      watu.sort((a, b) => {
         if (a.self) return -1;
         if (b.self) return 1;
         if (a.username < b.username) return -1;
@@ -154,15 +194,15 @@ useEffect(() => {
 
     socket.on("user connected", (user) => {
       
-      for (let i = 0; i < watu.length; i++){
+      for (let i = 0; i < watu.length; i++) {
         const existingUser = watu[i];
 
-        if (existingUser.userID === user.userID) { 
+        if (existingUser.userID === user.userID) {
           existingUser.connected = true;
           return;
         }
       }
-     watu.push(user)
+      watu.push(user)
       
       setWatu([...watu])
 
@@ -171,12 +211,12 @@ useEffect(() => {
 
 
 
-    socket.on("user disconnected", (id) => { 
+    socket.on("user disconnected", (id) => {
 
-      for (let i = 0; i < watu.length; i++){
+      for (let i = 0; i < watu.length; i++) {
         const existingUser = watu[i];
 
-        if (existingUser.userID === id) { 
+        if (existingUser.userID === id) {
           existingUser.connected = false;
           break;
         }
@@ -186,12 +226,12 @@ useEffect(() => {
 
     })
 
-    return () => { 
+    return () => {
       socket.off("connect");
-    socket.off("disconnect");
-    socket.off("users");
-    socket.off("user connected");
-    socket.off("user disconnected");
+      socket.off("disconnect");
+      socket.off("users");
+      socket.off("user connected");
+      socket.off("user disconnected");
     }
         
      
@@ -199,23 +239,40 @@ useEffect(() => {
 
 
 
- 
-
 
 
   
   
   return (
     <>
-      {watu?.map((user) => {
+      <button
+        onClick={
+          () => { 
+            socket.emit("assigndraftpositions", focusonleague.name)
+          }
+        }
+      >assignposi</button>
+      <button onClick={assigndraftPick}>createdraft</button>
+      <button onClick={() => {
+
+        socket.emit("joinDraft", {
+          
+          fantasyname: focusonparticipant.fantasyname,
+          room: focusonleague.name,
+        } )
+      }}>joindraft</button>
+      {usersinroom?.map((user) => {
         return (
           <div key={user.userID} style={{color: "#ffd204"}}>
-            <span>{user.username} joined the draft </span>       
+            <span>{user.username} joined the draft  {user.room}</span>    
+            
             
           </div>
         );
       
        })}
+      
+   
       <button onClick={letmein}>letmein</button>
    
       {
@@ -223,7 +280,7 @@ useEffect(() => {
 }
  
     <div className={s.root} style={{color: "#ffd204"}}>
-      {focusonparticipant.draftOrder ? (<>
+      {focusonparticipant.draftOrder !== null ? (<>
         <h1> Draft</h1>
 
 <h1>
@@ -233,7 +290,7 @@ useEffect(() => {
  league: {focusonleague.name}<br/>
   teamname:  {focusonparticipant.fantasyname}
   
-          {focusonparticipant.mid} <br/>
+         <br/>
             draftOrder:   {focusonparticipant.draftOrder} <br/>
             draftDate: {focusonleague.draftTime.split("T")[0]}
           </h1>
@@ -286,14 +343,21 @@ useEffect(() => {
       </thead>
       <tbody>
           {
-            teams?.map((participant) => (
-              <tr key={participant.id}>
+                  teams?.slice(5).map((participant) => (
+                    <tr key={participant.id} onClick={
+                      () => { 
+                        socket.emit("draftPick", {
+                          name: participant.name,
+                          fantasyname: focusonparticipant.fantasyname,
+                          role: "Team",   
+                        })
+                      }
+              }>
                 <td>{participant.name}</td>
                 <td>{participant.top}</td>
                 <td>{participant.jungle}</td>
                 <td>{participant.mid}</td>
                 <td>{participant.adc}</td>
-
                 <td>{participant.support}</td>
                 <td>{participant.points}</td>
                 </tr>
@@ -316,18 +380,31 @@ useEffect(() => {
       </thead>
       <tbody>
           {
-           players?.filter((player) => {
+           players?.slice(5).filter((player) => {
             if (player.position === "Top" || player.position === "Jungle" || player.position === "Mid" || player.position === "Bot" || player.position === "Support") {
               return player
             
               
             }
-          }).map((participant) => (
-              <tr key={participant.id}>
-                <td>{participant.name}</td>
-                <td>{participant.team}</td>
-                <td>{participant.position}</td>
-                <td>{participant.points}</td>
+          }).map((player) => (
+            <tr key={player.id} onClick={
+              () => {
+                console.log(player.position)
+                socket.emit(
+                  "draftPick", 
+                  {
+                    name: player.name,
+                    fantasyname: focusonparticipant.fantasyname,
+                    role: player.position,
+      
+                  }
+                
+              )}
+            }>
+                <td>{player.name}</td>
+                <td>{player.team}</td>
+                <td>{player.position}</td>
+                <td>{player.points}</td>
              
                 </tr>
             ))
@@ -389,33 +466,13 @@ export const getStaticProps = async ({ params }: { params: any }) => {
       focusonleague , focusonparticipant, participants, teams,players, 
      
     },
+
+    revalidate: 1,
   }
 }
 
 export const getStaticPaths = async () => {
-  // const leagues = await prisma.league.findMany()
 
-  
-  // for (const league of leagues) {
-  //   const participants = await prisma.participant.findMany({
-  //     where: {leaguename: league.name},
-  //   })
-
-
-
-  //      paths = participants.map((participant) => ({
-  //       params: { name: league.name, fantasyname: participant.fantasyname }
-  //     }))
-    
-  //     return {
-  //       paths, fallback: false
-  //     }
-
-    
-    
-  // }
-
-  const leagues = await prisma.league.findMany()
   const participants = await prisma.participant.findMany()
  
 
@@ -434,7 +491,4 @@ const paths = participants.map((participant) => ({
 
 
 export default Draft
-function renderMembers(): any {
-  throw new Error("Function not implemented.");
-}
 
