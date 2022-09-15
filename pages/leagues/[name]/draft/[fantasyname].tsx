@@ -22,7 +22,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   const [watu, setWatu] = useState([{ connected: false, self: true, userID: "", username: "", }])
   const [message, setMessage] = useState("")
   const [usersinroom, setUsersinroom] = useState([{  userID: "", username: "", room: "",sessionID: "" }])
-
+  const [message2, setMessage2] = useState("")
 
 
   const letmein = async () => {
@@ -63,7 +63,18 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   },[])
 
 
+  useEffect(() => {
 
+    socket.on("message2", (message2) => {
+      console.log(message2)
+      setMessage2(message2)
+    })
+  
+    return () => {
+
+      socket.off("message2")
+    }
+  }, [])
 
   useEffect(() => {
 
@@ -245,22 +256,23 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   
   return (
     <>
-      <button
+      <div>
+      <button style={{color: "#ffd204"}}
         onClick={
           () => { 
-            socket.emit("assigndraftpositions", focusonleague.name)
+            socket.emit("startDraft", focusonleague.name)
           }
         }
-      >assignposi</button>
-      <button onClick={assigndraftPick}>createdraft</button>
-      <button onClick={() => {
+      >startDraft</button><br/>
+      <button style={{color: "#ffd204"}} onClick={assigndraftPick}>createdraft</button><br/>
+      <button style={{color: "#ffd204"}} onClick={() => {
 
         socket.emit("joinDraft", {
           
           fantasyname: focusonparticipant.fantasyname,
           room: focusonleague.name,
         } )
-      }}>joindraft</button>
+      }}>joindraft</button><br/>
       {usersinroom?.map((user) => {
         return (
           <div key={user.userID} style={{color: "#ffd204"}}>
@@ -276,8 +288,13 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
       <button onClick={letmein}>letmein</button>
    
       {
-        message ? (<p>{ message}</p>):(<p>what league?</p>)
+        message ? (<p style={{color: "#ffd204"}}>{ message}</p>):(<p>what league?</p>)
+      }
+      
+      {
+        message2 ? (<p style={{color: "#ffd204"}}>{ message2}</p>):(<p>myturn</p>)
 }
+      </div>
  
     <div className={s.root} style={{color: "#ffd204"}}>
       {focusonparticipant.draftOrder !== null ? (<>

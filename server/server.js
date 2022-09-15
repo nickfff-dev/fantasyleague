@@ -11,7 +11,7 @@ const prisma  =  new  PrismaClient()
 const { PrismaDraftStore } = require('./draftStore')
 const draftStore = new PrismaDraftStore()
 
-
+const initializeTeamPickArray = require("./runDraft")
 const cors = require('cors')
 const { instrument } = require("@socket.io/admin-ui");
 const io = require('socket.IO')(server
@@ -197,6 +197,87 @@ io.on("connection", (socket) => {
   
   
   } catch (e) {
+      console.log(e)
+      
+  }
+  })
+
+  socket.on("startDraft", async (room) => { 
+    const draftMembers = await draftStore.getDraftMembers(room)
+    const roommembers = io.sockets.adapter.rooms.get(room)
+    // add socket
+    var numberofteams = draftMembers.length
+    var numberofrounds = 6
+    var numberofpicks = numberofteams * numberofrounds
+    var numberofpicksperround = 1
+    
+    let teamPickArray = []
+    
+      for (var i = 0; i < numberofrounds; i++) {
+        if (i % 2 == 0) {
+          for (var j = 0; j < numberofteams; j++) {
+            teamPickArray.push(j)
+    
+          }
+        } else {
+          for (var x = numberofteams - 1; x >= 0; x--) {
+            teamPickArray.push(x)
+          }
+        }
+      
+      }
+      
+    
+      var rounds = 6
+      let roundArray = []
+      var roundArrayIndex = 0
+      for (var y = 0; y < rounds; y++) {
+        roundArray.push(teamPickArray.slice(roundArrayIndex, roundArrayIndex + numberofteams))
+        roundArrayIndex += numberofteams
+      }
+      const topRound = roundArray[0]
+      const jungleRound = roundArray[1]
+      const midRound = roundArray[2]
+      const adcRound = roundArray[3]
+      const supportRound = roundArray[4]
+      const teamRound = roundArray[5]
+    try {
+      
+    
+      // sort draftMembers by draftOrder
+
+      draftMembers.sort((a, b) => a.draftOrder - b.draftOrder)
+
+    
+        
+     
+      for (var i = 0; i < draftMembers.length; i++){
+        (
+          function (i) {
+            topRound?.forEach((topPick) => {
+              if (draftMembers[i].draftOrder === topPick) {
+                roommembers.forEach((member) => { 
+                  const memberSocket = io.sockets.sockets.get(member)
+                  setTimeout(function () {
+                    if (memberSocket.username === draftMembers[i].fantasyname) {
+                      memberSocket.emit("message2", "Your turn to pick a top" + draftMembers[i].draftOrder)
+                      
+                    }
+                  
+                 
+                
+                 }, i*8000)
+                })
+              }
+            })
+          }
+        ) (i)
+      }
+      
+      
+
+
+    } catch (e) {
       console.log(e)
       
   }
