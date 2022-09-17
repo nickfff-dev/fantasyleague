@@ -256,7 +256,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   
   return (
     <>
-      <div>
+      <div className={s.root} style={{textAlign: "center"}}>
       <button style={{color: "#ffd204"}}
         onClick={
           () => { 
@@ -264,7 +264,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
           }
         }
       >startDraft</button><br/>
-      <button style={{color: "#ffd204"}} onClick={assigndraftPick}>createdraft</button><br/>
+      <button style={{color: "#ffd204"}} onClick={assigndraftPick}>create draft</button><br/>
       <button style={{color: "#ffd204"}} onClick={() => {
 
         socket.emit("joinDraft", {
@@ -276,7 +276,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
       {usersinroom?.map((user) => {
         return (
           <div key={user.userID} style={{color: "#ffd204"}}>
-            <span>{user.username} joined the draft  {user.room}</span>    
+            <span>{user.username} {user.room}</span>    
             
             
           </div>
@@ -285,15 +285,15 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
        })}
       
    
-      <button onClick={letmein}>letmein</button>
-   
+      <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
+   <div  style={{float:"right"}}>
       {
-        message ? (<p style={{color: "#ffd204"}}>{ message}</p>):(<p>what league?</p>)
+        message ? (<p style={{color: "#ffd204"}}>{ message}</p>):(<p style={{color: "#ffd204"}}>what league?</p>)
       }
       
       {
-        message2 ? (<p style={{color: "#ffd204"}}>{ message2}</p>):(<p>myturn</p>)
-}
+        message2 ? (<p style={{color: "#ffd204"}}>{ message2}</p>):(<p style={{color: "#ffd204"}}>myturn</p>)
+}</div>
       </div>
  
     <div className={s.root} style={{color: "#ffd204"}}>
