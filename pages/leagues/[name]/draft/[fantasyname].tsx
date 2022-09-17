@@ -260,10 +260,17 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
       <button style={{color: "#ffd204"}}
         onClick={
           () => { 
-            socket.emit("startDraft", focusonleague.name)
+            socket.emit("startTop", focusonleague.name)
           }
         }
-      >startDraft</button><br/>
+        >startTop</button><br />
+            <button style={{color: "#ffd204"}}
+        onClick={
+          () => { 
+            socket.emit("startJungle", focusonleague.name)
+          }
+        }
+      >startJungle</button><br/>
       <button style={{color: "#ffd204"}} onClick={assigndraftPick}>create draft</button><br/>
       <button style={{color: "#ffd204"}} onClick={() => {
 
