@@ -47,8 +47,8 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   }, [])
 
 
-  const assigndraftPick = () => {
-    socket.emit("createDraft", focusonleague.name)
+  const prepareDraft = () => {
+    socket.emit("preparedraft", focusonleague.name)
    }
 
   useEffect(() => { 
@@ -260,26 +260,20 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
       <button style={{color: "#ffd204"}}
         onClick={
           () => { 
-            socket.emit("startTop", focusonleague.name)
+            socket.emit("startDraft", focusonleague.name)
           }
         }
-        >startTop</button><br />
-            <button style={{color: "#ffd204"}}
-        onClick={
-          () => { 
-            socket.emit("startJungle", focusonleague.name)
-          }
-        }
-      >startJungle</button><br/>
-      <button style={{color: "#ffd204"}} onClick={assigndraftPick}>create draft</button><br/>
-      <button style={{color: "#ffd204"}} onClick={() => {
+        >startDraft</button><br />
+        
+      <button style={{color: "#ffd204"}} onClick={prepareDraft}>preparedraft</button><br/>
+      {/* <button style={{color: "#ffd204"}} onClick={() => {
 
         socket.emit("joinDraft", {
-          
+            
           fantasyname: focusonparticipant.fantasyname,
           room: focusonleague.name,
         } )
-      }}>joindraft</button><br/>
+      }}>joindraft</button><br/> */}
       {usersinroom?.map((user) => {
         return (
           <div key={user.userID} style={{color: "#ffd204"}}>

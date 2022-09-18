@@ -41,8 +41,7 @@ var teamPickArray = []
   const adcRound = roundArray[3]
   const supportRound = roundArray[4]
   const teamRound = roundArray[5]
-
-  return [topRound, jungleRound, midRound, adcRound, supportRound, teamRound]
+console.log([topRound, jungleRound, midRound, adcRound, supportRound, teamRound])
  
 }
 
