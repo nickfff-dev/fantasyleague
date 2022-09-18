@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
 
   // join the "league" room
   socket.on("joinRoom", async (room) => {
-    if (socket.room === room) {
+    if (socket.room == room) {
       socket.emit(
         "message",
         "Already in a room" + socket.username + " " + socket.room
@@ -285,10 +285,20 @@ io.on("connection", (socket) => {
         try {
           (function (h) {
             setTimeout(function () {
+              var counter = 8
               const draftMember = draftMembersWithSocketId.filter((draftMember) => draftMember.draftOrder === round[h])[0];
               const socket = io.sockets.sockets.get(draftMember.socketId);
-
-              socket.emit("message2", " name: " + draftMember.fantasyname + " positionindraft: " + draftMember.draftOrder + " positioninround: " + h + " roundName " + roundName);
+              
+              socket.emit("message2",  draftMember.fantasyname + " turn to pick a " + roundName);
+              socket.emit("counter", counter);
+              const interval = setInterval(() => {
+                counter--;
+                socket.emit("counter", counter);
+                if (counter === 0) { 
+                  clearInterval(interval);
+    
+                }
+               }, 1000);
             }, 8000 * h);
           } )(h);
         } catch (e) {

@@ -23,6 +23,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   const [message, setMessage] = useState("")
   const [usersinroom, setUsersinroom] = useState([{  userID: "", username: "", room: "",sessionID: "" }])
   const [message2, setMessage2] = useState("")
+  const [counter, setCounter] = useState(0)
 
 
   const letmein = async () => {
@@ -36,6 +37,12 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
 
   }
 
+
+  useEffect(() => { 
+    socket.on("counter", (count) => {
+      setCounter(count);
+    })
+  }, [counter])
   useEffect(() => { 
     socket.on("draftposition", (data) => {
       console.log(data)
@@ -256,7 +263,9 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   
   return (
     <>
-      <div className={s.root} style={{textAlign: "center"}}>
+      <div className={s.root} style={{ textAlign: "center", display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
+        <div  style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
       <button style={{color: "#ffd204"}}
         onClick={
           () => { 
@@ -266,6 +275,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
         >startDraft</button><br />
         
       <button style={{color: "#ffd204"}} onClick={prepareDraft}>preparedraft</button><br/>
+   </div>
       {/* <button style={{color: "#ffd204"}} onClick={() => {
 
         socket.emit("joinDraft", {
@@ -274,36 +284,38 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
           room: focusonleague.name,
         } )
       }}>joindraft</button><br/> */}
+        
+        <div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <h1>users in room</h1>
       {usersinroom?.map((user) => {
         return (
-          <div key={user.userID} style={{color: "#ffd204"}}>
-            <span>{user.username} {user.room}</span>    
+          
+            <span key={user.userID}>{user.username} {user.room}</span>    
             
             
-          </div>
+          
         );
       
-       })}
-      
+      })}
+        </div>
+        <h1 style={{color: "#ffd204"}}>{counter == 0 ? "wait your turn": "timer: " + counter}</h1>
+        
+      {/* {
+        message ? (<div  style={{color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center"}} ><h1>draft events</h1><p  style={{color: "#ffd204"}}>{ message}</p></div>):(<p style={{color: "#ffd204"}}>draftlog</p>)
+      } */}
    
-      <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
-   <div  style={{float:"right"}}>
-      {
-        message ? (<p style={{color: "#ffd204"}}>{ message}</p>):(<p style={{color: "#ffd204"}}>what league?</p>)
-      }
+     
+   <div  style={{float:"right"}} >
+      
       
       {
-        message2 ? (<p style={{color: "#ffd204"}}>{ message2}</p>):(<p style={{color: "#ffd204"}}>myturn</p>)
+        message2 ? (<h1 style={{color: "#ffd204"}}>{message2}</h1>):(<h1 style={{color: "#ffd204"}}></h1>)
 }</div>
       </div>
  
     <div className={s.root} style={{color: "#ffd204"}}>
-      {focusonparticipant.draftOrder !== null ? (<>
-        <h1> Draft</h1>
-
-<h1>
-  
-</h1>
+      {focusonparticipant.draftOrder !== null ? (<div style={{color: "#ffd204", display:"flex", flexDirection:"row" , justifyContent: "space-between"}} >
+ <div>        <h1> Draft</h1>
 <h1>
  league: {focusonleague.name}<br/>
   teamname:  {focusonparticipant.fantasyname}
@@ -311,7 +323,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
          <br/>
             draftOrder:   {focusonparticipant.draftOrder} <br/>
             draftDate: {focusonleague.draftTime.split("T")[0]}
-          </h1>
+          </h1> </div>
           <table style={{color: "#ffd204"}} hidden={false}>
       
       <thead>
@@ -433,7 +445,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
         
      </div>
         
-        </>) : `"not confirmed for draft yet follow this link to confirm draft" http://localhost:3000/leagues/${focusonleague.name}/confirmdraft/${focusonparticipant.fantasyname}`}
+        </div>) : `"not confirmed for draft yet follow this link to confirm draft" http://localhost:3000/leagues/${focusonleague.name}/confirmdraft/${focusonparticipant.fantasyname}`}
      
       </div>
 
