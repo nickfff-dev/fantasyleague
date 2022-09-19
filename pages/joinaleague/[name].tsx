@@ -4,6 +4,8 @@ import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
 
 
 
@@ -11,7 +13,8 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 
 
 
-const JoinLeague = ({ league }: { league: League }) => {
+
+const JoinLeague = ({ league }:  InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   const [teamName , setTeamName] = useState("");
   const { data: session } = useSession();
@@ -90,35 +93,18 @@ const JoinLeague = ({ league }: { league: League }) => {
 
 
 
-export const getStaticProps = async ({ params }: { params: any }) => { 
-
-
+export const getServerSideProps: GetServerSideProps = async (context) => { 
+  const name = context.params?.name
   const league = await prisma.league.findUnique({
-    where: {name: params.name},
+    where: {
+      name: name?.toString()
+    }
   })
 
-
- 
-
   return {
-    props: {
-      league
-     
-    },
+    props: { league }
   }
 }
-
-export const getStaticPaths = async () => {
-  const leagues = await prisma.league.findMany()
-  const paths = leagues.map((league) => ({
-    params: { name: league.name },
-  }))
-
-  return { paths, fallback: false }
-  
-  
-}
-
 
 
 

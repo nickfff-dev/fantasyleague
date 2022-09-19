@@ -96,7 +96,7 @@ model Teams {
   adc      String  @db.VarChar(100)
   support  String  @db.VarChar(100)
   points   Int     @db.Int
-  leagueId Int?
+  leagueId Int?    @unique
   League   League? @relation(fields: [leagueId], references: [id])
 }
 
@@ -107,7 +107,7 @@ model Players {
   team     String? @db.VarChar(100)
   position String  @db.VarChar(100)
   points   Int?    @db.Int
-  leagueId Int?
+  leagueId Int?   @unique
   League   League? @relation(fields: [leagueId], references: [id])
 }
 
@@ -123,7 +123,7 @@ model Participant {
   points      Int?    @db.Int
   draftOrder  Int?    @db.Int
   leaguename  String? @db.VarChar(255)
-  leagueId    Int?
+  leagueId    Int?   @unique
   fantasyname String? @db.VarChar(255) @unique
   League      League? @relation(fields: [leagueId], references: [id])
   Draft       Draft?  @relation(fields: [draftName], references: [name])
@@ -137,7 +137,7 @@ model Fixture {
   Team1        String
   Team2        String
   Tab          String
-  leagueId     Int?
+  leagueId     Int?  @unique
   League       League? @relation(fields: [leagueId], references: [id])
 }
 

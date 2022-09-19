@@ -25,8 +25,6 @@ const TeamsPage = ({ teams, error }: InferGetStaticPropsType<typeof getStaticPro
 export const getStaticProps = async () => {
   await populateTeams();
   const teams = await prisma.teams.findMany();
-  console.log(teams)
-
   if (!teams) {
     return {
       props: {
@@ -38,8 +36,7 @@ export const getStaticProps = async () => {
   return {
     props: {
       teams,
-    },
-    revalidate: 1200,
+    }
   };
 };
 

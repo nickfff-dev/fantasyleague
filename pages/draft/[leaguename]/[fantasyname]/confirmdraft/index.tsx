@@ -2,12 +2,14 @@ import prisma from "@lib/prisma";
 import { useEffect, useState } from 'react';
 import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
-import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
+import s from "@components/HomePage/Insights/Seasons/Seasons.module.css"
+import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
 
 
 
 
-const ConfirmDraft = ({ league, draftman }: { league: League, draftman: Participant }) => {
+const ConfirmDraft = ({ league, draftman } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   
   const [draftPosition, setDraftPosition] = useState(0); 
   useEffect(() => { 
@@ -36,7 +38,7 @@ const ConfirmDraft = ({ league, draftman }: { league: League, draftman: Particip
   return (
     <div className={s.container} style={{color: "white"}}>
       {
-        draftPosition === null ? <h1>Confirm Draft</h1> : <h1>Draft confirmed</h1> 
+        draftPosition === 0 ? <h1>Confirm Draft</h1> : <h1>Draft confirmed</h1> 
      }
       <br/>
       <p>participating in: {league.name }</p>  <br/>
@@ -47,7 +49,7 @@ const ConfirmDraft = ({ league, draftman }: { league: League, draftman: Particip
 
    
       {
-        draftPosition !== null ? <p>draft position: {draftPosition} <br/> you have already confirmed </p> :       <button onClick={sendDraft}> click to Confirm Draft</button>
+        draftPosition > 0 ? <p>draft position: {draftPosition} <br/> you have already confirmed </p> :       <button onClick={sendDraft}> click to Confirm Draft</button>
 }
 
      
@@ -56,42 +58,22 @@ const ConfirmDraft = ({ league, draftman }: { league: League, draftman: Particip
 }
 
 
-export const getStaticProps = async ({ params }: { params: any }) => { 
-
-
+export const getServerSideProps: GetServerSideProps = async (context) => { 
+  const leaguename = context.params?.leaguename;
+  const fantasyname = context.params?.fantasyname;
   const league = await prisma.league.findUnique({
-    where: {name: params.name},
-  })
-
-  if (!league){return} 
-  const draftman = await prisma.participant.findFirst({
     where: {
-      fantasyname: params.fantasyname,
+      name: leaguename?.toString()
     }
   })
- 
-
+  const draftman = await prisma.participant.findUnique({
+    where: {
+      fantasyname: fantasyname?.toString()
+    }
+  })
   return {
-    props: {
-      league, draftman
-     
-    },
+    props: { league, draftman }
   }
-}
-
-export const getStaticPaths = async () => { 
-  const leagues = await prisma.league.findMany()
-  const participants = await prisma.participant.findMany()
- 
-
-  
-const paths = participants.map((participant) => ({
-  params: { fantasyname: participant.fantasyname, name: participant.leaguename },
-}))
-
-
-  return { paths, fallback: false }
-
 }
 
 

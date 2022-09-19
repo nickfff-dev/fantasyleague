@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
-import { GetStaticPaths } from 'next'
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-      
+import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
 
 
-const MyLeagues = ({ leagues , username}: { leagues: League[] , username: String}) => {
+const MyLeagues = ({ leagues , username} :  InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   const [myleagues, setMyLeagues] = useState<League[]>([])
 
@@ -22,7 +22,7 @@ const MyLeagues = ({ leagues , username}: { leagues: League[] , username: String
       <div className={s.container} style={{ color: "#ffd204" }}>
         <h1>{ username}</h1>
       <h1>My Leagues</h1>
-        {leagues.map((league) => {
+        {leagues.map((league: League) => {
           return (
             <div key={league.id}>
               <h2>name: {league.name}</h2>
@@ -46,50 +46,26 @@ const MyLeagues = ({ leagues , username}: { leagues: League[] , username: String
 
 
 
-
-
-
-
-
-export const getStaticProps = async ({ params }: { params: any }) => { 
-
-
-
-   const username = params.username
-
-  const leagues = await prisma.league.findMany({
+ export const getServerSideProps: GetServerSideProps = async (context) => { 
+   const username = context.params?.username
+   
+   const leagues = await prisma.league.findMany({
     where: {
       members: {
         some: {
-          username: params.username
+          username: username?.toString()
         }
     }
   }
-})
+   })
+   
+   return {
+     props: {
+       leagues,
+        username
+     }
+   }
 
-
-
-
-  return {
-    props: {
-      leagues,  username
-    },
-  }
-}
-
-
-
-export const getStaticPaths = async () => { 
-  const participants = await prisma.participant.findMany({})
-  if(!participants) { return }
-
-  const paths = participants.map((participant) => ({
-    params: { username: participant.username },
-  })
-  )
-    return {
-      paths, fallback: false
-    }
 }
 
 

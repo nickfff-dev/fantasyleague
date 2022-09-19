@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
+import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
 
 
-
-
-const AllOpenLeagues = ({ leagues }: { leagues: League[] }) => {
+const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   
  
   return (
@@ -15,7 +15,7 @@ const AllOpenLeagues = ({ leagues }: { leagues: League[] }) => {
           <div className={s.root} style={{color: "#ffd204"}}>
       <h1>Open Leagues</h1>
       {
-        leagues.map((league) => (
+        leagues.map((league:League) => (
           <div key={league.id} className={s.container}>
             <p>name: {league?.name}</p>
             <p>region: {league?.region}</p>
@@ -43,18 +43,11 @@ const AllOpenLeagues = ({ leagues }: { leagues: League[] }) => {
 
 
 
-export const getStaticProps = async () => { 
-  const leagues = await prisma.league.findMany({})
-
-  if (!leagues) { return}
-
-
-
-
+export const getServerSideProps: GetServerSideProps = async () => { 
+  const leagues = await prisma.league.findMany({
+  })
   return {
-    props: {
-      leagues
-    },
+    props: { leagues }
   }
 }
 
