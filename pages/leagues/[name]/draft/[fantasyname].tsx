@@ -4,20 +4,17 @@ import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import io, { Socket } from 'Socket.IO-client'
-import useSocket from "useSocket.js";
-import socket from "@lib/socket"
+
 
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 
+const socket =  io();
 
 
+const Draft = ({focusonleague, focusonparticipant, participants, teams, players} :{focusonleague:League , focusonparticipant:Participant, participants:Participant[], teams: Teams[], players: Players[]}) => { 
 
 
-const Draft = ({ focusonleague, focusonparticipant, participants, teams, players, }: { focusonleague: League, focusonparticipant: Participant, participants: Participant[], teams: Teams[], players: Players[] }) => {
-
-
-  
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
   const [watu, setWatu] = useState([{ connected: false, self: true, userID: "", username: "", }])
   const [message, setMessage] = useState("")
@@ -26,235 +23,241 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   const [counter, setCounter] = useState(0)
 
 
-  const letmein = async () => {
+ 
 
+  const letmein = async () => { 
     const username = focusonparticipant.fantasyname
     socket.auth = { username };
     socket.connect();
-  
-    
-    
 
+}
+
+  
+useEffect(() => { 
+  socket.on("counter", (count: any) => {
+    setCounter(count);
+  })
+}, [counter])
+useEffect(() => { 
+  socket.on("draftposition", (data: any) => {
+    console.log(data)
+  
+  })
+  return () => { 
+    socket.off("draftposition")
+  }
+}, [])
+
+
+const prepareDraft = () => {
+  socket.emit("preparedraft", focusonleague.name)
+ }
+
+useEffect(() => { 
+  socket.on("roommembers", (mwmbwesr: typeof usersinroom) => {
+       console.log(mwmbwesr.length)
+   
+    setUsersinroom(mwmbwesr)
+  })
+  return () => { 
+    socket.off("roommembers")
+  }
+},[])
+
+
+useEffect(() => {
+
+  socket.on("message2", (message2: any) => {
+    console.log(message2)
+    setMessage2(message2)
+  })
+
+  return () => {
+
+    socket.off("message2")
+  }
+}, [])
+
+useEffect(() => {
+
+  socket.on("message", (message: any) => {
+    console.log(message)
+    setMessage(message)
+  })
+
+  return () => {
+
+    socket.off("message")
+  }
+}, [])
+useEffect(() => {
+  
+  socket.onAny((event: any, ...args: any) => {
+    console.log(event, args);
+  })
+
+ 
+  return () => { 
+    socket.offAny()
+  }
+}, [])
+
+useEffect(() => {
+
+  const sessionID = sessionStorage.getItem("sessionID");
+  if (sessionID) {
+
+    socket.auth = { sessionID };
+    socket.connect();
+    
   }
 
-
-  useEffect(() => { 
-    socket.on("counter", (count) => {
-      setCounter(count);
-    })
-  }, [counter])
-  useEffect(() => { 
-    socket.on("draftposition", (data) => {
-      console.log(data)
+  socket.on("session", ({ sessionID, userID }) => {
+ 
+    socket.auth = { sessionID };
     
-    })
-    return () => { 
-      socket.off("draftposition")
-    }
-  }, [])
+ 
+    sessionStorage.setItem("sessionID", sessionID);
 
-
-  const prepareDraft = () => {
-    socket.emit("preparedraft", focusonleague.name)
-   }
-
-  useEffect(() => { 
-    socket.on("roommembers", (mwmbwesr) => {
-         console.log(mwmbwesr.length)
+    (socket as any).userID = userID;
      
-      setUsersinroom(mwmbwesr)
-    })
-    return () => { 
-      socket.off("roommembers")
-    }
-  },[])
-
-
-  useEffect(() => {
-
-    socket.on("message2", (message2) => {
-      console.log(message2)
-      setMessage2(message2)
-    })
-  
-    return () => {
-
-      socket.off("message2")
-    }
-  }, [])
-
-  useEffect(() => {
-
-    socket.on("message", (message) => {
-      console.log(message)
-      setMessage(message)
-    })
-  
-    return () => {
-
-      socket.off("message")
-    }
-  }, [])
-  useEffect(() => {
     
-    socket.onAny((event, ...args) => {
-      console.log(event, args);
-    })
 
-   
-    return () => { 
-      socket.offAny()
+    
+  });
+
+
+
+  socket.on("connect_error", (err: { message: string; }) => {
+    if (err.message === "invalid username") {
+      console.log("invalid username")
+
     }
-  }, [])
-  
-  useEffect(() => {
+  });
 
-    const sessionID = sessionStorage.getItem("sessionID");
-    if (sessionID) {
 
-      socket.auth = { sessionID };
-      socket.connect();
-      
-    }
 
-    socket.on("session", ({ sessionID, userID }) => {
+  return () => {
+    socket.off("connect_error")
+  }
+}
+
+  , [])
+
+
+
+
+useEffect(() => {
+  socket.on("connect", () => {
+
+    socket.emit("joinRoom",   focusonleague.name)
    
-      socket.auth = { sessionID };
-      
-   
-      sessionStorage.setItem("sessionID", sessionID);
-  
-      (socket as any).userID = userID;
+
+    watu.forEach((user: { self: any; connected: boolean; }) => {
+      if (user.self) {
+        user.connected = true;
        
       
-
-      
-    });
-
-
-
-    socket.on("connect_error", (err) => {
-      if (err.message === "invalid username") {
-        console.log("invalid username")
-  
       }
-    });
-
-
-
-    return () => {
-      socket.off("connect_error")
-    }
-  }
-
-    , [])
-  
-  
-
-
-  useEffect(() => {
-    socket.on("connect", () => {
-
-      socket.emit("joinRoom",   focusonleague.name)
-     
-
-      watu.forEach((user) => {
-        if (user.self) {
-          user.connected = true;
-         
-        
-        }
-      })
     })
+  })
 
-    socket.on("disconnect", () => {
-     
-      watu.forEach((user) => {
-        if (user.self) {
-          user.connected = false;
-        }
-      })
+  socket.on("disconnect", () => {
+   
+    watu.forEach((user: { self: any; connected: boolean; }) => {
+      if (user.self) {
+        user.connected = false;
+      }
     })
+  })
 
-    socket.on("users", (users) => {
-      users.forEach((user: any) => {
-        for (
-          let i = 0; i < watu.length; i++
-        ) {
+  socket.on("users", (users: any[]) => {
+    users.forEach((user: any) => {
+      for (
+        let i = 0; i < watu.length; i++
+      ) {
 
-          const existingUser = watu[i];
-          if (existingUser.userID === user.userID) {
-            existingUser.connected = user.connected;
-            return
-          }
-        }
-
-        user.self = user.userID === (socket as any).userID;
-        watu.push(user);
-
-        setWatu([...watu])
-
-
-
-      })
-
-      watu.sort((a, b) => {
-        if (a.self) return -1;
-        if (b.self) return 1;
-        if (a.username < b.username) return -1;
-        return a.username > b.username ? 1 : 0;
-      })
-     
-
-
-      
-    })
-
-    socket.on("user connected", (user) => {
-      
-      for (let i = 0; i < watu.length; i++) {
         const existingUser = watu[i];
-
         if (existingUser.userID === user.userID) {
-          existingUser.connected = true;
-          return;
+          existingUser.connected = user.connected;
+          return
         }
       }
-      watu.push(user)
-      
+
+      user.self = user.userID === (socket as any).userID;
+      watu.push(user);
+
       setWatu([...watu])
 
+
+
+    })
+
+    watu.sort((a: { self: any; username: string; }, b: { self: any; username: string; }) => {
+      if (a.self) return -1;
+      if (b.self) return 1;
+      if (a.username < b.username) return -1;
+      return a.username > b.username ? 1 : 0;
+    })
+   
+
+
+    
+  })
+
+  socket.on("user connected", (user: { userID: any; username: string }) => {
+    
+    for (let i = 0; i < watu.length; i++) {
+      const existingUser = watu[i];
+
+      if (existingUser.userID === user.userID) {
+        existingUser.connected = true;
+        return;
+      }
+    }
+    watu.push({
+      connected: true,
+      self: user.userID === (socket as any).userID,
+      userID: user.userID,
+      username: user.username
     })
     
+    setWatu([...watu])
+
+  })
+  
 
 
 
-    socket.on("user disconnected", (id) => {
+  socket.on("user disconnected", (id: any) => {
 
-      for (let i = 0; i < watu.length; i++) {
-        const existingUser = watu[i];
+    for (let i = 0; i < watu.length; i++) {
+      const existingUser = watu[i];
 
-        if (existingUser.userID === id) {
-          existingUser.connected = false;
-          break;
-        }
+      if (existingUser.userID === id) {
+        existingUser.connected = false;
+        break;
       }
-
-     
-
-    })
-
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("users");
-      socket.off("user connected");
-      socket.off("user disconnected");
     }
-        
-     
-  }, [])
 
+   
+
+  })
+
+  return () => {
+    socket.off("connect");
+    socket.off("disconnect");
+    socket.off("users");
+    socket.off("user connected");
+    socket.off("user disconnected");
+  }
+      
+   
+}, [])
+
+
+  
+  
 
 
 
@@ -263,6 +266,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
   
   return (
     <>
+      
       <div className={s.root} style={{ textAlign: "center", display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
         <div  style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
@@ -287,7 +291,7 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
         
         <div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <h1>users in room</h1>
-      {usersinroom?.map((user) => {
+      {usersinroom?.map((user: { userID: any; username: any; room: any; }) => {
         return (
           
             <span key={user.userID}>{user.username} {user.room}</span>    
@@ -459,10 +463,8 @@ const Draft = ({ focusonleague, focusonparticipant, participants, teams, players
 
 
 export const getStaticProps = async ({ params }: { params: any }) => { 
+ 
   
-  
-  
-
   const name = params.name
   const fantasyname = params.fantasyname
 
@@ -493,21 +495,41 @@ export const getStaticProps = async ({ params }: { params: any }) => {
 
   return {
     props: {
-      focusonleague , focusonparticipant, participants, teams,players, 
+      focusonleague , focusonparticipant, participants, teams,players
      
     },
-
-    revalidate: 1,
   }
 }
 
 export const getStaticPaths = async () => {
+  // const leagues = await prisma.league.findMany()
 
+  
+  // for (const league of leagues) {
+  //   const participants = await prisma.participant.findMany({
+  //     where: {leaguename: league.name},
+  //   })
+
+
+
+  //      paths = participants.map((participant) => ({
+  //       params: { name: league.name, fantasyname: participant.fantasyname }
+  //     }))
+    
+  //     return {
+  //       paths, fallback: false
+  //     }
+
+    
+    
+  // }
+
+  const leagues = await prisma.league.findMany()
   const participants = await prisma.participant.findMany()
  
 
   
-const paths = participants.map((participant) => ({
+const paths = participants.map((participant: { fantasyname: any; leaguename: any; }) => ({
   params: { fantasyname: participant.fantasyname, name: participant.leaguename },
 }))
 

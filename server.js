@@ -1,33 +1,30 @@
+const app = require('express')()
+const server = require('http').Server(app)
+const io = require('socket.IO')(server)
+const next = require('next')
+
+const port = parseInt(process.env.PORT, 10) || 3000
+const hostname = 'localhost'
+const dev = process.env.NODE_ENV !== 'production'
+const nextApp = next({ dev, hostname, port })
+const nextHandler = nextApp.getRequestHandler()
 const crypto = require("crypto");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 const { InMemorySessionStore } = require("./sessionStore");
-// const {DraftManager} = require('./draftStore')
-const app = require("express")();
-const server = require("http").Server(app);
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-
 const { PrismaDraftStore } = require("./draftStore");
-const draftStore = new PrismaDraftStore();
-
-const initializeTeamPickArray = require("./runDraft");
-const cors = require("cors");
+const draftStore = new PrismaDraftStore()
 const { instrument } = require("@socket.io/admin-ui");
-const io = require("socket.IO")(server, {
-  cors: {
-    origin: ["http://localhost:3000", "https://admin.socket.io"],
-    credentials: true,
-  },
-});
+
+
+
 instrument(io, {
   auth: false,
 });
 
-const port = 5000;
-const hostname = "localhost";
 
 const sessionStore = new InMemorySessionStore();
-
 io.use((socket, next) => {
   const sessionID = socket.handshake.auth.sessionID;
   if (sessionID) {
@@ -364,7 +361,23 @@ io.on("connection", (socket) => {
     }
   });
 });
-server.listen(port, (err) => {
-  if (err) throw err;
-  console.log(`> Ready on http://${hostname}:${port}`);
-});
+
+nextApp.prepare().then(() => {
+  app.all('*', (req, res) => {
+    return nextHandler(req, res)
+  })
+  //  add nextauth to express
+  
+  server.listen(port, (err) => {
+    if (err) throw err
+    console.log(`> Ready on http://${hostname}:${port}`)
+  })
+}
+
+  
+  
+
+
+)
+
+
