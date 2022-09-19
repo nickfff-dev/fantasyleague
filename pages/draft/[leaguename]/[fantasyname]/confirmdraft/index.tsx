@@ -65,11 +65,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     where: {
       name: leaguename?.toString()
     }
+  }).then(async (league) => {
+    await prisma.$disconnect()
+    return league
+   
   })
   const draftman = await prisma.participant.findUnique({
     where: {
       fantasyname: fantasyname?.toString()
     }
+  }).then(async (participant) => {
+    await prisma.$disconnect()
+    return participant
+   
   })
   return {
     props: { league, draftman }

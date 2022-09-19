@@ -45,6 +45,10 @@ const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServe
 
 export const getServerSideProps: GetServerSideProps = async () => { 
   const leagues = await prisma.league.findMany({
+  }).then(async (leagues) => {
+    await prisma.$disconnect()
+    return leagues
+   
   })
   return {
     props: { leagues }

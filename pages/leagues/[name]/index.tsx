@@ -67,21 +67,37 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     where: {
       name: name?.toString()
     }
+  }).then(async (league) => {
+    await prisma.$disconnect()
+    return league
+   
   })
   const teams = await prisma.teams.findMany({
     where: {
       leagueId: league?.id
     }
+  }).then(async (teams) => {
+    await prisma.$disconnect()
+    return teams
+   
   })
   const players = await prisma.players.findMany({
     where: {
       leagueId: league?.id
     }
+  }).then(async (players) => {
+    await prisma.$disconnect()
+    return players
+   
   })
   const fixtures = await prisma.fixture.findMany({
     where: {
       leagueId: league?.id
     }
+  }).then(async (fixtures) => {
+    await prisma.$disconnect()
+    return fixtures
+   
   })
   return {
     props: {

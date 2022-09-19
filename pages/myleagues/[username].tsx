@@ -57,7 +57,11 @@ const MyLeagues = ({ leagues , username} :  InferGetServerSidePropsType<typeof g
         }
     }
   }
-   })
+   }).then(async (leagues) => {
+    await prisma.$disconnect()
+    return leagues
+   
+  })
    
    return {
      props: {

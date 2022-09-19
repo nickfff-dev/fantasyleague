@@ -37,18 +37,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     where: {
       fantasyname: context.params?.fantasyname as string,
     }
+  }).then(async (participant) => {
+    await prisma.$disconnect()
+    return participant
+   
   })
 
   const teams = await prisma.teams.findMany({
     where: {
       leagueId: participant?.leagueId
     }
+  }).then(async (teams) => {
+    await prisma.$disconnect()
+    return teams
+   
   })
 
   const players = await prisma.players.findMany({
     where: {
       leagueId: participant?.leagueId
     }
+  }).then(async (players) => {
+    await prisma.$disconnect()
+    return players
+   
   })
 
   const participantTop = players.filter((player: Players) => player.name === participant?.top)
@@ -57,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const participantAdc = players.filter((player: Players) => player.name === participant?.adc)
   const participantSupport = players.filter((player: Players) => player.name === participant?.support)
   const participantBench1 = teams.filter((team: Teams) => team.name === participant?.team)
-  const participantdata =[ participantTop, participantJungle, participantMid, participantAdc, participantSupport, participantBench1]
+
 
   return {
     props: { participant,  participantTop, participantJungle, participantMid, participantAdc, participantSupport, participantBench1 },

@@ -95,15 +95,21 @@ const JoinLeague = ({ league }:  InferGetServerSidePropsType<typeof getServerSid
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
   const name = context.params?.name
-  const league = await prisma.league.findUnique({
+  const league  = await prisma.league.findUnique({
     where: {
       name: name?.toString()
     }
+  }).then(async (league) => {
+    await prisma.$disconnect()
+    return league
+   
   })
+
 
   return {
     props: { league }
   }
+  
 }
 
 

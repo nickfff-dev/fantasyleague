@@ -44,6 +44,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   
       
     }
+  }).then(async (participant) => {
+    await prisma.$disconnect()
+    return participant
+   
   })
 
   const top = participant?.top
