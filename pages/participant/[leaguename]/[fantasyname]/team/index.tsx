@@ -15,30 +15,45 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
   const results = JSON.parse(leagueResults)
   const team = JSON.parse(teamResults)
   const [totalscore, setTotalScore] = useState(0)
+ 
+ 
+  const calculateplayertotalscore = (playerName: string) => {
+   const pendingres = []
+    const onePlayerRes = results.filter((result: any) => result.Link === playerName )
+    pendingres.push({
+      name: playerName,
 
+      kills: onePlayerRes.reduce((a: any, b: any) => a + b.Kills, 0),
+      deaths: onePlayerRes.reduce((a: any, b: any) => a + b.Deaths, 0),
+      assists: onePlayerRes.reduce((a: any, b: any) => a + b.Assists, 0),
+      cs: onePlayerRes.reduce((a: any, b: any) => a + b.CS, 0),
+      visionScore: onePlayerRes.reduce((a: any, b: any) => a + b.VisionScore, 0),
+      teamKills: onePlayerRes.reduce((a: any, b: any) => a + b.TeamKills, 0),
+      points: onePlayerRes.map((result: any) => {
+        return Number(calculatePlayerScore(result.Kills, result.Deaths, result.Assists, result.CS, result.VisionScore, result.TeamKills))
+      }).reduce((a: number, b: number) => a + b, 0)
+
+
+    })
+
+
+    console.log (pendingres)
+  
+     return pendingres
+    
+    
+  }
+
+
+  
   const calculateTotalScore = () => {
  
     let totalpoints: number[] = []
     results.map((result: any) => {
-      if (result.Link === participant.top && result.Link !== null) {
+      
         totalpoints.push(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore)))
-      console.log(totalpoints)      }
-      if (result.Link === participant.jungle && result.Link !== null) {
-        totalpoints.push(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore)))
-        console.log(totalpoints)  
-      }
-      if (result.Link === participant.mid && result.Link !== null) {
-        totalpoints.push(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore)))
-        console.log(totalpoints)  
-      }
-      if (result.Link === participant.adc && result.Link !== null) {
-        totalpoints.push(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore)))
-        console.log(totalpoints)  
-      }
-      if (result.Link === participant.support && result.Link !== null) {
-        totalpoints.push(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore)))
-        console.log(totalpoints)  
-      }
+   
+
 
 
 
@@ -46,22 +61,21 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
     })
 
     team.map((result: any) => { 
-      if (result.Team1 === participant.team && result.Link !== null) {
-        totalpoints.push(Number(calculateTeamScore(
-
-          result.Team2Dragons, result.Team2Barons, result.Team2RiftHeralds, result.Team2Inhibitors, result.Team2Kills, result.Team2Towers, result.Winner === 2 ? true : false
-             
-        )))
-        console.log(totalpoints)  
-      }
-      if (result.Team2 === participant.team && result.Link !== null) { 
+   
+      
+   
         totalpoints.push(Number(calculateTeamScore(
 
           result.Team1Dragons, result.Team1Barons, result.Team1RiftHeralds, result.Team1Inhibitors, result.Team1Kills, result.Team1Towers, result.Winner === 1 ? true : false
              
         )))
-        console.log(totalpoints)
-      }
+        totalpoints.push(Number(calculateTeamScore(
+
+          result.Team2Dragons, result.Team2Barons, result.Team2RiftHeralds, result.Team2Inhibitors, result.Team2Kills, result.Team2Towers, result.Winner === 2 ? true : false
+             
+        )))
+   
+      
     })
       
   return totalpoints.reduce((a, b) => a + b, 0)
@@ -70,8 +84,9 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
 
   useEffect(() => { 
     setTotalScore(calculateTotalScore())
+ 
   })
-  
+
 
   return (
     <div style={{ color: "#ffd204" }}>
@@ -82,13 +97,13 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
       <p>leaguename: {participant.leaguename}</p>
       <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
       {
-        results.map((result: any) => { 
-          if (result.Link === participant.top) {
+        results.map((result: any, index: number) => { 
+        
             return (
               <>
                  <br/>
               <div key ={result.GameId}>
-                <p>top: {result.Link}</p>
+                <p>{result.Role}<br/> {result.Link}</p>
                 
                 <p>kills: {result.Kills}</p>
                 <p>deaths: {result.Deaths}</p>
@@ -99,132 +114,27 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
                   <p>points: {calculatePlayerScore(
                     result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
                   )}</p>
+                  <br/>
               </div>
               <br/>
     </>
             )
             
-          }
+          
 
         })
       }
-      {
-        results.map((result: any) => { 
-          if (result.Link === participant.jungle) {
-            return (
-              <>
-                 <br/>
-              <div key ={result.GameId}>
-                <p>jungle: {result.Link}</p>
-             
-                <p>kills: {result.Kills}</p>
-                <p>deaths: {result.Deaths}</p>
-                <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
-                  <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
-                  )}</p>
-              </div>
-              <br/>
-    </>
-            )
-            
-          }
-
-        })
-        }
-            {
-        results.map((result: any) => { 
-          if (result.Link === participant.mid) {
-            return (
-              <>
-                 <br/>
-              <div key ={result.GameId}>
-                <p>mid: {result.Link}</p>
-             
-                <p>kills: {result.Kills}</p>
-                <p>deaths: {result.Deaths}</p>
-                <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
-                  <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
-                  )}</p>
-              </div>
-              <br/>
-    </>
-            )
-            
-          }
-
-        })
-        }
-         {
-        results.map((result: any) => { 
-          if (result.Link === participant.adc) {
-            return (
-              <>
-                 <br/>
-              <div key ={result.GameId}>
-                <p>bot: {result.Link}</p>
-             
-                <p>kills: {result.Kills}</p>
-                <p>deaths: {result.Deaths}</p>
-                <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
-                  <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
-                  )}</p>
-              </div>
-              <br/>
-    </>
-            )
-            
-          }
-
-        })
-        }
-               {
-        results.map((result: any) => { 
-          if (result.Link === participant.support) {
-            return (
-              <>
-                 <br/>
-              <div key ={result.GameId}>
-                <p>support: {result.Link}</p>
-             
-                <p>kills: {result.Kills}</p>
-                <p>deaths: {result.Deaths}</p>
-                <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
-                  <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
-                  )}</p>
-              </div>
-              <br/>
-    </>
-            )
-            
-          }
-
-        })
-        }
+      
 
         {
-          team.map((result: any) => { 
-            if (result.Team1 === participant.team) {
+          team.map((result: any, index: number) => { 
+            
               return (
                 <>
                   <br />
-                  <div key={result.Team1}>
-                    <p>team: {result.Team1}</p>
+                  <div key={index}>
+                    <p>team: {result.Team1 ? result.Team1 : result.Team2}</p>
+                    
                     <p>points: {result.GameId}</p>
                     <p>dragonkills: {result.Team1Dragons}</p>
                     <p>baronkills: {result.Team1Barons}</p>
@@ -243,18 +153,18 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
                   </>
               )
               
-            }
+            
           })
         }
         {
-          team.map((result: any) => { 
+          team.map((result: any, index: number) => { 
             
-            if (result.Team2 === participant.team) {
               return (
                 <>
                   <br />
-                  <div key={result.Team2}>
-                    <p>team: {result.Team2}</p>
+                  <div key={index}>
+                    <p>team: {result.Team2 ? result.Team2 : result.Team2}</p>
+                    
                     <p>points: {result.GameId}</p>
                     <p>dragonkills: {result.Team2Dragons}</p>
                     <p>baronkills: {result.Team2Barons}</p>
@@ -268,15 +178,15 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
                     <p>points: {calculateTeamScore(
 
                       result.Team2Dragons, result.Team2Barons, result.Team2RiftHeralds, result.Team2Inhibitors, result.Team2Kills, result.Team2Towers, result.Winner === 2 ? true : false
-                         
                     )}</p>
-                    </div>
+                  </div>
                   </>
               )
-            }
+              
+            
           })
         }
-        
+   
       </div>
       <h1>total perfomance
         {totalscore}
@@ -312,10 +222,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const leagueResult = await getPrivateLeagueResults(theleague?.startDate as string, theleague?.endDate as string, theleague?.region as string)
   const teamResult = await getPrivateLeagueMatches(theleague?.startDate as string, theleague?.endDate as string, theleague?.region as string)
 
+  const playerperf = leagueResult?.filter((result: any) => { 
+    if (result.Link === participant?.top || result.Link === participant?.jungle || result.Link === participant?.mid || result.Link === participant?.adc || result.Link === participant?.support) {
+      return result
+    }
+  
+   })
+  
+  const teamperf = teamResult?.filter((result: any) => { 
+    if (result.Team1 === participant?.team || result.Team2 === participant?.team) {
+      return result
+    }
+  })
 
 
-  const leagueResults = JSON.stringify(leagueResult)
-  const teamResults = JSON.stringify(teamResult)
+  const leagueResults = JSON.stringify(playerperf)
+  const teamResults = JSON.stringify(teamperf)
+
 
 
 

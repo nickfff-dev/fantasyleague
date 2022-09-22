@@ -278,30 +278,44 @@ io.on("connection", (socket) => {
     ];
  console.log( allRounds)
     const topSess = (round, roundName) => {
-      for (let h = 0; h < round.length;) {
+      for (let h = 0; h < round.length; h++) {
         try {
           (function (h) {
-            setTimeout(function () {
-              var counter = 8
-              const draftMember = draftMembersWithSocketId.filter((draftMember) => draftMember.draftOrder === round[h])[0];
-              const socket = io.sockets.sockets.get(draftMember.socketId);
-              
-              socket.emit("message2",  draftMember.fantasyname + " turn to pick a " + roundName);
-              socket.emit("counter", counter);
-              const interval = setInterval(() => {
-                counter--;
-                socket.emit("counter", counter);
-                if (counter === 0) { 
-                  clearInterval(interval);
-    
-                }
-               }, 1000);
-            }, 8000 * h);
+               
+      const turntimeOut =  setTimeout(function () {
+        var counter = 8
+        const draftMember = draftMembersWithSocketId.filter((draftMember) => draftMember.draftOrder === round[h])[0];
+        const socket = io.sockets.sockets.get(draftMember.socketId);
+        var counter = 8
+        socket.emit("message2",  draftMember.fantasyname + " turn to pick a " + roundName);
+        socket.emit("counter", counter);
+        const interval = setInterval(() => {
+          counter--;
+          socket.emit("counter", counter);
+          if (counter === 0) { 
+            clearInterval(interval);
+            clearTimeout(turntimeOut)
+
+          }
+     
+      
+        }, 1000);
+
+        socket.on("draftPick", async (data) => { 
+          clearInterval(interval);
+          clearTimeout(turntimeOut)
+          socket.off("draftPick", async (data) => {
+            console.log("off");
+          
+         })
+
+          
+        })
+
+      }, 8000 * h);
           } )(h);
         } catch (e) {
           console.log(e);
-        }finally {
-          h++
         }
       }
     };
