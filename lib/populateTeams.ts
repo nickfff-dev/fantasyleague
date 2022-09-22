@@ -71,7 +71,6 @@ export const populateTeams = async () => {
             didWin: currentTeamGame.Winner === 1 ? true : false,
             turretKills: currentTeamGame.Team1Towers,
             points: calculateTeamScore(currentTeamGame.Team1Kills, currentTeamGame.Team1Dragons, currentTeamGame.Team1Barons, currentTeamGame.Team1RiftHeralds, currentTeamGame.Team1Inhibitors, currentTeamGame.Team1Towers, currentTeamGame.Winner === 1 ? true : false),
-
           })
         } else if (team.Team === currentTeamGame.Team2) {
           teamperfomance.push({

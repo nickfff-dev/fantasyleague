@@ -65,25 +65,26 @@ model VerificationToken {
 // FANTASY MODELS
 
 model League {
-  id         Int           @id @default(autoincrement())
-  name       String        @unique
-  draftTime  String
-  startDate  String
-  endDate    String
-  duration   Int?          @db.Int
-  buyIn      String?       @db.VarChar(255)
-  buyInFee   Int?          @db.Int
-  inviteOnly String
-  inviteCode String?       @db.VarChar(255)
-  owner      String
-  maxPlayers Int
-  minPlayers Int
-  region     String
-  teams      Teams[]
-  players    Players[]
-  fixtures   Fixture[]
-  members    Participant[]
-  Draft      Draft[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  draftTime    String
+  startDate    String
+  endDate      String
+  duration     Int?           @db.Int
+  buyIn        String?        @db.VarChar(255)
+  buyInFee     Int?           @db.Int
+  inviteOnly   String
+  inviteCode   String?        @db.VarChar(255)
+  owner        String
+  maxPlayers   Int
+  minPlayers   Int
+  region       String
+  teams        Teams[]
+  players      Players[]
+  fixtures     Fixture[]
+  members      Participant[]
+  Draft        Draft[]
+  PlayerResult PlayerResult[]
 }
 
 model Teams {
@@ -96,7 +97,7 @@ model Teams {
   adc      String  @db.VarChar(100)
   support  String  @db.VarChar(100)
   points   Int     @db.Int
-  leagueId Int?    
+  leagueId Int?
   League   League? @relation(fields: [leagueId], references: [id])
 }
 
@@ -107,7 +108,7 @@ model Players {
   team     String? @db.VarChar(100)
   position String  @db.VarChar(100)
   points   Int?    @db.Int
-  leagueId Int?   
+  leagueId Int?
   League   League? @relation(fields: [leagueId], references: [id])
 }
 
@@ -123,8 +124,8 @@ model Participant {
   points      Int?    @db.Int
   draftOrder  Int?    @db.Int
   leaguename  String? @db.VarChar(255)
-  leagueId    Int?   
-  fantasyname String? @db.VarChar(255) @unique
+  leagueId    Int?
+  fantasyname String? @unique @db.VarChar(255)
   League      League? @relation(fields: [leagueId], references: [id])
   Draft       Draft?  @relation(fields: [draftName], references: [name])
   draftName   String?
@@ -137,7 +138,7 @@ model Fixture {
   Team1        String
   Team2        String
   Tab          String
-  leagueId     Int?  
+  leagueId     Int?
   League       League? @relation(fields: [leagueId], references: [id])
 }
 
@@ -148,4 +149,21 @@ model Draft {
   leagueId Int?
   members  Participant[]
   League   League?       @relation(fields: [leagueId], references: [id])
+}
+
+model PlayerResult {
+  name           String
+  team           String
+  role           String
+  creepScore     Int?
+  visionScore    Int?
+  kills          Int?
+  deaths         Int?
+  assists        Int?
+  game           String  @unique
+  teamTotalKills Int?
+  points         Int?
+  leagueId       Int?
+  league         League? @relation(fields: [leagueId], references: [id])
+  date           String?
 }
