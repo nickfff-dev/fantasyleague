@@ -50,11 +50,21 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  sessionStore.saveSession(socket.sessionID, {
-    userID: socket.userID,
-    username: socket.username,
-    connected: true,
-  });
+  // avoid saving multiple sessions for the same user
+
+  
+
+sessionStore.saveSession(socket.sessionID, {
+        userID: socket.userID,
+        username: socket.username,
+        connected: true,
+      });
+
+    
+  
+
+
+ 
 
   // emit session details
   socket.emit("session", {
@@ -64,94 +74,80 @@ io.on("connection", (socket) => {
 
   // join the "league" room
   socket.on("joinRoom", async (room) => {
-    if (socket.room == room) {
-      socket.emit(
-        "message",
-        "Already in a room" + socket.username + " " + socket.room
-      );
-      return;
-    }
-    socket.join(room);
 
-    socket.room = room;
-
-    const roommembers = io.sockets.adapter.rooms.get(room);
-    const wmembers = [];
-    for (const member of roommembers) {
-      const memberSocket = io.sockets.sockets.get(member);
-      wmembers.push({
-        username: memberSocket.username,
-        room: memberSocket.room,
-        userID: memberSocket.userID,
-        sessionID: memberSocket.sessionID,
-      });
-
-      if (memberSocket.username === socket.username) {
-        continue;
+  
+    const people = io.sockets.adapter.rooms.get(room); 
+    if (people) {
+      const roomppl = []
+      for (const person of people) {
+        let personsocket = io.sockets.sockets.get(person);
+        if (personsocket.username === socket.username) {
+          socket.emit("message", socket.username + " is already in the room");
+         
+  
+        }
+        else {
+          socket.join(room);
+          socket.room = room;
+          socket.emit("message", socket.username + " joined the room " + room);
+          const roommembers = io.sockets.adapter.rooms.get(room);
+      const wmembers = [];
+      for (const member of roommembers) {
+        const memberSocket = io.sockets.sockets.get(member);
+        wmembers.push({
+          username: memberSocket.username,
+          room: memberSocket.room,
+          userID: memberSocket.userID,
+          sessionID: memberSocket.sessionID,
+        });
+  
+      
+ 
+        
       }
-      // console.log(draftStore.getDraft(room))
-      socket.emit(
-        "message",
-        memberSocket.username + " is in the room" + " " + socket.room
-      );
-    }
-
-    io.to(room).emit("roommembers", wmembers);
-  });
-  socket.on("createDraft", async (room) => {
-    try {
-      const draft = {
-        name: room,
-      };
-
-      draftStore.saveDraft(draft);
-      io.to(room).emit("draftcreated", draft);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-  socket.on("joinDraft", async (data) => {
-    try {
-      const member = {
-        fantasyname: data.fantasyname,
-      };
-      const draftName = data.room;
-      draftStore.addDraftMember(draftName, member);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-  socket.on("assigndraftpositions", async (room) => {
-    try {
-      const draftMemmbers = draftStore.getDraftMembers(room);
-      draftMemmbers.then((draftMemmbers) => {
-        const draftMemmbersLength = draftMemmbers.length;
-
-        const draftposition = [];
-        for (let i = 0; i < draftMemmbersLength; i++) {
-          draftposition.push(i);
+  
+    
+      io.to(room).emit("roommembers", wmembers);
+        
         }
+     
 
-        const shuffled = draftposition.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, draftMemmbersLength);
 
-        for (let i = 0; i < draftMemmbersLength; i++) {
-          draftStore.updateDraftMemberDraftOrder(
-            room,
-            draftMemmbers[i].fantasyname,
-            selected[i]
-          );
-        }
+      }
 
-        io.to(room).emit("message", "draftMemmbers2");
-      });
-    } catch (e) {
-      console.log(e);
+      
+       
+
     }
-  });
+    else { 
+      socket.join(room);
+      socket.room = room;
+      socket.emit("message", socket.username + " You joined the room " + room);
+      const roommembers = io.sockets.adapter.rooms.get(room);
+      const wmembers = [];
+      for (const member of roommembers) {
+        const memberSocket = io.sockets.sockets.get(member);
+        wmembers.push({
+          username: memberSocket.username,
+          room: memberSocket.room,
+          userID: memberSocket.userID,
+          sessionID: memberSocket.sessionID,
+        });
+  
+      
+ 
+        
+      }
+  
+    
+      io.to(room).emit("roommembers", wmembers);
+      
+    }
 
+  
+    
+  });
+  
   socket.on("preparedraft", async (room) => {
    
     const addTodraft = io.sockets.adapter.rooms.get(room);
@@ -340,7 +336,7 @@ io.on("connection", (socket) => {
       console.log(e);
     } 
 
-    // run the other rounds after the first one
+    
   });
 
   const users = [];
@@ -350,7 +346,9 @@ io.on("connection", (socket) => {
       username: session.username,
       connected: session.connected,
     });
+
   });
+ console.log(users)
   socket.emit("users", users);
 
   socket.broadcast.emit("user connected", {

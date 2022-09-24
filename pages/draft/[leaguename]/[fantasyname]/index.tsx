@@ -34,12 +34,22 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 }
 
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 useEffect(() => { 
   socket.on("counter", (count: any) => {
     setCounter(count);
   })
 }, [counter])
-useEffect(() => { 
+useEffect(() => {
   socket.on("draftposition", (data: any) => {
     console.log(data)
   
@@ -56,20 +66,27 @@ const prepareDraft = () => {
 
 useEffect(() => { 
   socket.on("roommembers", (mwmbwesr: typeof usersinroom) => {
-       console.log(mwmbwesr.length)
-   
+       console.log(mwmbwesr.length)  
     setUsersinroom(mwmbwesr)
   })
   return () => { 
     socket.off("roommembers")
   }
-},[])
+}, [])
+  
+  
+  
+  
+  
+  
 
+  
+  
 
 useEffect(() => {
 
   socket.on("message2", (message2: any) => {
-    console.log(message2)
+    
     setMessage2(message2)
   })
 
@@ -82,7 +99,7 @@ useEffect(() => {
 useEffect(() => {
 
   socket.on("message", (message: any) => {
-    console.log(message)
+   
     setMessage(message)
   })
 
@@ -150,8 +167,8 @@ useEffect(() => {
 
 useEffect(() => {
   socket.on("connect", () => {
-
-    socket.emit("joinRoom",   focusonleague.name)
+  
+    socket.emit("joinRoom", focusonleague.name)
    
 
     watu.forEach((user: { self: any; connected: boolean; }) => {
@@ -253,7 +270,9 @@ useEffect(() => {
     socket.off("user disconnected");
   }
       
-   
+    
+
+
 }, [])
 
   
@@ -318,11 +337,11 @@ league: {focusonleague.name}<br/>
 teamname:  {focusonparticipant.fantasyname}
 
        <br/>
-          draftOrder:   {focusonparticipant.draftOrder} <br/>
+          draftOrder:   {focusonparticipant.draftOrder} 
           draftDate: {focusonleague.draftTime.split("T")[0]}
-        </h1> </div>
+            </h1> </div>
+     
         <table style={{color: "#ffd204"}} hidden={false}>
-    
     <thead>
       <tr>
         <th scope="col">FANTASYNAME</th>
