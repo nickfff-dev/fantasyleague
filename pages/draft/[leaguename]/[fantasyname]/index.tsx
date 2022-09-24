@@ -18,15 +18,19 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
   const [watu, setWatu] = useState([{ connected: false, self: true, userID: "", username: "", }])
+  const[draftPeople, setDraftPeople] = useState([{adc: "", jungle: "", mid: "", support: "", top: "", team: "", username: "", leaguename:"", leagueId: 0, id: 0 }])
   const [message, setMessage] = useState("")
-  const [usersinroom, setUsersinroom] = useState([{  userID: "", username: "", room: "",sessionID: "" }])
-  const [message2, setMessage2] = useState("")
+  const [message2, setMessage2] =   useState("")
   const [counter, setCounter] = useState(0)
+
+
+
+
 
 
  
 
-  const letmein = async () => { 
+  const letmein = async () => {
     const username = focusonparticipant.fantasyname
     socket.auth = { username };
     socket.connect();
@@ -35,7 +39,17 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
   
   
-  
+  useEffect(() => { 
+
+  socket.on("people", (data: any) => {
+    console.log(data);
+    setDraftPeople(data)
+  })
+    return () => { 
+      socket.off("people")
+    }
+    
+}, [draftPeople])
   
   
   
@@ -48,6 +62,7 @@ useEffect(() => {
   socket.on("counter", (count: any) => {
     setCounter(count);
   })
+
 }, [counter])
 useEffect(() => {
   socket.on("draftposition", (data: any) => {
@@ -64,15 +79,7 @@ const prepareDraft = () => {
   socket.emit("preparedraft", focusonleague.name)
  }
 
-useEffect(() => { 
-  socket.on("roommembers", (mwmbwesr: typeof usersinroom) => {
-       console.log(mwmbwesr.length)  
-    setUsersinroom(mwmbwesr)
-  })
-  return () => { 
-    socket.off("roommembers")
-  }
-}, [])
+
   
   
   
@@ -267,7 +274,8 @@ useEffect(() => {
     socket.off("disconnect");
     socket.off("users");
     socket.off("user connected");
-    socket.off("user disconnected");
+
+    socket.off("user disconnected");  
   }
       
     
@@ -280,8 +288,16 @@ useEffect(() => {
     <>
       
     <div className={s.root} style={{ textAlign: "center", display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
-      <div  style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-      <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
+        <div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
+    <button style={{color: "#ffd204"}}
+      onClick={
+        () => { 
+          socket.emit("draftposition", focusonleague.name)
+        }
+      }
+      >assigndraftposi</button><br />
+      
     <button style={{color: "#ffd204"}}
       onClick={
         () => { 
@@ -303,15 +319,17 @@ useEffect(() => {
       
       <div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <h1>users in room</h1>
-    {usersinroom?.map((user: { userID: any; username: any; room: any; }) => {
+    {watu?.map((user) => {  
       return (
         
-          <span key={user.userID}>{user.username} {user.room}</span>    
+          <span key={user.userID}>{user.username} {focusonleague.room}</span>    
           
           
         
       );
     
+
+
     })}
       </div>
       <h1 style={{color: "#ffd204"}}>{counter == 0 ? "wait your turn": "timer: " + counter}</h1>
@@ -330,14 +348,14 @@ useEffect(() => {
     </div>
 
   <div className={s.root} style={{color: "#ffd204"}}>
-    {focusonparticipant.draftOrder !== null ? (<div style={{color: "#ffd204", display:"flex", flexDirection:"row" , justifyContent: "space-between"}} >
+    <div style={{color: "#ffd204", display:"flex", flexDirection:"row" , justifyContent: "space-between"}} >
 <div>        <h1> Draft</h1>
 <h1>
 league: {focusonleague.name}<br/>
 teamname:  {focusonparticipant.fantasyname}
 
        <br/>
-          draftOrder:   {focusonparticipant.draftOrder} 
+          draftOrder:   {`${focusonparticipant.draftOrder}`} 
           draftDate: {focusonleague.draftTime.split("T")[0]}
             </h1> </div>
      
@@ -349,14 +367,15 @@ teamname:  {focusonparticipant.fantasyname}
         <th scope="col">JNG</th>
           <th scope="col">MID</th>
           <th scope="col">BOT</th>
-          <th scope="col">SUP</th>
+                <th scope="col">SUP</th>
+                
           <th scope="col">TEAM</th>
           
       </tr>
     </thead>
     <tbody>
         {
-          participants.map((participant: Participant) => (
+          draftPeople.map((participant: any) => (
             <tr key={participant.id} >
               <td>{participant.fantasyname}</td>
               <td>{participant.top}</td>
@@ -395,8 +414,10 @@ teamname:  {focusonparticipant.fantasyname}
                       socket.emit("draftPick", {
                         name: team.name,
                         fantasyname: focusonparticipant.fantasyname,
-                        role: "Team",   
+                        role: "Team", 
+                        draftName: focusonleague.name,
                       })
+                      
                     }
             }>
               <td>{team.name}</td>
@@ -442,6 +463,7 @@ teamname:  {focusonparticipant.fantasyname}
                   name: player.name,
                   fantasyname: focusonparticipant.fantasyname,
                   role: player.position,
+                  draftName : focusonleague.name,
     
                 }
               
@@ -461,7 +483,7 @@ teamname:  {focusonparticipant.fantasyname}
       
    </div>
       
-      </div>) : `"not confirmed for draft yet follow this link to confirm draft" http://localhost:3000/leagues/${focusonleague.name}/confirmdraft/${focusonparticipant.fantasyname}`}
+      </div>
    
     </div>
 

@@ -24,7 +24,7 @@ const LeaguePage = ({ league, teams, players, fixtures }: InferGetServerSideProp
           <p>isBuyin: {`${league.buyIn}`}</p>
           <p>duration: { league.duration} days</p>
           <p>id: {league.id}</p>
-          <a href={`/leagues/${league.name}/joinaleague`}>jointhe league va this link</a>
+          <a href={`/joinaleague/${league.name}`}>jointhe league via this link</a>
         </div>
        
 

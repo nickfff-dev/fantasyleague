@@ -46,6 +46,7 @@ class DraftManager extends draftStore {
       ...member,
       [updatePosition]: updateValue,
     })
+    
   }
   deleteDraftMember(draftName, FantasyName,) {
    

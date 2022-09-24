@@ -50,7 +50,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  // avoid saving multiple sessions for the same user
+
 
   
 
@@ -107,7 +107,7 @@ sessionStore.saveSession(socket.sessionID, {
       }
   
     
-      io.to(room).emit("roommembers", wmembers);
+      
         
         }
      
@@ -140,7 +140,7 @@ sessionStore.saveSession(socket.sessionID, {
       }
   
     
-      io.to(room).emit("roommembers", wmembers);
+  
       
     }
 
@@ -156,7 +156,7 @@ sessionStore.saveSession(socket.sessionID, {
       name: room,
     }
     try {
-      await draftStore.saveDraft(draft).then(() => {
+     draftStore.saveDraft(draft).then(() => {
   for (const newMember of addTodraft) { 
     const memberSocket = io.sockets.sockets.get(newMember);
     const member = {
@@ -167,20 +167,29 @@ sessionStore.saveSession(socket.sessionID, {
   }
  })}catch (e) {
   console.log(e);
-    } finally {
+    }  
+
+
+  
+  
+  })
+
+  
+  socket.on("draftposition", async (room) => { 
+    try {
 
       const draftMemmbers = draftStore.getDraftMembers(room);
       draftMemmbers.then((draftMemmbers) => {
         const draftMemmbersLength = draftMemmbers.length;
-
+  
         const draftposition = [];
         for (let i = 0; i < draftMemmbersLength; i++) {
           draftposition.push(i);
         }
-
+  
         const shuffled = draftposition.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, draftMemmbersLength);
-
+  
         for (let i = 0; i < draftMemmbersLength; i++) {
           draftStore.updateDraftMemberDraftOrder(
             room,
@@ -188,19 +197,23 @@ sessionStore.saveSession(socket.sessionID, {
             selected[i]
           );
         }
-
+  
         io.to(room).emit("message", "draftMemmbers2");
       });
     
   
-}
-
-
-  
+  }catch (e) {
+  console.log(e);
+    }
   })
 
+  socket.on("populate", async (room) => {
+    const draftMembers = draftStore.getDraftMembers(room);
+    draftMembers.then((draftMembers) => {
+      io.to(room).emit("people", draftMembers);
+    })
 
-
+  })
 
 
   socket.on("draftPick", async (data) => {
@@ -208,8 +221,17 @@ sessionStore.saveSession(socket.sessionID, {
       const FantasyName = data.fantasyname;
       const updatePosition = data.role;
       const updateValue = data.name;
+      const draftName = data.draftName
 
-      draftStore.updateDraftPick(FantasyName, updatePosition, updateValue);
+      draftStore.updateDraftPick(FantasyName, updatePosition, updateValue).then(() => {
+        
+        draftStore.getDraftMembers(draftName).then((data) => {
+          io.to (draftName).emit("people", data)
+        })
+        
+      })
+      
+      
     } catch (e) {
       console.log(e);
     }
@@ -279,10 +301,10 @@ sessionStore.saveSession(socket.sessionID, {
           (function (h) {
                
       const turntimeOut =  setTimeout(function () {
-        var counter = 8
+        var counter = 10
         const draftMember = draftMembersWithSocketId.filter((draftMember) => draftMember.draftOrder === round[h])[0];
         const socket = io.sockets.sockets.get(draftMember.socketId);
-        var counter = 8
+   
         socket.emit("message2",  draftMember.fantasyname + " turn to pick a " + roundName);
         socket.emit("counter", counter);
         const interval = setInterval(() => {
@@ -300,15 +322,15 @@ sessionStore.saveSession(socket.sessionID, {
         socket.on("draftPick", async (data) => { 
           clearInterval(interval);
           clearTimeout(turntimeOut)
-          socket.off("draftPick", async (data) => {
-            console.log("off");
-          
-         })
+       
 
           
         })
 
-      }, 8000 * h);
+    
+
+
+      }, 10000 * h);
           } )(h);
         } catch (e) {
           console.log(e);
@@ -319,19 +341,19 @@ sessionStore.saveSession(socket.sessionID, {
       topSess(topRound, "top");
       setTimeout(function () {
         topSess(jungleRound, "jungle");
-      }, 8000 * topRound.length);
+      }, 10000 * topRound.length);
       setTimeout(function () {
         topSess(midRound, "mid");
-      }, 8000 * (topRound.length + jungleRound.length));
+      }, 10000 * (topRound.length + jungleRound.length));
       setTimeout(function () {
         topSess(adcRound, "adc");
-      }, 8000 * (topRound.length + jungleRound.length + midRound.length));
+      }, 10000 * (topRound.length + jungleRound.length + midRound.length));
       setTimeout(function () {
         topSess(supportRound, "support");
-      }, 8000 * (topRound.length + jungleRound.length + midRound.length + adcRound.length));
+      }, 10000 * (topRound.length + jungleRound.length + midRound.length + adcRound.length));
       setTimeout(function () {
         topSess(teamRound, "team");
-      }, 8000 * (topRound.length + jungleRound.length + midRound.length + adcRound.length + supportRound.length));
+      }, 10000 * (topRound.length + jungleRound.length + midRound.length + adcRound.length + supportRound.length));
     } catch (e) {
       console.log(e);
     } 

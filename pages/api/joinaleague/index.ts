@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
       })
 
-      res.status(200).send(`Joined ${leaguename} successfully as ${teamname} the please confirm draft attendance through this link http://localhost:3000/leagues/${leaguename}/confirmdraft/${teamname}`)
+      res.status(200).send(`Joined ${leaguename} successfully as ${teamname}`)
     }catch(e){
       console.log(e)
     }
