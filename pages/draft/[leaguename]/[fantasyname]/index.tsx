@@ -416,6 +416,8 @@ teamname:  {focusonparticipant.fantasyname}
                         fantasyname: focusonparticipant.fantasyname,
                         role: "Team", 
                         draftName: focusonleague.name,
+                        leagueId: focusonleague.id,
+                        choiceId: team.id,
                       })
                       
                     }
@@ -463,7 +465,9 @@ teamname:  {focusonparticipant.fantasyname}
                   name: player.name,
                   fantasyname: focusonparticipant.fantasyname,
                   role: player.position,
-                  draftName : focusonleague.name,
+                  draftName: focusonleague.name,
+                  leagueId: focusonleague.id,
+                  choiceId: player.id,
     
                 }
               

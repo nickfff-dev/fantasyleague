@@ -222,8 +222,10 @@ sessionStore.saveSession(socket.sessionID, {
       const updatePosition = data.role;
       const updateValue = data.name;
       const draftName = data.draftName
+      const leagueId = data.leagueId
+      const choiceId = data.choiceId
 
-      draftStore.updateDraftPick(FantasyName, updatePosition, updateValue).then(() => {
+      draftStore.updateDraftPick(FantasyName, updatePosition, updateValue, leagueId, choiceId).then(() => {
         
         draftStore.getDraftMembers(draftName).then((data) => {
           io.to (draftName).emit("people", data)
@@ -234,7 +236,9 @@ sessionStore.saveSession(socket.sessionID, {
       
     } catch (e) {
       console.log(e);
-    }
+    } 
+
+
   });
 
   socket.on("startDraft", async (room) => {

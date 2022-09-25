@@ -68,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     name: player.Player,
                     team: player.Team,
                     position: player.Role,
+                    selected: false,
                   }
                 }
               }
@@ -91,7 +92,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     mid: team.RosterLinks.split(";;")[2],
                     adc: team.RosterLinks.split(";;")[3],
                     support: team.RosterLinks.split(";;")[4],
-                    points: 0
+                    points: 0,
+                    selected: false
                   }
                 }
               }

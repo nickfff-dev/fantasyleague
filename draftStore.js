@@ -184,27 +184,90 @@ class PrismaDraftStore extends draftStore {
 
 
   }
-  async updateDraftPick(FantasyName, updatePosition, updateValue) {
+  async updateDraftPick(FantasyName, updatePosition, updateValue, leagueId, choiceId) {
    
     try {
-      if (updatePosition !== "Bot") {
+      if (updatePosition === "Bot") {
            
         await this.prisma.participant.update({
           where: {
             fantasyname: FantasyName
           },
           data: {
-            [updatePosition.toLowerCase()]: updateValue
+            adc: updateValue,
+          }
+        })
+        await this.prisma.league.update({
+          where: {
+            id: leagueId
+          },
+          data: {
+            players: {
+              update: {
+                where: {
+                  id: choiceId
+                },
+                data: {
+                  selected: true
+                }
+              }
+            }
           }
         })
       }
+      else if (updatePosition === "Team") {
+        await this.prisma.participant.update({
+          where: {
+            fantasyname: FantasyName
+          },
+          data: {
+            team: updateValue
+          }
+        })
+        await this.prisma.league.update({
+          where: {
+            id: leagueId
+          },
+          data: {
+            teams: {
+              update: {
+                where: {
+                  id: choiceId
+                },
+                data: {
+                  selected: true
+                }
+              }
+            }
+          }
+        })
+      
+       }
       else {
         await this.prisma.participant.update({
           where: {
             fantasyname: FantasyName
           },
           data: {
-            adc: updateValue
+      
+            [updatePosition.toLowerCase()]: updateValue,
+          }
+        })
+        await this.prisma.league.update({
+          where: {
+            id: leagueId
+          },
+          data: {
+            players: {
+              update: {
+                where: {
+                  id: choiceId
+                },
+                data: {
+                  selected: true
+                }
+              }
+            }
           }
         })
       }
@@ -213,6 +276,7 @@ class PrismaDraftStore extends draftStore {
     catch (err) { console.log(err) 
     }
     finally {
+   
       await this.prisma.$disconnect()
     }
 

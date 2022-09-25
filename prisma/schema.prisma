@@ -99,6 +99,7 @@ model Teams {
   points   Int     @db.Int
   leagueId Int?
   League   League? @relation(fields: [leagueId], references: [id])
+  selected Boolean @default(false)
 }
 
 model Players {
@@ -110,6 +111,7 @@ model Players {
   points   Int?    @db.Int
   leagueId Int?
   League   League? @relation(fields: [leagueId], references: [id])
+  selected Boolean? @default(false)
 }
 
 model Participant {
