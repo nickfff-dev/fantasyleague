@@ -334,9 +334,9 @@ useEffect(() => {
       </div>
       <h1 style={{color: "#ffd204"}}>{counter == 0 ? "wait your turn": "timer: " + counter}</h1>
       
-    {/* {
+    {
       message ? (<div  style={{color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center"}} ><h1>draft events</h1><p  style={{color: "#ffd204"}}>{ message}</p></div>):(<p style={{color: "#ffd204"}}>draftlog</p>)
-    } */}
+    }
  
    
  <div  style={{float:"right"}} >
@@ -408,7 +408,12 @@ teamname:  {focusonparticipant.fantasyname}
     </thead>
     <tbody>
         {
-                teams.slice(5).map((team: Teams) => (
+                  teams.slice(5).filter((team: Teams) => {
+                    if (team.selected === false) {
+                      return team
+                    }
+                  
+                }).map((team: Teams) => (
                   <tr key={team.id} onClick={
                     () => { 
                       socket.emit("draftPick", {
@@ -449,8 +454,9 @@ teamname:  {focusonparticipant.fantasyname}
     </thead>
     <tbody>
         {
-         players.slice(5).filter((player: Players) => {
-          if (player.position === "Top" || player.position === "Jungle" || player.position === "Mid" || player.position === "Bot" || player.position === "Support") {
+         players.filter((player: Players) => {
+           if ((player.position === "Top" || player.position === "Jungle" || player.position === "Mid" || player.position === "Bot" || player.position === "Support") && player.selected === false) {
+           
             return player
           
             
@@ -458,7 +464,6 @@ teamname:  {focusonparticipant.fantasyname}
         }).map((player: Players) => (
           <tr key={player.id} onClick={
             () => {
-              console.log(player.position)
               socket.emit(
                 "draftPick", 
                 {
