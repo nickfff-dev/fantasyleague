@@ -21,7 +21,7 @@ const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServe
             <p>region: {league?.region}</p>
             <p>owner: {league?.owner}</p>
             <p>duration {league?.duration} days</p>
-            <a href={`/leagues/${league.name}/joinaleague`}>join league link</a>
+            <a href={`/joinaleague/${league.name}`}>join league link</a>
 
           </div>
         ))
