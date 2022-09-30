@@ -82,7 +82,7 @@ sessionStore.saveSession(socket.sessionID, {
       for (const person of people) {
         let personsocket = io.sockets.sockets.get(person);
         if (personsocket.username === socket.username) {
-          socket.emit("message", socket.username + " is already in the room");
+          socket.emit("message", personsocket.username + " is already in the room");
          
   
         }
@@ -90,21 +90,7 @@ sessionStore.saveSession(socket.sessionID, {
           socket.join(room);
           socket.room = room;
           socket.emit("message", socket.username + " joined the room " + room);
-          const roommembers = io.sockets.adapter.rooms.get(room);
-      const wmembers = [];
-      for (const member of roommembers) {
-        const memberSocket = io.sockets.sockets.get(member);
-        wmembers.push({
-          username: memberSocket.username,
-          room: memberSocket.room,
-          userID: memberSocket.userID,
-          sessionID: memberSocket.sessionID,
-        });
-  
-      
- 
-        
-      }
+
   
     
       
@@ -123,21 +109,7 @@ sessionStore.saveSession(socket.sessionID, {
       socket.join(room);
       socket.room = room;
       socket.emit("message", socket.username + " You joined the room " + room);
-      const roommembers = io.sockets.adapter.rooms.get(room);
-      const wmembers = [];
-      for (const member of roommembers) {
-        const memberSocket = io.sockets.sockets.get(member);
-        wmembers.push({
-          username: memberSocket.username,
-          room: memberSocket.room,
-          userID: memberSocket.userID,
-          sessionID: memberSocket.sessionID,
-        });
-  
-      
- 
-        
-      }
+
   
     
   

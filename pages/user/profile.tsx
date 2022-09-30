@@ -20,17 +20,23 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
   const onUserNameSubmit = async (e: React.FormEvent<HTMLFormElement>) => {   
     e.preventDefault();
-    const data = {
-      name: owner.username,
-      userName: usernewname,
-      action: "save username"
-    }
+  
+     
+    const  userName = usernewname
+     const email = owner.email
+    const task = "save username"
+    const name = owner.name
+    
     try {
-      await fetch(`/api/user/${owner.username}`, {
+      await fetch(`/api/user/${name}`, {
         method: "POST",
-        body: JSON.stringify({ data })
+        body: JSON.stringify({ 
+          userName,
+          email,
+          task
+         })
       }).then((res) => {
-        res.json().then((data) => {
+        res.text().then((data) => {
           console.log(data);
         })
       })
@@ -50,7 +56,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
         <h2 className={s.subtitle}>Welcome {owner.name}</h2>
         <h2 className={s.subtitle}>Your email is {owner.email}</h2>
         <h2 className={s.subtitle}>{
-          owner.username ? `username: Your username is ${owner.username}` : `username: You don't have a username yet`
+          owner.userName ? `username:  ${owner.userName}` : `username: You don't have a username yet`
 
         
       }</h2>
@@ -64,9 +70,9 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
       <div className={s.container}>
       
 
-          {
-        owner.userName !== "" ?   (<form onSubmit={onUserNameSubmit}> <label htmlFor="userName">enteruseRname<input type="text" name="userName" onChange={onUserNameChange} /><button type="submit" value="submit"  >save</button></label></form>) : null
-        }
+          
+      {owner.userName? null:(<form method="POST" onSubmit={onUserNameSubmit}> <label htmlFor="userName">enteruseRname<input type="text" name="userName" onChange={onUserNameChange} /><input type="submit" value="Submit"/></label></form>)}
+        
         
         
       </div>
@@ -82,7 +88,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
               <h2 className={s.subtitle}>League Owner: {league.owner}</h2>
               <h2 className={s.subtitle}>League Region: {league.region}</h2>
               <h2 className={s.subtitle}>League buyinFee: {league.buyInFee}</h2>
-              <h2 className={s.subtitle}> <a    href={`/leagues/${league.name}`} target="_blank" >LinktoLeague</a></h2>
+              <h2 className={s.subtitle}> <a href={`/leagues/${league.name}`} target="_blank" >LinktoLeague</a></h2>
                
               <h2 className={s.subtitle}></h2></div>)
         })
@@ -110,7 +116,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const username  = session?.user?.name as string
   const owner = await prisma.user.findUnique({
     where: {
-      name: session?.user?.name as string,
+      email: session?.user?.email as string,
+      
     }
   }).then((data) => {
     return data

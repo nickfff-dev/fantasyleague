@@ -11,7 +11,11 @@ import { InferGetServerSidePropsType } from 'next'
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 
-const socket =  io();
+const socket = io(
+  {
+    autoConnect: false
+  }
+ );
 
 function Draft({ focusonleague, focusonparticipant, participants, teams, players }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
@@ -37,6 +41,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
 }
 
+  
   
   
   useEffect(() => { 
@@ -455,7 +460,7 @@ teamname:  {focusonparticipant.fantasyname}
     <tbody>
         {
          players.filter((player: Players) => {
-           if ((player.position === "Top" || player.position === "Jungle" || player.position === "Mid" || player.position === "Bot" || player.position === "Support") && player.selected === false) {
+           if (player.position === "Top" || player.position === "Jungle" || player.position === "Mid" || player.position === "Bot" || player.position === "Support" ) {
            
             return player
           
@@ -464,24 +469,30 @@ teamname:  {focusonparticipant.fantasyname}
         }).map((player: Players) => (
           <tr key={player.id} onClick={
             () => {
-              socket.emit(
-                "draftPick", 
-                {
-                  name: player.name,
-                  fantasyname: focusonparticipant.fantasyname,
-                  role: player.position,
-                  draftName: focusonleague.name,
-                  leagueId: focusonleague.id,
-                  choiceId: player.id,
-    
-                }
-              
-            )}
+             
+                socket.emit(
+                  "draftPick", 
+                  {
+                    name: player.name,
+                    fantasyname: focusonparticipant.fantasyname,
+                    role: player.position,
+                    draftName: focusonleague.name,
+                    leagueId: focusonleague.id,
+                    choiceId: player.id,
+                    
+      
+                  }
+                
+              )
+            
+            }
           }>
+
               <td>{player.name}</td>
               <td>{player.team}</td>
               <td>{player.position}</td>
-              <td>{player.points}</td>
+            <td>{player.points}</td>
+            
            
               </tr>
           ))
@@ -550,9 +561,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     where: {
       leagueId: focusonleague?.id
     }
-  }).then(async (players) => {
+  }).then(async (data) => {
     await prisma.$disconnect()
-    return players
+    const unselectplayers = data.filter((player) => { 
+      if (!player.selected) {
+        return player
+      }
+    })
+    return unselectplayers
    
   })
 
