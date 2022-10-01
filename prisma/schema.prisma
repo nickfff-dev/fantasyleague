@@ -38,20 +38,21 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  userName      String?   @unique
-  email         String?   @unique
-  emailVerified DateTime?
-  birthDate     DateTime?
+  userName      String?      @unique
+  email         String?      @unique
+  emailVerified String?
+  birthDate     String?
   country       String?
   province      String?
   image         String?
-  admin         Boolean   @default(false)
+  admin         Boolean      @default(false)
   accounts      Account[]
   sessions      Session[]
-
-  // leagues       Leagues[]
+  Wallet        Wallet[]
+  Deposit       Deposit[]
+  Withdrawal    Withdrawal[]
 }
 
 model VerificationToken {
@@ -78,6 +79,7 @@ model League {
   owner        String
   maxPlayers   Int
   minPlayers   Int
+  points       Int?
   region       String
   teams        Teams[]
   players      Players[]
@@ -85,6 +87,7 @@ model League {
   members      Participant[]
   Draft        Draft[]
   PlayerResult PlayerResult[]
+  TeamResult   TeamResult[]
 }
 
 model Teams {
@@ -103,14 +106,14 @@ model Teams {
 }
 
 model Players {
-  id       Int     @id @default(autoincrement())
-  name     String  @db.VarChar(255)
-  slug     String? @db.VarChar(255)
-  team     String? @db.VarChar(100)
-  position String  @db.VarChar(100)
-  points   Int?    @db.Int
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(255)
+  slug     String?  @db.VarChar(255)
+  team     String?  @db.VarChar(100)
+  position String   @db.VarChar(100)
+  points   Int?     @db.Int
   leagueId Int?
-  League   League? @relation(fields: [leagueId], references: [id])
+  League   League?  @relation(fields: [leagueId], references: [id])
   selected Boolean? @default(false)
 }
 
@@ -168,4 +171,54 @@ model PlayerResult {
   leagueId       Int?
   league         League? @relation(fields: [leagueId], references: [id])
   date           String?
+}
+
+model TeamResult {
+  name            String
+  game            String   @unique
+  teamKills       Int?
+  dragonKills     Int?
+  riftHeraldKills Int?
+  turretKills     Int?
+  inhibitorKills  Int?
+  baronKills      Int?
+  didWin          Boolean?
+  points          Int?
+  leagueId        Int?
+  league          League?  @relation(fields: [leagueId], references: [id])
+  date            String?
+}
+
+model Wallet {
+  id      Int    @id @default(autoincrement())
+  balance Int
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credits Int?
+}
+
+model Deposit {
+  id       Int    @id @default(autoincrement())
+  amount   Int
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date     String
+  time     String
+  status   String
+  txId     String
+  txHash   String
+  txStatus String
+}
+
+model Withdrawal {
+  id       Int    @id @default(autoincrement())
+  amount   Int
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date     String
+  time     String
+  status   String
+  txId     String
+  txHash   String
+  txStatus String
 }

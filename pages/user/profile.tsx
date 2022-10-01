@@ -6,18 +6,50 @@ import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
-import  Link  from "next/link";
+import Link from "next/link";
+import dayjs from "dayjs";
 
 
 const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
   const [usernewname, setUser] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   
   const onUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
     setUser(e.target.value);
 
 
   }
+  const onBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
+    setBirthDate(dayjs(e.target.value).toDate().toISOString());
+    console.log (dayjs(e.target.value).toDate().toISOString());
+    
+  }
+  const onBirthdDateSubmit = async () => { 
+    const  birthDay = birthDate
+    const email = owner.email
+   const task = "save birthDate"
+   const name = owner.name
+   
+   try {
+     await fetch(`/api/user/${name}`, {
+       method: "POST",
+       body: JSON.stringify({ 
+        birthDay,
+         email,
+         task
+        })
+     }).then((res) => {
+       res.text().then((data) => {
+         console.log(data);
+       })
+     })
+  
+}catch (error) {
+     console.log(error);
+   }
+ }
 
+  
   const onUserNameSubmit = async (e: React.FormEvent<HTMLFormElement>) => {   
     e.preventDefault();
   
@@ -72,6 +104,15 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
           
       {owner.userName? null:(<form method="POST" onSubmit={onUserNameSubmit}> <label htmlFor="userName">enteruseRname<input type="text" name="userName" onChange={onUserNameChange} /><input type="submit" value="Submit"/></label></form>)}
+        
+        
+        
+      </div>
+      <div className={s.container}>
+      
+
+          
+      {owner.birthDate ? null:(<form method="POST" onSubmit={onBirthdDateSubmit}> <label htmlFor="birthDate">enterbirthdate<input type="date" name="birthDate" onChange={ onBirthDateChange} /><br/><input type="submit" value="Submit"/></label></form>)}
         
         
         

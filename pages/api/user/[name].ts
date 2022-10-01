@@ -8,19 +8,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
   const data = JSON.parse(req.body)
+  
   if (data.task === "save username") {
-    console.log (data.task)
-   await prisma.user.update({
+    console.log(data.task)
+    await prisma.user.update({
       where: { email: data.email },
       data: { userName: data.userName },
-   }).then(() => {
-    res.status(200).json("success");
-   })
+    }).then(() => {
+      res.status(200).json("success");
+    })
+    
+    
     
       
    
   
     
+  }
+  else if (data.task === "save birthDate") { 
+    
+ 
+     await prisma.user.update({
+        where: { email: data.email },
+        data: { birthDate: data.birthDay },
+     }).then(() => {
+      res.status(200).json("success");
+     })
+      
+      
+      
+        
+     
+    
+      
+    
+
   }
 
 }
