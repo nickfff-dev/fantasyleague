@@ -50,8 +50,8 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
  }
 
   
-  const onUserNameSubmit = async (e: React.FormEvent<HTMLFormElement>) => {   
-    e.preventDefault();
+  const onUserNameSubmit = async () => {   
+
   
      
     const  userName = usernewname

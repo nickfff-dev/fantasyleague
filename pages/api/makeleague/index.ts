@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     try {
       
-      const newLeague = await prisma.league.create({
+       await prisma.league.create({
 
         data: {
           name: league.name,
@@ -44,89 +44,81 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           minPlayers: league.minPlayers,
         }
  
-      })
-      
-      
-
-
-      const leagueName = newLeague.name
-    
-      
-  
-
-      
-
-      getPrivateLeaguePlayers(league.startDate, league.endDate, league.region).then((players) => {
-
-        if (players) {
-          players.forEach(async (player) => {
-            await prisma.league.update({
-              where: { name: leagueName },
-              data: {
-                players: {
-                  create: {
-                    name: player.Player,
-                    team: player.Team,
-                    position: player.Role,
-                    selected: false,
-                  }
-                }
-              }
-            })
-          })
-        }
+       }).then(() => {
         
-      })
+         
+         getPrivateLeaguePlayers(league.startDate, league.endDate, league.region).then((players) => {
 
-      getPrivateLeagueTeams(league.startDate, league.endDate, league.region).then((teams) => {
-        if (teams) {
-          teams.forEach(async (team) => {
-            await prisma.league.update({
-              where: { name: leagueName },
-              data: {
-                teams: {
-                  create: {
-                    name: team.Team,
-                    top: team.RosterLinks.split(";;")[0],
-                    jungle: team.RosterLinks.split(";;")[1],
-                    mid: team.RosterLinks.split(";;")[2],
-                    adc: team.RosterLinks.split(";;")[3],
-                    support: team.RosterLinks.split(";;")[4],
-                    points: 0,
-                    selected: false
-                  }
-                }
-              }
-            })
-          })
-        }
-        
-      })
-
-      getLeagueFixture(league.startDate, league.endDate, league.region).then((fixtures) => {
-        if (fixtures) {
-          fixtures.forEach(async (fixture) => {
-            await prisma.league.update({
-              where: { name: leagueName },
-              data: {
-                fixtures: {
-                  create: {
-                    MatchId: fixture.MatchId,
-                    DateTime_UTC: dayjs(fixture.DateTime_UTC).format("YYYY-MM-DD"),
-                    Tab: fixture.Tab,
-                    Team1: fixture.Team1,
-                    Team2: fixture.Team2,
-                   
-                  }
-                }
-              }
-            })
-          })
-        }
-        
-      })
+           if (players) {
+             players.forEach(async (player) => {
+               await prisma.league.update({
+                 where: { name: league.name },
+                 data: {
+                   players: {
+                     create: {
+                       name: player.Player,
+                       team: player.Team,
+                       position: player.Role,
+                       selected: false,
+                     }
+                   }
+                 }
+               })
+             })
+           }
       
-     
+         }).then(() => {
+           getPrivateLeagueTeams(league.startDate, league.endDate, league.region).then((teams) => {
+             if (teams) {
+               teams.forEach(async (team) => {
+                 await prisma.league.update({
+                   where: { name: league.name },
+                   data: {
+                     teams: {
+                       create: {
+                         name: team.Team,
+                         top: team.RosterLinks.split(";;")[0],
+                         jungle: team.RosterLinks.split(";;")[1],
+                         mid: team.RosterLinks.split(";;")[2],
+                         adc: team.RosterLinks.split(";;")[3],
+                         support: team.RosterLinks.split(";;")[4],
+                         points: 0,
+                         selected: false
+                       }
+                     }
+                   }
+                 })
+               })
+             }
+            
+           })
+           
+         }).then(() => { 
+          getLeagueFixture(league.startDate, league.endDate, league.region).then((fixtures) => {
+            if (fixtures) {
+              fixtures.forEach(async (fixture) => {
+                await prisma.league.update({
+                  where: { name: league.name },
+                  data: {
+                    fixtures: {
+                      create: {
+                        MatchId: fixture.MatchId,
+                        DateTime_UTC: dayjs(fixture.DateTime_UTC).format("YYYY-MM-DD"),
+                        Tab: fixture.Tab,
+                        Team1: fixture.Team1,
+                        Team2: fixture.Team2,
+                       
+                      }
+                    }
+                  }
+                })
+              })
+            }
+            
+          })    
+           
+         })
+      })
       res.status(200).send(`${league.name}`)
     }
     catch (e: any) {
