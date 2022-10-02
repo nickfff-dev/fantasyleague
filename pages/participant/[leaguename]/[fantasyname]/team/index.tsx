@@ -5,23 +5,27 @@ import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useEffect, useState } from "react";
 import { getPrivateLeagueResults, getPrivateLeagueMatches } from "@lib/cargoQueries";
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
+import { Grid } from '@components/ui';
 
 import { InferGetServerSidePropsType } from 'next'
+import { TeamResults,PlayerResults } from "@components"
 
 
 
-function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+function ParticipantTeamPage({ participant, leagueResults, teamResults,theleague }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
   const results = JSON.parse(leagueResults)
   const team = JSON.parse(teamResults)
   const [totalscore, setTotalScore] = useState(0)
  
- 
+
   const calculateplayertotalscore = (playerName: string) => {
    const pendingres = []
     const onePlayerRes = results.filter((result: any) => result.Link === playerName )
     pendingres.push({
       name: playerName,
+
 
       kills: onePlayerRes.reduce((a: any, b: any) => a + b.Kills, 0),
       deaths: onePlayerRes.reduce((a: any, b: any) => a + b.Deaths, 0),
@@ -82,118 +86,40 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
    
   }
 
-  useEffect(() => { 
-    setTotalScore(calculateTotalScore())
- 
-  })
+
 
 
   return (
-    <div style={{ color: "#ffd204" }}>
+    <div>
+      <Grid>
+    <div className={s.root} style={{ color: "#ffd204" }}>
       <h1>Participant: {participant.name}</h1>
       
       <p>id: {participant.id}</p>
       <p>name: {participant.fantasyname}</p>
       <p>leaguename: {participant.leaguename}</p>
-      <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-      {
-        results.map((result: any, index: number) => { 
-        
-            return (
-              <>
-                 <br/>
-              <div key ={result.GameId}>
-                <p>{result.Role}<br/> {result.Link}</p>
-                
-                <p>kills: {result.Kills}</p>
-                <p>deaths: {result.Deaths}</p>
-                <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
-                  <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
-                  )}</p>
-                  <br/>
-              </div>
-              <br/>
-    </>
-            )
-            
-          
+     
+          <PlayerResults playerresults={results}
+            top={participant.top}
+            jungle={participant.jungle}
+            mid={participant.mid}
+            adc={participant.adc}
+            support={participant.support}
 
-        })
-      }
+          
+          
+          />
       
 
-        {
-          team.map((result: any, index: number) => { 
-            
-              return (
-                <>
-                  <br />
-                  <div key={index}>
-                    <p>team: {result.Team1 ? result.Team1 : result.Team2}</p>
-                    
-                    <p>points: {result.GameId}</p>
-                    <p>dragonkills: {result.Team1Dragons}</p>
-                    <p>baronkills: {result.Team1Barons}</p>
-                    <p>heraldkills: {result.Team1RiftHeralds}</p>
-                    <p>inhibkills: {result.Team1Inhibitors}</p>
-                    <p>towerkills: {result.Team1Kills}</p>
-                    <p>turretkills: {result.Team1Towers}</p>
-                    <p>didWin: {
-                      result.Winner === 1 ? `${true}` : `${false}`
-                    }</p>
-                    <p>points: {calculateTeamScore(
-
-                      result.Team1Dragons, result.Team1Barons, result.Team1RiftHeralds, result.Team1Inhibitors, result.Team1Kills, result.Team1Towers, result.Winner === 1 ? true : false
-                    )}</p>
-                  </div>
-                  </>
-              )
-              
-            
-          })
-        }
-        {
-          team.map((result: any, index: number) => { 
-            
-              return (
-                <>
-                  <br />
-                  <div key={index}>
-                    <p>team: {result.Team2 ? result.Team2 : result.Team2}</p>
-                    
-                    <p>points: {result.GameId}</p>
-                    <p>dragonkills: {result.Team2Dragons}</p>
-                    <p>baronkills: {result.Team2Barons}</p>
-                    <p>heraldkills: {result.Team2RiftHeralds}</p>
-                    <p>inhibkills: {result.Team2Inhibitors}</p>
-                    <p>towerkills: {result.Team2Kills}</p>
-                    <p>turretkills: {result.Team2Towers}</p>
-                    <p>didWin: {
-                      result.Winner === 2 ? `${true}` : `${false}`
-                    }</p>
-                    <p>points: {calculateTeamScore(
-
-                      result.Team2Dragons, result.Team2Barons, result.Team2RiftHeralds, result.Team2Inhibitors, result.Team2Kills, result.Team2Towers, result.Winner === 2 ? true : false
-                    )}</p>
-                  </div>
-                  </>
-              )
-              
-            
-          })
-        }
+       <TeamResults results={team} teamname={participant.team} />
    
       </div>
       <h1>total perfomance
         {totalscore}
       </h1>
       
-     
-      </div>
+      </Grid>
+     </div>
   )
  }
 
@@ -219,31 +145,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   })
 
-  const leagueResult = await getPrivateLeagueResults(theleague?.startDate as string, theleague?.endDate as string, theleague?.region as string)
+  const leagueResult = await getPrivateLeagueResults(theleague?.startDate as string, theleague?.endDate as string, theleague?.region as string).then(data => {
+    return data
+  })
   const teamResult = await getPrivateLeagueMatches(theleague?.startDate as string, theleague?.endDate as string, theleague?.region as string)
 
-  const playerperf = leagueResult?.filter((result: any) => { 
-    if (result.Link === participant?.top || result.Link === participant?.jungle || result.Link === participant?.mid || result.Link === participant?.adc || result.Link === participant?.support) {
-      return result
-    }
+ 
   
-   })
-  
-  const teamperf = teamResult?.filter((result: any) => { 
-    if (result.Team1 === participant?.team || result.Team2 === participant?.team) {
-      return result
-    }
-  })
 
 
-  const leagueResults = JSON.stringify(playerperf)
-  const teamResults = JSON.stringify(teamperf)
+  const leagueResults = JSON.stringify(leagueResult)
+  const teamResults = JSON.stringify(teamResult)
 
 
 
 
   return {
-    props: { participant, leagueResults, teamResults},
+    props: { participant, leagueResults, teamResults, theleague},
   }
   
   

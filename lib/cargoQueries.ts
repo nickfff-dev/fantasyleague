@@ -264,7 +264,7 @@ export const getPrivateLeagueMatches = async (startDate: string, endDate: string
           right: 'ScoreboardGames.MatchId',
         },
       ],
-      groupBy: ['ScoreboardGames.DateTime_UTC'],
+    
       orderBy: [{ field: 'ScoreboardGames.DateTime_UTC', desc: true }],
       limit: 5000
     });
@@ -287,7 +287,8 @@ export const getPrivateLeagueResults = async (startDate: string, endDate: string
       where: `MatchSchedule.DateTime_UTC >= "${startDate}" AND MatchSchedule.DateTime_UTC <= "${endDate}" AND MatchSchedule.OverviewPage LIKE "%${region}%" AND MatchSchedule.OverviewPage NOT LIKE "%Academy%" AND MatchSchedule.OverviewPage NOT LIKE "%LCS Proving Grounds%" AND MatchSchedule.OverviewPage NOT LIKE "%LCK CL%" AND MatchSchedule.OverviewPage NOT LIKE "%Championship%" AND MatchSchedule.OverviewPage NOT LIKE "%Regional%" AND MatchSchedule.OverviewPage NOT LIKE "%Playoffs%"`,
       joinOn: [
         {left: 'MatchSchedule.MatchId', right: 'ScoreboardPlayers.MatchId'},
-      ]
+      ],
+      
 
     })
     
