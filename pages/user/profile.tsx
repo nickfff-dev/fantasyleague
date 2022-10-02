@@ -8,8 +8,7 @@ import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
 import Link from "next/link";
 import dayjs from "dayjs";
-import { DepositsPage } from "@components";
-import {WithdrawPage} from "@components";
+
 
 
 const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
@@ -102,16 +101,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
         
         
       </div>
-      <div className={s.container}>
-      
 
-      <WithdrawPage owner={ owner}  />
-
-        
-        
-        
-      </div>
-      <div className={s.container}><DepositsPage owner={ owner}  /></div>
       
  <div  ><h1 className={s.title} style={{textAlign:"center"}}>Leagues</h1></div>
       {

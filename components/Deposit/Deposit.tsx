@@ -5,11 +5,16 @@ import dayjs from 'dayjs';
 import { Fixture, Teams, League, Players, Participant, Wallet, Deposit, User } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useSession, signIn, signOut } from 'next-auth/react';
-import x  from '@components/ui/Button/Button.module.css';
+import x from '@components/ui/Button/Button.module.css';
+import { useRouter } from 'next/router';
 
 
-const DepositsPage = ({  owner }: {  owner: User }) => {
-
+const DepositsPage = ({  owner, wallet }: {  owner: User , wallet: Wallet}) => {
+  const router = useRouter();
+  const refreshData = () => {
+    router.replace(router.asPath);
+  }
+  
   const { data: session } = useSession();
   const [depositAmount, setDepositAmount] = useState(0);
   const [responsetext, setResponseText] = useState("")
@@ -45,6 +50,7 @@ const DepositsPage = ({  owner }: {  owner: User }) => {
         res.text().then((text) => {
           console.log(text)
           setResponseText(text)
+          refreshData()
 
         })
 
@@ -67,16 +73,17 @@ const DepositsPage = ({  owner }: {  owner: User }) => {
 
           })
         }
+        <button onClick={onDepositAmountSubmit}>Confirm</button>
+       
+        <p>balance: ${wallet.balance}</p>
+        <p>
+          new balance: $ {wallet.balance}
+          
+        </p>
+        <p> {responsetext}</p>
       </div>
-      <button onClick={onDepositAmountSubmit}>Submit</button>
-      <div className={s.container}>
       
-
-      
-        <p>{responsetext}</p>
-        <p></p>
-     
-      </div>
+ 
       </Grid>
   )
 }
