@@ -8,11 +8,13 @@ import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
 import Link from "next/link";
 import dayjs from "dayjs";
+import { DepositsPage } from "@components";
+import {WithdrawPage} from "@components";
 
 
 const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
   const [usernewname, setUser] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [birthDate, setBirthDate] = useState(owner.birthDate);
   
   const onUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
     setUser(e.target.value);
@@ -24,39 +26,17 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
     console.log (dayjs(e.target.value).toDate().toISOString());
     
   }
-  const onBirthdDateSubmit = async () => { 
-    const  birthDay = birthDate
-    const email = owner.email
-   const task = "save birthDate"
-   const name = owner.name
-   
-   try {
-     await fetch(`/api/user/${name}`, {
-       method: "POST",
-       body: JSON.stringify({ 
-        birthDay,
-         email,
-         task
-        })
-     }).then((res) => {
-       res.text().then((data) => {
-         console.log(data);
-       })
-     })
-  
-}catch (error) {
-     console.log(error);
-   }
- }
+
 
   
   const onUserNameSubmit = async () => {   
 
   
      
-    const  userName = usernewname
+    const userName = usernewname
+    const birthDay = birthDate
      const email = owner.email
-    const task = "save username"
+    const task = "save user"
     const name = owner.name
     
     try {
@@ -65,6 +45,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
         body: JSON.stringify({ 
           userName,
           email,
+          birthDay,
           task
          })
       }).then((res) => {
@@ -83,40 +64,54 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
   return (
     <Grid>
-      <div className={s.container}>
+      {
+        owner.verificationCode ? (<>
+          <div className={s.container}>
         <h1 className={s.title}>Account</h1>
         <h2 className={s.subtitle}>Welcome {owner.name}</h2>
         <h2 className={s.subtitle}>Your email is {owner.email}</h2>
         <h2 className={s.subtitle}>{
-          owner.userName ? `username:  ${owner.userName}` : `username: You don't have a username yet`
+          owner.userName ? `username:  ${owner.userName}` : `username: You need to add your username below`
 
         
-      }</h2>
+        }</h2>
+             <h2 className={s.subtitle}>{
+          owner.birthDate ? `birthdate:  ${owner.birthDate}` : `birthdate: You need to add your birthdate below`
+
+        
+        }</h2>
+        
         <img src={owner.image} alt={owner.name} />
         <p>locale: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
 
 
 
       </div>
-      {/* create editable input fields with default values as the current user data */}
+
       <div className={s.container}>
       
 
-          
-      {owner.userName? null:(<form method="POST" onSubmit={onUserNameSubmit}> <label htmlFor="userName">enteruseRname<input type="text" name="userName" onChange={onUserNameChange} /><input type="submit" value="Submit"/></label></form>)}
-        
+            {
+              owner.userName && owner.birthDate ? null:(<form method="POST" onSubmit={onUserNameSubmit}>
+              { !owner.userName ? (<label htmlFor="userName">enteruseRname<input type="text" name="userName" onChange={onUserNameChange} /></label>):null}
+               { owner.birthdate ?( <label htmlFor="birthDate">enterbirthdate<input type="date" name="birthDate" onChange={onBirthDateChange} /></label>):null}
+               <input type="submit" value="Submit" />
+           </form>
+  )
+            }
         
         
       </div>
       <div className={s.container}>
       
 
-          
-      {owner.birthDate ? null:(<form method="POST" onSubmit={onBirthdDateSubmit}> <label htmlFor="birthDate">enterbirthdate<input type="date" name="birthDate" onChange={ onBirthDateChange} /><br/><input type="submit" value="Submit"/></label></form>)}
+      <WithdrawPage owner={ owner}  />
+
         
         
         
       </div>
+      <div className={s.container}><DepositsPage owner={ owner}  /></div>
       
  <div  ><h1 className={s.title} style={{textAlign:"center"}}>Leagues</h1></div>
       {
@@ -133,6 +128,9 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
                
               <h2 className={s.subtitle}></h2></div>)
         })
+      }
+        
+        </>) : (<div ><a href="/user/verify">click here to verify</a></div>)
       }
       
     </Grid>

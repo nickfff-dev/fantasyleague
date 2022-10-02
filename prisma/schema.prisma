@@ -38,21 +38,21 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  name          String?
-  userName      String?      @unique
-  email         String?      @unique
-  emailVerified String?
-  birthDate     String?
-  country       String?
-  province      String?
-  image         String?
-  admin         Boolean      @default(false)
-  accounts      Account[]
-  sessions      Session[]
-  Wallet        Wallet[]
-  Deposit       Deposit[]
-  Withdrawal    Withdrawal[]
+  id               String    @id @default(cuid())
+  name             String?
+  userName         String?   @unique
+  email            String?   @unique
+  emailVerified    Boolean?
+  verificationCode Int?
+  birthDate        String?
+  country          String?
+  province         String?
+  image            String?
+  admin            Boolean   @default(false)
+  accounts         Account[]
+  sessions         Session[]
+  Wallet           Wallet[]
+  walletkey        String?
 }
 
 model VerificationToken {
@@ -130,6 +130,7 @@ model Participant {
   draftOrder  Int?    @db.Int
   leaguename  String? @db.VarChar(255)
   leagueId    Int?
+  userId      String?
   fantasyname String? @unique @db.VarChar(255)
   League      League? @relation(fields: [leagueId], references: [id])
   Draft       Draft?  @relation(fields: [draftName], references: [name])
@@ -192,33 +193,34 @@ model TeamResult {
 model Wallet {
   id      Int    @id @default(autoincrement())
   balance Int
-  userId  String
+  userId  String @unique
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   credits Int?
+
+  Deposit    Deposit[]
+  Withdrawal Withdrawal[]
 }
 
 model Deposit {
   id       Int    @id @default(autoincrement())
   amount   Int
   userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  walletId Int
+  wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
   date     String
   time     String
-  status   String
-  txId     String
   txHash   String
-  txStatus String
+  credits  Int
 }
 
 model Withdrawal {
   id       Int    @id @default(autoincrement())
   amount   Int
   userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  walletId Int
+  wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
   date     String
   time     String
-  status   String
-  txId     String
-  txHash   String
-  txStatus String
+  txHash   String @unique
+  credits  Int
 }
