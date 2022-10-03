@@ -158,6 +158,7 @@ model Draft {
 }
 
 model PlayerResult {
+  id             Int     @id @default(autoincrement())
   name           String
   team           String
   role           String
@@ -166,17 +167,21 @@ model PlayerResult {
   kills          Int?
   deaths         Int?
   assists        Int?
-  game           String  @unique
+  game           String
   teamTotalKills Int?
   points         Int?
   leagueId       Int?
   league         League? @relation(fields: [leagueId], references: [id])
   date           String?
+  participantId  Int?
+  playerId       Int?
+  @@unique([name, game]) 
 }
 
 model TeamResult {
+  id              Int      @id @default(autoincrement())
   name            String
-  game            String   @unique
+  game            String
   teamKills       Int?
   dragonKills     Int?
   riftHeraldKills Int?
@@ -188,6 +193,10 @@ model TeamResult {
   leagueId        Int?
   league          League?  @relation(fields: [leagueId], references: [id])
   date            String?
+  teamId          Int?
+  participantId   Int?
+
+  @@unique([name, game])
 }
 
 model Wallet {

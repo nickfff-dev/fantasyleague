@@ -10,23 +10,36 @@ import { InferGetServerSidePropsType } from 'next'
 
 
 function ParticipantPage({ participant, top, jungle }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [matop, setMatop] = useState<typeof top>("")
+
   
-  useEffect(() => { 
-    setMatop(top)
-  },  [top])
+  const populatets = async () => { 
+    await fetch("/api/populateleague/thebestleague", {
+      method: "POST",
+      body: JSON.stringify({
+        fantasyname: participant.fantasyname,
+      }),
+    }).then((res) => {
+      res.text().then((text) => { 
+        console.log(text);
+      })
+    })
+  }
   return (
     <div  style={{color: "#ffd204"}}>
       <h1>Participant: {participant.name}</h1>
       <p>id: {participant.id}</p>
       <p>name: {participant.fantasyname}</p>
       <p>leaguename: {participant.leaguename}</p>
-      <p>top:  {matop}</p>
+      <p>top:  {participant.top}</p>
       <p>jungle:  {jungle}</p>
       <p>mid:  {participant.mid}</p>
       <p>adc:  {participant.adc}</p>
       <p>support:  {participant.support}</p>
       <p>bench1:  {participant.team}</p>
+
+      <button
+      onClick={populatets}
+      >populte</button>
 
     
 

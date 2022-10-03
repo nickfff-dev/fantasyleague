@@ -25,29 +25,29 @@ const TeamResults = ({ results, teamname }: { results: any, teamname: String }) 
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row"}}>
             {results.map((result: any) => {
-              if (result.Team1 === teamname) {
+              if (result.name === teamname) {
                 return (
                   <div className={s.item} key={results.indexOf(result)}>
-                  <p>team: {result.Team1 }</p>
-                  <p>playing against: { result.Team2}</p>
+                  <p>team: {result.name }</p>
+                
                         
-                        <p>fixture: {result.GameId}</p>
-                        <p>dragonkills: {result.Team1Dragons}</p>
-                        <p>baronkills: {result.Team1Barons}</p>
-                        <p>heraldkills: {result.Team1RiftHeralds}</p>
-                        <p>inhibkills: {result.Team1Inhibitors}</p>
-                        <p>towerkills: {result.Team1Kills}</p>
-                  <p>turretkills: {result.Team1Towers}</p>
-                  <p>gamename{ result.Gamename}</p>
+                        <p>fixture: {result.game}</p>
+                        <p>dragonkills: {result.dragonKills}</p>
+                        <p>baronkills: {result.baronKills}</p>
+                        <p>heraldkills: {result.riftHeraldKills}</p>
+                        <p>inhibkills: {result.inhibitorKills}</p>
+                        <p>towerkills: {result.teamKills}</p>
+                  <p>turretkills: {result.turretKills}</p>
+                 
                   <p>date: {
-                   result.DateTime_UTC
+                   result.Date
                   }</p>
                         <p>didWin: {
-                          result.Winner === 1 ? `${true}` : `${false}`
+                          `${result.didWin}`
                         }</p>
                         <p>points: {calculateTeamScore(
     
-                          result.Team1Dragons, result.Team1Barons, result.Team1RiftHeralds, result.Team1Inhibitors, result.Team1Kills, result.Team1Towers, result.Winner === 1 ? true : false
+                          result.dragonKills, result.baronKills, result.riftHeraldKills, result.inhibitorKills, result.teamKills, result.turretKills, result.didWin
                         )}</p>
                     
                   </div>
@@ -58,66 +58,21 @@ const TeamResults = ({ results, teamname }: { results: any, teamname: String }) 
           </div>
           </Grid>
 
-<Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row"}}>
-          {
-              results.map((result: any) => {
-              
-                if (result.Team2 === teamname) {
-                  return (
-                    <div  key={results.indexOf(result)}>
-                    <p>team: {result.Team2}</p>
-                    <p>playing against: { result.Team1}</p>
-                 <p>fixture: {result.GameId}</p>
-                 <p>dragonkills: {result.Team2Dragons}</p>
-                 <p>baronkills: {result.Team2Barons}</p>
-                 <p>heraldkills: {result.Team2RiftHeralds}</p>
-                 <p>inhibkills: {result.Team2Inhibitors}</p>
-                 <p>towerkills: {result.Team2Kills}</p>
-             <p>turretkills: {result.Team2Towers}</p>
-             <p>gamename{ result.Gamename}</p>
-             <p>date: {
-            result.DateTime_UTC
-           }</p>
-                 <p>didWin: {
-                   result.Winner === 2 ? `${true}` : `${false}`
-                 }</p>
-                 <p>points: {calculateTeamScore(
 
-                   result.Team2Dragons, result.Team2Barons, result.Team2RiftHeralds, result.Team2Inhibitors, result.Team2Kills, result.Team2Towers, result.Winner === 2 ? true : false
-                 )}</p>
-
-
-             </div>
-                  )
-                }
-            }
-        
-            
-            )
-            }
-      
-          </div>
-    
-        </Grid>
         <h1>totalpoints </h1>
           {
-            results.filter((result: any) => result.Team1 === teamname || result.Team2 === teamname).reduce((acc: number, result: any) => {
-              if (result.Team1 === teamname) {
+            results.filter((result: any) => result.name === teamname ).reduce((acc: number, result: any) => {
+
                 return acc + calculateTeamScore(
-                  result.Team1Dragons, result.Team1Barons, result.Team1RiftHeralds, result.Team1Inhibitors, result.Team1Kills, result.Team1Towers, result.Winner === 1 ? true : false
+                  result.dragonKills, result.baronKills, result.riftHeraldKills, result.inhibitorKills, result.teamKills, result.turretKills, result.didWin
                 )
-              } else {
-                return acc + calculateTeamScore(
-                  result.Team2Dragons, result.Team2Barons, result.Team2RiftHeralds, result.Team2Inhibitors, result.Team2Kills, result.Team2Towers, result.Winner === 2 ? true : false
-                )
-              }
+            
             
                }, 0)
         }
         
         <h1>number of games</h1>{
-          results.filter((result: any) => result.Team1 === teamname || result.Team2 === teamname).reduce((acc: number, result: any) => { 
+          results.filter((result: any) => result.name === teamname ).reduce((acc: number, result: any) => {
             return acc + 1
           }, 0)
         }

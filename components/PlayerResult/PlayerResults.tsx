@@ -27,20 +27,21 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
             {playerresults.map((result: any, index: number) => {
-              if (result.Link === top && result.Role === "Top") {
+              if (result.name === top && result.role === "Top") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.Role}<br /> {result.Link}</p>
-                  <p>fixture: {result.GameId}</p>
+                  <p>{result.role}<br /> {result.name}</p>
+                  <p>fixture: {result.game}</p>
                   
-                  <p>kills: {result.Kills}</p>
-                  <p>deaths: {result.Deaths}</p>
-                  <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
+                  <p>kills: {result.kills}</p>
+                    <p>deaths: {result.deaths}</p>
+                    <p>gamename: { result.game}</p>
+                  <p>assists: {result.assists}</p>
+                  <p>teamkills: {result.teamTotalKills}</p>
+                  <p>CS: {result.creepScore}</p>
+                  <p>VisionScore: {result.visionScore}</p>
                   <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
+                    result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
                   )}</p>
                 </div>
                )
@@ -50,15 +51,15 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         </Grid>
         <h1>total points</h1>
         {
-            playerresults.filter((result: any) => result.Link === top && result.Role === "Top").reduce(
+            playerresults.filter((result: any) => result.name === top && result.role === "Top").reduce(
               (acc: number, result: any) => acc + Number(calculatePlayerScore(
-                result.Kills , result.Assists , result.Deaths , result.TeamKills , result.CS, result.VisionScore
+                result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
               )), 0
             )
         }
         <h1>number of games</h1>
         {
-          playerresults.filter((result: any) => result.Link === top && result.Role === "Top").reduce(
+          playerresults.filter((result: any) => result.name === top && result.role === "Top").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
@@ -66,20 +67,21 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
             {playerresults.map((result: any, index: number) => {
-              if (result.Link === jungle && result.Role === "Jungle") {
+              if (result.name === jungle && result.role === "Jungle") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.Role}<br /> {result.Link}</p>
-                  <p>fixture: {result.GameId}</p>
+                  <p>{result.role}<br /> {result.name}</p>
+                  <p>fixture: {result.game}</p>
                   
-                  <p>kills: {result.Kills}</p>
-                  <p>deaths: {result.Deaths}</p>
-                  <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
+                  <p>kills: {result.kills}</p>
+                    <p>deaths: {result.deaths}</p>
+                    <p>gamename: { result.game}</p>
+                  <p>assists: {result.assists}</p>
+                  <p>teamkills: {result.teamTotalKills}</p>
+                  <p>CS: {result.creepScore}</p>
+                  <p>VisionScore: {result.visionScore}</p>
                   <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
+                    result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
                   )}</p>
                 </div>
                )
@@ -89,35 +91,36 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         </Grid>
         <h1>total points</h1>
         {
-            playerresults.filter((result: any) => result.Link === jungle && result.Role === "Jungle").reduce(
+            playerresults.filter((result: any) => result.name === jungle && result.role === "Jungle").reduce(
               (acc: number, result: any) => acc + Number(calculatePlayerScore(
-                result.Kills , result.Assists , result.Deaths , result.TeamKills , result.CS, result.VisionScore
+                result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
               )), 0
             )
         }
         <h1>number of games</h1>
         {
-          playerresults.filter((result: any) => result.Link === jungle && result.Role === "Jungle").reduce(
+          playerresults.filter((result: any) => result.name === jungle && result.role === "Jungle").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
             {playerresults.map((result: any, index: number) => {
-              if (result.Link === mid && result.Role === "Mid") {
+              if (result.name === mid && result.role === "Mid") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.Role}<br /> {result.Link}</p>
-                  <p>fixture: {result.GameId}</p>
+                  <p>{result.role}<br /> {result.name}</p>
+                  <p>fixture: {result.game}</p>
                   
-                  <p>kills: {result.Kills}</p>
-                  <p>deaths: {result.Deaths}</p>
-                  <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
+                  <p>kills: {result.kills}</p>
+                    <p>deaths: {result.deaths}</p>
+                    <p>gamename: { result.game}</p>
+                  <p>assists: {result.assists}</p>
+                  <p>teamkills: {result.teamTotalKills}</p>
+                  <p>CS: {result.creepScore}</p>
+                  <p>VisionScore: {result.visionScore}</p>
                   <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
+                    result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
                   )}</p>
                 </div>
                )
@@ -127,15 +130,15 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         </Grid>
         <h1>total points</h1>
         {
-            playerresults.filter((result: any) => result.Link === mid && result.Role === "Mid").reduce(
+            playerresults.filter((result: any) => result.name === mid && result.role === "Mid").reduce(
               (acc: number, result: any) => acc + Number(calculatePlayerScore(
-                result.Kills , result.Assists , result.Deaths , result.TeamKills , result.CS, result.VisionScore
+                result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
               )), 0
             )
         }
         <h1>number of games</h1>
         {
-          playerresults.filter((result: any) => result.Link === mid && result.Role === "Mid").reduce(
+          playerresults.filter((result: any) => result.name === mid && result.role === "Mid").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
@@ -143,20 +146,21 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
             {playerresults.map((result: any, index: number) => {
-              if (result.Link === adc && result.Role === "Bot") {
+              if (result.name === adc && result.role === "Bot") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.Role}<br /> {result.Link}</p>
-                  <p>fixture: {result.GameId}</p>
+                  <p>{result.role}<br /> {result.name}</p>
+                  <p>fixture: {result.game}</p>
                   
-                  <p>kills: {result.Kills}</p>
-                  <p>deaths: {result.Deaths}</p>
-                  <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
+                  <p>kills: {result.kills}</p>
+                    <p>deaths: {result.deaths}</p>
+                    <p>gamename: { result.game}</p>
+                  <p>assists: {result.assists}</p>
+                  <p>teamkills: {result.teamTotalKills}</p>
+                  <p>CS: {result.creepScore}</p>
+                  <p>VisionScore: {result.visionScore}</p>
                   <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
+                    result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
                   )}</p>
                 </div>
                )
@@ -166,15 +170,15 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         </Grid>
         <h1>total points</h1>
         {
-            playerresults.filter((result: any) => result.Link === adc && result.Role === "Bot").reduce(
+            playerresults.filter((result: any) => result.name === adc && result.role === "Bot").reduce(
               (acc: number, result: any) => acc + Number(calculatePlayerScore(
-                result.Kills , result.Assists , result.Deaths , result.TeamKills , result.CS, result.VisionScore
+                result.kills , result.assists , result.deaths , result.teamTotalKills , result.creepScore, result.visionScore
               )), 0
             )
         }
         <h1>number of games</h1>
         {
-          playerresults.filter((result: any) => result.Link === adc && result.Role === "Bot").reduce(
+          playerresults.filter((result: any) => result.name === adc && result.role === "Bot").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
@@ -182,22 +186,22 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
             {playerresults.map((result: any, index: number) => {
-              if (result.Link === support && result.Role === "Support") {
+              if (result.name === support && result.role === "Support") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.Role}<br /> {result.Link}</p>
-                  <p>fixture: {result.GameId}</p>
+                  <p>{result.role}<br /> {result.name}</p>
+                  <p>fixture: {result.game}</p>
                   
-                  <p>kills: {result.Kills}</p>
-                  <p>deaths: {result.Deaths}</p>
-                  <p>assists: {result.Assists}</p>
-                  <p>teamkills: {result.TeamKills}</p>
-                  <p>CS: {result.CS}</p>
-                  <p>VisionScore: {result.VisionScore}</p>
+                  <p>kills: {result.kills}</p>
+                    <p>deaths: {result.deaths}</p>
+                    <p>gamename: { result.game}</p>
+                  <p>assists: {result.assists}</p>
+                  <p>teamkills: {result.teamTotalKills}</p>
+                  <p>CS: {result.creepScore}</p>
+                  <p>VisionScore: {result.visionScore}</p>
                   <p>points: {calculatePlayerScore(
-                    result.Kills, result.Assists, result.Deaths, result.TeamKills, result.CS, result.VisionScore
-                    )}</p>
-                
+                    result.kills, result.assists, result.deaths, result.teamTotalKills, result.creepScore, result.visionScore
+                  )}</p>
                 </div>
                )
               }
@@ -208,15 +212,15 @@ const PlayerResults = ({ playerresults, top, jungle, mid, adc, support }: { play
         </Grid>
      <h1>total points</h1>
         {
-            playerresults.filter((result: any) => result.Link === support && result.Role === "Support").reduce(
+            playerresults.filter((result: any) => result.name === support && result.role === "Support").reduce(
               (acc: number, result: any) => acc + Number(calculatePlayerScore(
-                result.Kills , result.Assists , result.Deaths , result.TeamKills , result.CS, result.VisionScore
+                result.kills , result.assists , result.deaths , result.teamTotalKills , result.creepScore, result.visionScore
               )), 0
             )
         }
         <h1>number of games</h1>
         {
-          playerresults.filter((result: any) => result.Link === support && result.Role === "Support").reduce(
+          playerresults.filter((result: any) => result.name === support && result.role === "Support").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
