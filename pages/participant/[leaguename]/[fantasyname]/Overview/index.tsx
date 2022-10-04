@@ -21,8 +21,6 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
  
 
  
-
- console.log(team)
   
 
 
@@ -72,11 +70,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       fantasyname: context.params?.fantasyname as string,
     }
   }).then(async (participant) => {
-
+    fetch("http://localhost:3000/api/populateleague/" + participant?.leaguename, {
+      method: "POST",
+      body: JSON.stringify({
+        fantasyname: participant?.fantasyname,
+      }),
+    }).then((res) => { 
+      res.text().then((text) => { 
+        console.log(text);
+      })
+    })
     await prisma.$disconnect()
     return participant
    
   })
+
+
+
 
   
 
@@ -85,6 +95,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     where: {
       leagueId: participant?.leagueId,
+      
 
     }
   }).then(data => {
@@ -94,6 +105,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const teamResult = await prisma.teamResult.findMany({
     where: {
       leagueId: participant?.leagueId,
+     
     
 
     }

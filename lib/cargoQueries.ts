@@ -57,7 +57,7 @@ export const getCurrentPlayers = async () => {
           right: 'Players.Team',
         },
       ],
-      limit: 5000
+      
     });
 
     return data;
@@ -95,7 +95,7 @@ export const getCurrentGames = async () => {
         'ScoreboardGames.Team2Kills',
       ],
       where:
-        'Tournaments.Name = CurrentLeagues.Event AND (Tournaments.Name LIKE "%LCS%" OR Tournaments.Name LIKE "%LEC%" OR Tournaments.Name LIKE "%LCK%" OR Tournaments.Name LIKE "%LPL%") AND Tournaments.Name NOT LIKE "%LCK CL%" AND  Tournaments.Name NOT LIKE "%LCS Proving Grounds%" AND MatchSchedule.Winner IS NOT NULL',
+        'Tournaments.Name = CurrentLeagues.Event AND (Tournaments.Name LIKE "%LCS%" OR Tournaments.Name LIKE "%LEC%" OR Tournaments.Name LIKE "%LCK%" OR Tournaments.Name LIKE "%LPL%") AND (Tournaments.Name NOT LIKE "%LCK CL%" OR  Tournaments.Name NOT LIKE "%LCS Proving Grounds%") AND MatchSchedule.Winner IS NOT NULL',
       joinOn: [
         {
           left: 'Tournaments.Name',
@@ -155,7 +155,6 @@ export const getLeagueFixture = async (startDate: string, endDate: string, regio
 
 
 
-
 export const getPrivateLeaguePlayers = async (startDate: string, endDate: string, region: string) => { 
 
   
@@ -163,8 +162,8 @@ export const getPrivateLeaguePlayers = async (startDate: string, endDate: string
 
     const { data } = await cargo.query({
       tables: ["MatchSchedule", "TournamentRosters", "Players"],
-      fields: ["Players.Player", "Players.Role", "Players.Team"],
-      where: `MatchSchedule.DateTime_UTC >= "${startDate}" AND MatchSchedule.DateTime_UTC <= "${endDate}" AND MatchSchedule.OverviewPage LIKE "%${region}%" AND MatchSchedule.OverviewPage NOT LIKE "%Academy%" AND MatchSchedule.OverviewPage NOT LIKE "%LCS Proving Grounds%" AND MatchSchedule.OverviewPage NOT LIKE "%LCK CL%" AND MatchSchedule.OverviewPage NOT LIKE "%Championship%" AND MatchSchedule.OverviewPage NOT LIKE "%Regional%" AND MatchSchedule.OverviewPage NOT LIKE "%Playoffs%" AND TournamentRosters.OverviewPage = MatchSchedule.OverviewPage AND Players.Team = TournamentRosters.Team`,
+      fields: ["Players.Player", "Players.Role", "Players.Team", "TournamentRosters.Team", "TournamentRosters.OverviewPage", "MatchSchedule.OverviewPage", "Players.IsSubstitute", "Players.TeamLast"],
+      where: `MatchSchedule.DateTime_UTC >= "${startDate}" AND MatchSchedule.DateTime_UTC <= "${endDate}" AND MatchSchedule.OverviewPage LIKE "%${region}%" AND MatchSchedule.OverviewPage NOT LIKE "%Academy%" AND MatchSchedule.OverviewPage NOT LIKE "%LCS Proving Grounds%" AND MatchSchedule.OverviewPage NOT LIKE "%LCK CL%" AND MatchSchedule.OverviewPage NOT LIKE "%Championship%" AND MatchSchedule.OverviewPage NOT LIKE "%Regional%" AND MatchSchedule.OverviewPage NOT LIKE "%Playoffs%"`,
       joinOn: [
         {
           left: "TournamentRosters.Team",
@@ -190,6 +189,7 @@ export const getPrivateLeaguePlayers = async (startDate: string, endDate: string
 }
 
 
+
 export const getPrivateLeagueTeams = async (startDate: string, endDate: string, region: string) => { 
   try {
 
@@ -202,7 +202,7 @@ export const getPrivateLeagueTeams = async (startDate: string, endDate: string, 
         'TournamentRosters.UniqueLine',
         'TournamentRosters.IsUsed'
       ],
-      where: `MatchSchedule.DateTime_UTC >= "${startDate}" AND MatchSchedule.DateTime_UTC <= "${endDate}" AND MatchSchedule.OverviewPage LIKE "%${region}%" AND MatchSchedule.OverviewPage NOT LIKE "%Academy%" AND MatchSchedule.OverviewPage NOT LIKE "%LCS Proving Grounds%" AND MatchSchedule.OverviewPage NOT LIKE "%LCK CL%" AND MatchSchedule.OverviewPage NOT LIKE "%Championship%" AND MatchSchedule.OverviewPage NOT LIKE "%Regional%" AND MatchSchedule.OverviewPage NOT LIKE "%Playoffs%"  AND TournamentRosters.OverviewPage = MatchSchedule.OverviewPage`,
+      where: `MatchSchedule.DateTime_UTC >= "${startDate}" AND MatchSchedule.DateTime_UTC <= "${endDate}" AND MatchSchedule.OverviewPage LIKE "%${region}%" AND MatchSchedule.OverviewPage NOT LIKE "%Academy%" AND MatchSchedule.OverviewPage NOT LIKE "%LCS Proving Grounds%" AND MatchSchedule.OverviewPage NOT LIKE "%LCK CL%" AND MatchSchedule.OverviewPage NOT LIKE "%Championship%" AND MatchSchedule.OverviewPage NOT LIKE "%Regional%" AND MatchSchedule.OverviewPage NOT LIKE "%Playoffs%"`,
       joinOn: [
         
         {
@@ -266,7 +266,6 @@ export const getPrivateLeagueMatches = async (startDate: string, endDate: string
       ],
     
       orderBy: [{ field: 'ScoreboardGames.DateTime_UTC', desc: true }],
-      limit: 5000
     });
     
     return data;
@@ -288,6 +287,7 @@ export const getPrivateLeagueResults = async (startDate: string, endDate: string
       joinOn: [
         {left: 'MatchSchedule.MatchId', right: 'ScoreboardPlayers.MatchId'},
       ],
+      orderBy: [{ field: 'ScoreboardPlayers.DateTime_UTC', desc: true }],
       
 
     })

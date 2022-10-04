@@ -11,19 +11,7 @@ import { InferGetServerSidePropsType } from 'next'
 
 function ParticipantPage({ participant, top, jungle }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-  
-  const populatets = async () => { 
-    await fetch("/api/populateleague/thebestleague", {
-      method: "POST",
-      body: JSON.stringify({
-        fantasyname: participant.fantasyname,
-      }),
-    }).then((res) => {
-      res.text().then((text) => { 
-        console.log(text);
-      })
-    })
-  }
+
   return (
     <div  style={{color: "#ffd204"}}>
       <h1>Participant: {participant.name}</h1>
@@ -37,9 +25,7 @@ function ParticipantPage({ participant, top, jungle }: InferGetServerSidePropsTy
       <p>support:  {participant.support}</p>
       <p>bench1:  {participant.team}</p>
 
-      <button
-      onClick={populatets}
-      >populte</button>
+
 
     
 

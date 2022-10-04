@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@lib/prisma';
 import { Fixture, Teams, League, Players, Participant, TeamResult} from "@prisma/client"
 import dayjs from 'dayjs';
-import { getPrivateLeagueResults, getPrivateLeagueMatches } from "@lib/cargoQueries";
+import { getPrivateLeagueResults, getPrivateLeagueMatches,getPrivateLeaguePlayers } from "@lib/cargoQueries";
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
 
 
@@ -34,9 +34,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
   if (league) {
+
     try {
       getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string).then(data => {
+
         if (data) {
+         
           data.forEach(async (result) => {
             const playerResults = await prisma.playerResult.findUnique({
               where: {
@@ -269,7 +272,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                             didWin: matchres.Winner === 2 ? true : false,
                             participantId: participant?.id,
                             points: calculateTeamScore(
-                              matchres.Team2Dragons, matchres.Team2Barons, matchres.Team2RiftHeralds, matchres.Team2Inhibitors, matchres.Team2Kills, matchres.Team2Towers, matchres.Winner === 2 ? true : false
+                            matchres.Team2Dragons, matchres.Team2Barons, matchres.Team2RiftHeralds, matchres.Team2Inhibitors, matchres.Team2Kills, matchres.Team2Towers, matchres.Winner === 2 ? true : false
                             
                             )
   
