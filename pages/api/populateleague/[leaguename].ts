@@ -71,13 +71,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                           deaths: result.Deaths,
                           assists: result.Assists,
                           teamTotalKills: result.TeamKills,
-                          points: Math.ceil(Number(calculatePlayerScore(result.Kills, result.Deaths, result.Assists, result.CS, result.VisionScore, result.TeamKills)))
+                          points: Math.ceil(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.CS, result.VisionScore, result.TeamKills)))
                         }
                       }
                     }
                   }
                 })
-             }
+              }
             } else {
               if ((result.Link === participant?.top && result.Role === "Top") || (result.Link === participant?.jungle && result.Role === "Jungle") || (result.Link === participant?.mid && result.Role === "Mid") || (result.Link === participant?.adc && result.Role === "Bot") || (result.Link === participant?.support && result.Role === "Support")) {
                 await prisma.league.update({
@@ -85,6 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     id: league.id
                   },
                   data: {
+                
                     PlayerResult: {
                       create: {
                         name: result.Link,
@@ -99,7 +100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                         assists: result.Assists,
                         teamTotalKills: result.TeamKills,
                         participantId: participant?.id,
-                        points: Math.ceil(Number(calculatePlayerScore(result.Kills, result.Deaths, result.Assists, result.CS, result.VisionScore, result.TeamKills)))
+                        points: Math.ceil(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.CS, result.VisionScore, result.TeamKills)))
                       }
                     }
                   }
@@ -112,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   
           })
   
-        } 
+        }
       }).then(() => {
         getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string).then((matches) => {
           if (matches) {
@@ -168,7 +169,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                          
                             didWin: matchres.Winner === 1 ? true : false,
                             points: calculateTeamScore(
-                              matchres.Team1Dragons, matchres.Team1Barons, matchres.Team1RiftHeralds, matchres.Team1Inhibitors, matchres.Team1Kills, matchres.Team1Towers, matchres.Winner === 1 ? true : false
+                              matchres.Team1Kills, matchres.Team1Dragons, matchres.Team1RiftHeralds, matchres.Team1Towers, matchres.Team1Inhibitors, matchres.Team1Barons, matchres.Winner === 1 ? true : false
                               
                             )
 
@@ -211,8 +212,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                            
                             didWin: matchres.Winner === 2 ? true : false,
                             points: calculateTeamScore(
-                              matchres.Team2Dragons, matchres.Team2Barons, matchres.Team2RiftHeralds, matchres.Team2Inhibitors, matchres.Team2Kills, matchres.Team2Towers, matchres.Winner === 2 ? true : false
-                                
+                              matchres.Team2Kills, matchres.Team2Dragons, matchres.Team2RiftHeralds, matchres.Team2Towers, matchres.Team2Inhibitors, matchres.Team2Barons, matchres.Winner === 2 ? true : false
+                              
                             )
   
                           }
@@ -225,7 +226,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 
               }
               else {
-                if (matchres.Team1 === participant?.team || matchres.Team2 === participant?.team) {
+                if (matchres.Team1 === participant?.team) {
                   await prisma.league.update({
                     where: {
                       id: league.id
@@ -245,43 +246,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                           didWin: matchres.Winner === 1 ? true : false,
                           participantId: participant?.id,
                           points: calculateTeamScore(
-                            matchres.Team1Dragons, matchres.Team1Barons, matchres.Team1RiftHeralds, matchres.Team1Inhibitors, matchres.Team1Kills, matchres.Team1Towers, matchres.Winner === 1 ? true : false
-                          
+                            matchres.Team1Kills, matchres.Team1Dragons, matchres.Team1RiftHeralds, matchres.Team1Towers, matchres.Team1Inhibitors, matchres.Team1Barons, matchres.Winner === 1 ? true : false
+                            
+                          )
+                        }
+                      }
+                    }
+                  }).then(async () => {
+                    await prisma.$disconnect()
+        
+                  
+                  })
+                } else if (matchres.Team2 === participant?.team) {
+                  await prisma.league.update({
+                    where: {
+                      id: league.id
+                    },
+                    data: {
+                      TeamResult: {
+                        create: {
+                          name: matchres.Team2,
+                          game: matchres.GameId,
+                          date: dayjs(matchres.DateTime_UTC).toDate().toISOString(),
+                          teamKills: matchres.Team2Kills,
+                          dragonKills: matchres.Team2Dragons,
+                          riftHeraldKills: matchres.Team2RiftHeralds,
+                          turretKills: matchres.Team2Towers,
+                          baronKills: matchres.Team2Barons,
+                          inhibitorKills: matchres.Team2Inhibitors,
+                          didWin: matchres.Winner === 2 ? true : false,
+                          participantId: participant?.id,
+                          points: calculateTeamScore(
+                            matchres.Team2Kills, matchres.Team2Dragons, matchres.Team2RiftHeralds, matchres.Team2Towers, matchres.Team2Inhibitors, matchres.Team2Barons, matchres.Winner === 1 ? true : false
+                            
                           )
 
                         }
                       }
                     }
                   }).then(async () => {
-                    await prisma.league.update({
-                      where: {
-                        id: league.id
-                      },
-                      data: {
-                        TeamResult: {
-                          create: {
-                            name: matchres.Team2,
-                            game: matchres.GameId,
-                            date: dayjs(matchres.DateTime_UTC).toDate().toISOString(),
-                            teamKills: matchres.Team2Kills,
-                            dragonKills: matchres.Team2Dragons,
-                            riftHeraldKills: matchres.Team2RiftHeralds,
-                            turretKills: matchres.Team2Towers,
-                            baronKills: matchres.Team2Barons,
-                            inhibitorKills: matchres.Team2Inhibitors,
-                            didWin: matchres.Winner === 2 ? true : false,
-                            participantId: participant?.id,
-                            points: calculateTeamScore(
-                            matchres.Team2Dragons, matchres.Team2Barons, matchres.Team2RiftHeralds, matchres.Team2Inhibitors, matchres.Team2Kills, matchres.Team2Towers, matchres.Winner === 2 ? true : false
-                            
-                            )
-  
-                          }
-                        }
-                      }
-                    })
+                    await prisma.$disconnect()
+        
+                  
                   
                   })
+                  
                 }
               }
 
@@ -291,17 +300,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         })
       })
 
-        res.status(200).json("players updated")
-    
+      
+
 
       
 
 
 
     
-     } catch (error) {
+    } catch (error) {
       console.log(error)
-    };
+    } finally { 
+      await prisma.$disconnect()
+      res.status(200).json('success')
+    }
 
 
     

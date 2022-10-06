@@ -8,7 +8,21 @@ import { InferGetServerSidePropsType } from 'next'
 
 
 
-const LeaguePage = ({ league, teams, players, fixtures }: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
+const LeaguePage = ({ league, teams, players, fixtures,}: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
+    
+
+  const getresults = async () => {
+    await fetch("/api/leagueresults/" + league.name, {
+      method: "GET",
+    }).then((res) => res.json().then((data)=>{console.log(data)}))
+  }
+
+
+  useEffect(() => { 
+    getresults()
+
+  })
+
   return (
     <Grid>
       <div  style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}} >
@@ -30,19 +44,20 @@ const LeaguePage = ({ league, teams, players, fixtures }: InferGetServerSideProp
 
       <div className={s.root}  style={{color: "white", display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
        
-        {teams? teams.length : 0} teams
+        {teams._count.id} teams
       </div>
       
 
       <div className={s.root}  style={{color: "white",display:"flex", flexDirection:"column", justifyContent:"space-between",}}>
        
-        {players? players.length : 0} players
+        {players._count.id} players
         </div>
 
  
 
       </div><br/>
-      <div className={s.root} style={{ color: "white", display: "flex", flexDirection: "column", justifyContent: "space-between", }}>
+      <Grid>
+      <div className={s.root} style={{ color: "white", display: "flex", flexDirection: "row", justifyContent: "space-between", }}>
         {fixtures ? fixtures.length : 0} fixtures
         {fixtures?.map((fixture: Fixture) => {
           return (
@@ -55,24 +70,39 @@ const LeaguePage = ({ league, teams, players, fixtures }: InferGetServerSideProp
             </div>
             
           )
-        })} fixtures
+        })}
       </div>
+      </Grid><br/>
+      
+      <Grid>
+      <div className={s.root} style={{ color: "white", display: "flex", flexDirection: "row", justifyContent: "space-between", }}>
+       
+        
+      </div>
+      </Grid>
+      <p style={{ color: "white"}}>league points { league?.points}</p>
       
     </Grid>
   )
 }
+
 export const getServerSideProps: GetServerSideProps = async (context) => { 
   const name = context.params?.name
   const league = await prisma.league.findUnique({
     where: {
       name: name?.toString()
     }
-  }).then(async (league) => {
+  }).then(async (data) => {
+ 
     await prisma.$disconnect()
-    return league
+    return data
    
   })
-  const teams = await prisma.teams.findMany({
+
+  const teams = await prisma.teams.aggregate({
+    _count: {
+      id: true
+    },
     where: {
       leagueId: league?.id
     }
@@ -81,11 +111,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return teams
    
   })
-  const players = await prisma.players.findMany({
+  const players = await prisma.players.aggregate({
+    _count: {
+      id: true
+    },
     where: {
       leagueId: league?.id
     }
   }).then(async (players) => {
+
     await prisma.$disconnect()
     return players
    
@@ -104,7 +138,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       league,
       teams,
       players,
-      fixtures
+      fixtures,
+    
+
     }
   }
 }

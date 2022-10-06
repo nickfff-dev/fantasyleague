@@ -6,21 +6,27 @@ import { useEffect, useState } from "react";
 import { getPrivateLeagueResults, getPrivateLeagueMatches } from "@lib/cargoQueries";
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
 import { Grid } from '@components/ui';
+import { useRouter } from 'next/router';
 
 import { InferGetServerSidePropsType } from 'next'
-import { TeamResults,PlayerResults } from "@components"
+import { PlayerResults } from "@components"
+
+
 
 
 
 
 function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-
+  const router = useRouter();
+  const refreshData = () => {
+    router.replace(router.asPath);
+  }
   const results =JSON.parse(leagueResults)
   const team = JSON.parse(teamResults)
 
- 
 
  
+  
   
 
 
@@ -39,19 +45,25 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
       <p>name: {participant.fantasyname}</p>
       <p>leaguename: {participant.leaguename}</p>
      
-          <PlayerResults playerresults={results}
+          <PlayerResults
+          playerresults={results}
             top={participant.top}
             jungle={participant.jungle}
             mid={participant.mid}
             adc={participant.adc}
             support={participant.support}
+            results={team}
+            teamname={participant.team}
+            leaguename={participant.leaguename}
+            fantasyname={participant.fantasyname}
+            
 
           
           
           />
       
 
-       <TeamResults results={team} teamname={participant.team} />
+       
    
       </div>
  
@@ -64,24 +76,61 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
 
+  
 
-  const participant = await prisma.participant.findUnique({
+  const participantd = await prisma.participant.findUnique({
     where: {
       fantasyname: context.params?.fantasyname as string,
     }
-  }).then(async (participant) => {
-    fetch("http://localhost:3000/api/populateleague/" + participant?.leaguename, {
+  }).then(async (data) => {
+    fetch("http://localhost:3000/api/populateleague/" + data?.leaguename, {
       method: "POST",
       body: JSON.stringify({
-        fantasyname: participant?.fantasyname,
+        fantasyname: data?.fantasyname,
       }),
     }).then((res) => { 
-      res.text().then((text) => { 
-        console.log(text);
-      })
+      res.text().then((info) => {
+        console.log(info);
+      
+       })
     })
+
+    const leagueResult =  await prisma.playerResult.findMany({
+
+      where: {
+        participantId: data?.id,
+        
+  
+      }
+    }).then(data => {
+  
+      return data
+    })
+    const teamResult = await prisma.teamResult.findMany({
+      where: {
+        participantId: data?.id,
+       
+      
+  
+      }
+    }).then((data) => {
+       
+      return data
+    })
+  
+   
+     
+  
+    const teamResults = JSON.stringify(teamResult)
+    const leagueResults = JSON.stringify(leagueResult)
+ 
+  
     await prisma.$disconnect()
-    return participant
+    return {
+       data, leagueResults, teamResults}
+    
+    
+    
    
   })
 
@@ -91,39 +140,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   
 
 
-  const leagueResult =  await prisma.playerResult.findMany({
-
-    where: {
-      leagueId: participant?.leagueId,
-      
-
-    }
-  }).then(data => {
-
-    return data
-  })
-  const teamResult = await prisma.teamResult.findMany({
-    where: {
-      leagueId: participant?.leagueId,
-     
-    
-
-    }
-  }).then((data) => {
-     
-    return data
-  })
-
  
   
 
-  const teamResults = JSON.stringify(teamResult)
-  const leagueResults = JSON.stringify(leagueResult)
+  if(!participantd) {
+    return {
+      notFound: true,
+    }
+  }
+  const teamResults = participantd.teamResults
+  const leagueResults = participantd.leagueResults
+
+  const participant = participantd.data
 
 
 
   return {
-    props: { participant, leagueResults, teamResults},  
+    props: { participant, leagueResults, teamResults}, 
   }
   
   
