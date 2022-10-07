@@ -34,70 +34,134 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
   
-  const playerdataz = await prisma.playerResult.groupBy({
-    by: ["participantId"],
-    where: {
-      leagueId: league?.id
-    },
-    _sum: {
-      kills: true,
-      assists: true,
-      deaths: true,
-      creepScore: true,
-      visionScore: true,
-      teamTotalKills: true,
-      points: true,
-      
-    },
-    
-
-  })
-
-  const teamdata = await prisma.teamResult.groupBy({
-    by: ["participantId"],
-    where: {
-      leagueId: league?.id
-    },
-    _sum: {
-      dragonKills: true,
-      riftHeraldKills: true,
-      baronKills: true,
-      turretKills: true,
-      inhibitorKills: true,
-      teamKills: true,
-      points: true
-    }
-  })
-
-
-  const totalTeamPoints = (teamdata: any, playerdata: any) => {
-    
-  const  teampoints = teamdata.reduce((acc: number, team: any) => { 
-      return acc + team._sum.points;
-    
-  }, 0)
-    
-    const playerpoints = playerdata.reduce((acc: number, player: any) => { 
-      return acc + player._sum.points;
-    }, 0)
  
-
-    const totalpoints = teampoints    + playerpoints;
-    return totalpoints; 
-  }
+    const playerdataz = await prisma.playerResult.groupBy({
+      by: ["participantId"],
+      where: {
+        leagueId: league?.id
+      },
+      _sum: {
+        kills: true,
+        assists: true,
+        deaths: true,
+        creepScore: true,
+        visionScore: true,
+        teamTotalKills: true,
+        points: true,
+    
+      },
   
 
-  await prisma.league.update({
-    where: {
-      id: league?.id
-    },
-    data: {
-      points: totalTeamPoints(teamdata, playerdataz)
+    })
+
+    const teamdata = await prisma.teamResult.groupBy({
+      by: ["participantId"],
+      where: {
+        leagueId: league?.id
+      },
+      _sum: {
+        dragonKills: true,
+        riftHeraldKills: true,
+        baronKills: true,
+        turretKills: true,
+        inhibitorKills: true,
+        teamKills: true,
+        points: true
+      }
+    })
+
+
+  if (playerdataz.length >0  || teamdata.length>0) {
+    const totalTeamPoints = (teamdata: any, playerdata: any) => {
+  
+      const teampoints = teamdata.reduce((acc: number, team: any) => {
+        return acc + team._sum.points;
+  
+      }, 0)
+  
+      const playerpoints = playerdata.reduce((acc: number, player: any) => {
+        return acc + player._sum.points;
+      }, 0)
+
+
+      const totalpoints = teampoints + playerpoints;
+      return totalpoints;
     }
-  }).then(async () => { 
-    await prisma.$disconnect();
-    res.status(200).json(JSON.stringify({ playerdataz, teamdata }));
-  })
+
+
+
+    const findPlayerTotalPoints = async (participantId: number, teamdata: any) => {
+
+
+
+      const player = playerdataz.find((player: any) => player.participantId === participantId);
+      const team = teamdata.find((team: any) => team.participantId === participantId);
+      const totalpoints = player?._sum.points + team?._sum.points
+      try {
+        await prisma.league.update({
+          where: {
+            id: league?.id
+          },
+          data: {
+            members: {
+              update: {
+                where: {
+                  id: participantId
+                },
+                data: {
+                  points: totalpoints
+                }
+              }
+            }
+          }
+        })
+      }
+  
+      catch (error: any) {
+        console.log(error)
+      }
+
+
+    }
+
+    await prisma.participant.findMany({
+      where: {
+        leagueId: league?.id
+      }
+    }).then((data) => {
+      data.forEach(async (participant) => {
+        await findPlayerTotalPoints(participant.id, teamdata);
+      })
+    }).catch((err) => {
+      console.log(err);
+
+    })
+
+
+    try {
+      await prisma.league.update({
+        where: {
+          id: league?.id
+        },
+        data: {
+          points: totalTeamPoints(teamdata, playerdataz),
+    
+    
+        }
+      }).then(async () => {
+        await prisma.$disconnect();
+        res.status(200).json(JSON.stringify({ playerdataz, teamdata }));
+      })
+    } catch (error) {
+      res.status(200).json("not played yet")
+    }
+  
+  
+
+       
+ 
+
+
 
   
    
@@ -115,6 +179,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
 
+  }
+  else { 
+    res.status(200).json("not played yet")
+  }
 }
  
 

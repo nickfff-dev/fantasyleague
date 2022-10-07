@@ -10,25 +10,44 @@ import { InferGetServerSidePropsType } from 'next'
 
 const LeaguePage = ({ league, teams, players, fixtures, participants}: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
     
-const [leagueResults, setLeagueResults] = useState([] as any) 
+  const [leagueResults, setLeagueResults] = useState([] as any) 
+  const [isOldLeague, setIsOldLeague] = useState(false)
   const getresults = async () => {
     await fetch("/api/leagueresults/" + league.name, {
       method: "GET",
     }).then((res) => res.json().then((data) => {
       
-      setLeagueResults(JSON.parse(data))
+      if (data === "not played yet") {
+        setIsOldLeague(false)
+        console.log(data)
+      }
+      else { 
+        setLeagueResults(JSON.parse(data))
+        setIsOldLeague(true)
+        console.log(data)
+
+      }
       
-      console.log(JSON.parse(data))
+      
     }))
   }
 
 
   useEffect(() => { 
-    if(leagueResults.length === 0) {
+    if (leagueResults.length === 0 ) {
       getresults()
+      setIsOldLeague(false)
+      
+    } else { 
+      console.log("league results already loaded")
+      setIsOldLeague(false)
     }
 
-  }, [leagueResults])
+
+
+  }, [ leagueResults])
+
+
 
   return (
     <Grid>
@@ -45,7 +64,7 @@ const [leagueResults, setLeagueResults] = useState([] as any)
           <p>isBuyin: {`${league.buyIn}`}</p>
           <p>duration: { league.duration} days</p>
           <p>id: {league.id}</p>
-          <a href={`/joinaleague/${league.name}`}>jointhe league via this link</a>
+          <a href={`/joinaleague/${league.name}`}>join the league via this link</a>
         </div>
        
 
@@ -87,72 +106,74 @@ const [leagueResults, setLeagueResults] = useState([] as any)
         
       </div>
       </Grid>
-      <p style={{ color: "white" }}>league points {league?.points}</p>
+      <p style={{ color: "white" }}>league points {league.points > 0 ? league.points : "not played yet"}</p>
       
       <Grid>
-        <div className={s.root} style={{ color: "white", display: "flex", flexDirection: "row", justifyContent: "space-between",  }}>
-        {
+    
+          <div className={s.root} style={{ color: "white", display: "flex", flexDirection: "row", justifyContent: "space-between",  }}>
+          {
         leagueResults?.playerdataz?.map((player: any) => {
-          return (
-            <div key={player.participantId}>
-              <p><a href={`/participant/${league.name}/${participants?.find((participant: Participant) => participant.id === player.participantId)?.fantasyname}/Overview`}>{player.participantId}</a></p>
-              <p> kills : {player._sum.kills}</p>
-              <p> deaths : {player._sum.deaths}</p>
-              <p> assists : {player._sum.assists}</p>
-              <p>creepcore: {
-                player._sum.creepScore
-              }</p>
-              <p>visionScore: {
-                player._sum.visionScore
-              }</p>
-              <p> teamTotalKills : {player._sum.teamTotalKills}</p>
-
-              
-
-              <p>baronKills : {
-               leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.baronKills
-              
-              }</p>
-
-              <p>dragonKills : {
-              
-                leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.dragonKills
-              }</p>
-
-              <p>inhibitorKills : {
-              
-                leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.inhibitorKills
-              } </p>
-
-
-              <p>towerKills : {
-                 
-                leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.turretKills
-              
-              }</p>
-
-
-              <p> riftHeraldKills : {
-                    leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.riftHeraldKills
-              }</p>
-
-              <p>
-                teamKills: {
-                  leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.teamKills
-}
-
-              </p>
-
-              <p>points: {
-                player._sum.points + leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.points
-              }</p><br/>
-            </div>
-
-             
-          )
-        })
-      }
-     </div>
+            return (
+              <div key={player.participantId} style={{width: "200px", paddingRight: "10px"}}>
+                <p ><a href={`/participant/${league.name}/${participants?.find((participant: Participant) => participant.id === player.participantId)?.fantasyname}/Overview`}>{participants?.find((participant: Participant) => participant.id === player.participantId)?.fantasyname}</a></p> <br/>
+                <p> kills : {player._sum.kills}</p>
+                <p> deaths : {player._sum.deaths}</p>
+                <p> assists : {player._sum.assists}</p>
+                <p>creepcore: {
+                  player._sum.creepScore
+                }</p>
+                <p>visionScore: {
+                  player._sum.visionScore
+                }</p>
+                <p> teamTotalKills : {player._sum.teamTotalKills}</p>
+  
+                
+  
+                <p>baronKills : {
+                 leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.baronKills
+                
+                }</p>
+  
+                <p>dragonKills : {
+                
+                  leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.dragonKills
+                }</p>
+  
+                <p>inhibitorKills : {
+                
+                  leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.inhibitorKills
+                } </p>
+  
+  
+                <p>towerKills : {
+                   
+                  leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.turretKills
+                
+                }</p>
+  
+  
+                <p> riftHeraldKills : {
+                      leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.riftHeraldKills
+                }</p>
+  
+                <p>
+                  teamKills: {
+                    leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.teamKills
+  }
+  
+                </p>
+  
+                <p>points: {
+                  player._sum.points + leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.points
+                }</p><br/>
+              </div>
+  
+               
+            )
+          })
+        }
+       </div>
+      
      </Grid>
       
     </Grid>
