@@ -1,27 +1,34 @@
 import prisma from "@lib/prisma";
 import { useEffect, useState } from 'react';
 import { Grid } from '@components/ui';
-import { Fixture, Teams, League, Players } from "@prisma/client"
+import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 
 
 
-const LeaguePage = ({ league, teams, players, fixtures,}: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
+const LeaguePage = ({ league, teams, players, fixtures, participants}: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
     
-
+const [leagueResults, setLeagueResults] = useState([] as any) 
   const getresults = async () => {
     await fetch("/api/leagueresults/" + league.name, {
       method: "GET",
-    }).then((res) => res.json().then((data)=>{console.log(data)}))
+    }).then((res) => res.json().then((data) => {
+      
+      setLeagueResults(JSON.parse(data))
+      
+      console.log(JSON.parse(data))
+    }))
   }
 
 
   useEffect(() => { 
-    getresults()
+    if(leagueResults.length === 0) {
+      getresults()
+    }
 
-  })
+  }, [leagueResults])
 
   return (
     <Grid>
@@ -80,7 +87,73 @@ const LeaguePage = ({ league, teams, players, fixtures,}: InferGetServerSideProp
         
       </div>
       </Grid>
-      <p style={{ color: "white"}}>league points { league?.points}</p>
+      <p style={{ color: "white" }}>league points {league?.points}</p>
+      
+      <Grid>
+        <div className={s.root} style={{ color: "white", display: "flex", flexDirection: "row", justifyContent: "space-between",  }}>
+        {
+        leagueResults?.playerdataz?.map((player: any) => {
+          return (
+            <div key={player.participantId}>
+              <p><a href={`/participant/${league.name}/${participants?.find((participant: Participant) => participant.id === player.participantId)?.fantasyname}/Overview`}>{player.participantId}</a></p>
+              <p> kills : {player._sum.kills}</p>
+              <p> deaths : {player._sum.deaths}</p>
+              <p> assists : {player._sum.assists}</p>
+              <p>creepcore: {
+                player._sum.creepScore
+              }</p>
+              <p>visionScore: {
+                player._sum.visionScore
+              }</p>
+              <p> teamTotalKills : {player._sum.teamTotalKills}</p>
+
+              
+
+              <p>baronKills : {
+               leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.baronKills
+              
+              }</p>
+
+              <p>dragonKills : {
+              
+                leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.dragonKills
+              }</p>
+
+              <p>inhibitorKills : {
+              
+                leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.inhibitorKills
+              } </p>
+
+
+              <p>towerKills : {
+                 
+                leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.turretKills
+              
+              }</p>
+
+
+              <p> riftHeraldKills : {
+                    leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.riftHeraldKills
+              }</p>
+
+              <p>
+                teamKills: {
+                  leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.teamKills
+}
+
+              </p>
+
+              <p>points: {
+                player._sum.points + leagueResults?.teamdata?.find((team: any) => team.participantId === player.participantId)?._sum.points
+              }</p><br/>
+            </div>
+
+             
+          )
+        })
+      }
+     </div>
+     </Grid>
       
     </Grid>
   )
@@ -98,7 +171,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return data
    
   })
-
+  const participants = await prisma.participant.findMany({
+    where: {
+      leagueId: league?.id
+    }
+  }).then(async (data) => { 
+    await prisma.$disconnect()
+    return data
+  })
   const teams = await prisma.teams.aggregate({
     _count: {
       id: true
@@ -135,6 +215,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   })
   return {
     props: {
+      participants,
       league,
       teams,
       players,

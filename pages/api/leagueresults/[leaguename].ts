@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   });
 
 
-
+  
   const playerdataz = await prisma.playerResult.groupBy({
     by: ["participantId"],
     where: {
@@ -45,8 +45,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       deaths: true,
       creepScore: true,
       visionScore: true,
-      points: true
-    }
+      teamTotalKills: true,
+      points: true,
+      
+    },
+    
 
   })
 
@@ -66,10 +69,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
   })
 
-  console.log(playerdataz, teamdata);
+
+  const totalTeamPoints = (teamdata: any, playerdata: any) => {
+    
+  const  teampoints = teamdata.reduce((acc: number, team: any) => { 
+      return acc + team._sum.points;
+    
+  }, 0)
+    
+    const playerpoints = playerdata.reduce((acc: number, player: any) => { 
+      return acc + player._sum.points;
+    }, 0)
+ 
+
+    const totalpoints = teampoints    + playerpoints;
+    return totalpoints; 
+  }
+  
+
+  await prisma.league.update({
+    where: {
+      id: league?.id
+    },
+    data: {
+      points: totalTeamPoints(teamdata, playerdataz)
+    }
+  }).then(async () => { 
+    await prisma.$disconnect();
+    res.status(200).json(JSON.stringify({ playerdataz, teamdata }));
+  })
+
+  
    
-     
-  res.status(200).json(JSON.stringify({playerdataz,  teamdata}));
+
+  
 
   
 
