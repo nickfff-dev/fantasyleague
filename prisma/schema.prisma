@@ -173,9 +173,9 @@ model PlayerResult {
   leagueId       Int?
   league         League? @relation(fields: [leagueId], references: [id])
   date           String?
-  participantId  Int?
+  participantId  Int
   playerId       Int?
-  @@unique([name, game]) 
+  @@unique([name, game, participantId]) 
 }
 
 model TeamResult {
@@ -194,9 +194,9 @@ model TeamResult {
   league          League?  @relation(fields: [leagueId], references: [id])
   date            String?
   teamId          Int?
-  participantId   Int?
+  participantId   Int
 
-  @@unique([name, game])
+  @@unique([name, game, participantId])
 }
 
 model Wallet {

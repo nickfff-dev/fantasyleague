@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@lib/prisma';
-import { Fixture, Teams, League, Players, Participant, TeamResult} from "@prisma/client"
+import { Fixture, Teams, League, Players, Participant, TeamResult, PrismaClient, Prisma} from "@prisma/client"
 import dayjs from 'dayjs';
 import { getPrivateLeagueResults, getPrivateLeagueMatches,getPrivateLeaguePlayers } from "@lib/cargoQueries";
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
@@ -34,291 +34,173 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
   if (league) {
+    const playerdata = await getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string)
+    const teamdata = await getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string)
 
-    try {
-      getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string).then(data => {
-
-        if (data) {
-         
-          data.forEach(async (result) => {
-            const playerResults = await prisma.playerResult.findUnique({
-              where: {
-                name_game: {
-                  name: result.Link,
-                  game: result.GameId
+    playerdata?.map(async (team: any) => { 
+      if ((team.Link === participant?.top && team.Role === "Top") || (team.Link === participant?.jungle && team.Role === "Jungle") || (team.Link === participant?.mid && team.Role === "Mid") || (team.Link === participant?.adc && team.Role === "Bot") || (team.Link === participant?.support && team.Role === "Support")) {
+       
+         await prisma.playerResult.upsert({
+            where: {
+              name_game_participantId: {
+                name: team.Link,
+                game: team.GameId,
+                participantId: participant?.id as number,
+              }
+            },
+            create: {
+              name: team.Link,
+              game: team.GameId,
+              role: team.Role,
+              team: team.Team,
+              kills: team.Kills,
+              deaths: team.Deaths,
+              assists: team.Assists,
+              creepScore: team.CreepScore,
+              visionScore: team.VisionScore,
+              teamTotalKills: team.TeamKills,
+              participantId: participant?.id as number,
+              points: Math.ceil(Number(calculatePlayerScore(team.Kills, team.Assists, team.Deaths, team.CS, team.VisionScore, team.TeamKills))),
+              league: {
+                connect: {
+                  name: leaguename
                 }
-              }
-            })
-            if (playerResults) {
-              if ((result.Link === participant?.top && result.Role === "Top") || (result.Link === participant?.jungle && result.Role === "Jungle") || (result.Link === participant?.mid && result.Role === "Mid") || (result.Link === participant?.adc && result.Role === "Bot") || (result.Link === participant?.support && result.Role === "Support")) {
-                await prisma.league.update({
-                  where: {
-                    id: league.id
-                  },
-                  data: {
-                    PlayerResult: {
-                      update: {
-                        where: {
-                          name_game: {
-                            name: result.Link,
-                            game: result.GameId
-                          }
-                        },
-                        data: {
-                          creepScore: result.CS,
-                          visionScore: result.VisionScore,
-                          kills: result.Kills,
-                          deaths: result.Deaths,
-                          assists: result.Assists,
-                          teamTotalKills: result.TeamKills,
-                          points: Math.ceil(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.CS, result.VisionScore, result.TeamKills)))
-                        }
-                      }
-                    }
-                  }
-                })
-              }
-            } else {
-              if ((result.Link === participant?.top && result.Role === "Top") || (result.Link === participant?.jungle && result.Role === "Jungle") || (result.Link === participant?.mid && result.Role === "Mid") || (result.Link === participant?.adc && result.Role === "Bot") || (result.Link === participant?.support && result.Role === "Support")) {
-                await prisma.league.update({
-                  where: {
-                    id: league.id
-                  },
-                  data: {
-                
-                    PlayerResult: {
-                      create: {
-                        name: result.Link,
-                        role: result.Role,
-                        team: result.Team,
-                        game: result.GameId,
-                        date: dayjs(result.DateTime_UTC).toDate().toISOString(),
-                        creepScore: result.CS,
-                        visionScore: result.VisionScore,
-                        kills: result.Kills,
-                        deaths: result.Deaths,
-                        assists: result.Assists,
-                        teamTotalKills: result.TeamKills,
-                        participantId: participant?.id,
-                        points: Math.ceil(Number(calculatePlayerScore(result.Kills, result.Assists, result.Deaths, result.CS, result.VisionScore, result.TeamKills)))
-                      }
-                    }
-                  }
-                })
-              }
-  
+              },
+            },
+            update: {
+              kills: team.Kills,
+              deaths: team.Deaths,
+              assists: team.Assists,
+              creepScore: team.CreepScore,
+              visionScore: team.VisionScore,
+              teamTotalKills: team.TeamKills,
+
             }
-            
-  
-  
           })
-  
-        }
-      }).then(() => {
-        getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string).then((matches) => {
-          if (matches) {
-            matches.forEach(async (matchres) => {
+        
 
-              const matchResult1 = await prisma.teamResult.findUnique({
-                where: {
-                  name_game: {
-                    name: matchres.Team1,
-                    game: matchres.GameId
-                  }
-                }
-              })
+      }
 
-              const matchResult2 = await prisma.teamResult.findUnique({
-                where: {
-                  name_game: {
-                    name: matchres.Team2,
-                    game: matchres.GameId
-                  }
-                }
-              })
+    })
 
-              if (matchResult1) {
-                if (matchres.Team1 === participant?.team) {
-                  await prisma.league.update({
-                    where: {
-                      id: league.id
-                    },
-                    data: {
-                      TeamResult: {
-                        update: {
-                          where: {
-                            name_game: {
-                              name: matchres.Team1,
-                              game: matchres.GameId
-                            },
+    teamdata?.map(async (team: any) => { 
+      if (team.Team1 === participant?.team) {
 
-                          },
-                          data: {
-    
-                          
-
-                            teamKills: matchres.Team1Kills,
-                            dragonKills: matchres.Team1Dragons,
-                            riftHeraldKills: matchres.Team1RiftHeralds,
-                            turretKills: matchres.Team1Towers,
-                            baronKills: matchres.Team1Barons,
-                            inhibitorKills: matchres.Team1Inhibitors,
-                         
-
-
-                         
-                            didWin: matchres.Winner === 1 ? true : false,
-                            points: calculateTeamScore(
-                              matchres.Team1Kills, matchres.Team1Dragons, matchres.Team1RiftHeralds, matchres.Team1Towers, matchres.Team1Inhibitors, matchres.Team1Barons, matchres.Winner === 1 ? true : false
-                              
-                            )
-
-                          }
-                        }
-                      }
-                    }
-                  })
-                }
-              } else if (matchResult2) {
-                if (matchres.Team2 === participant?.team) {
-              
-                  await prisma.league.update({
-                    where: {
-                      id: league.id
-                    },
-                    data: {
-                      TeamResult: {
-                        update: {
-                          where: {
-                            name_game: {
-                              name: matchres.Team2,
-                              game: matchres.GameId
-                            },
-  
-                          },
-                          data: {
-      
-                            
-  
-                            teamKills: matchres.Team2Kills,
-                            dragonKills: matchres.Team2Dragons,
-                            riftHeraldKills: matchres.Team2RiftHeralds,
-                            turretKills: matchres.Team2Towers,
-                            baronKills: matchres.Team2Barons,
-                            inhibitorKills: matchres.Team2Inhibitors,
-                           
-  
-  
-                           
-                            didWin: matchres.Winner === 2 ? true : false,
-                            points: calculateTeamScore(
-                              matchres.Team2Kills, matchres.Team2Dragons, matchres.Team2RiftHeralds, matchres.Team2Towers, matchres.Team2Inhibitors, matchres.Team2Barons, matchres.Winner === 2 ? true : false
-                              
-                            )
-  
-                          }
-                        }
-                      }
-                    }
-                  })
-                }
-  
+         await prisma.teamResult.upsert({
+            where: {
+              name_game_participantId: {
+                name: team.Team1,
+                game: team.GameId,
+                participantId: participant?.id as number,
+              }
+            },
+            create: {
+              name: team.Team1,
+              game: team.GameId,
+              date: dayjs(team.DateTime_UTC).toDate().toISOString(),
+              teamKills: team.Team1Kills,
+              dragonKills: team.Team1Dragons,
+              riftHeraldKills: team.Team1RiftHeralds,
+              turretKills: team.Team1Towers,
+              baronKills: team.Team1Barons,
+              inhibitorKills: team.Team1Inhibitors,
+              didWin: team.Winner === 1 ? true : false,
+              participantId: participant?.id as number,
+              points: calculateTeamScore(
+                team.Team1Kills, team.Team1Dragons, team.Team1RiftHeralds, team.Team1Towers, team.Team1Inhibitors, team.Team1Barons, team.Winner === 1 ? true : false
                 
-              }
-              else {
-                if (matchres.Team1 === participant?.team) {
-                  await prisma.league.update({
-                    where: {
-                      id: league.id
-                    },
-                    data: {
-                      TeamResult: {
-                        create: {
-                          name: matchres.Team1,
-                          game: matchres.GameId,
-                          date: dayjs(matchres.DateTime_UTC).toDate().toISOString(),
-                          teamKills: matchres.Team1Kills,
-                          dragonKills: matchres.Team1Dragons,
-                          riftHeraldKills: matchres.Team1RiftHeralds,
-                          turretKills: matchres.Team1Towers,
-                          baronKills: matchres.Team1Barons,
-                          inhibitorKills: matchres.Team1Inhibitors,
-                          didWin: matchres.Winner === 1 ? true : false,
-                          participantId: participant?.id,
-                          points: calculateTeamScore(
-                            matchres.Team1Kills, matchres.Team1Dragons, matchres.Team1RiftHeralds, matchres.Team1Towers, matchres.Team1Inhibitors, matchres.Team1Barons, matchres.Winner === 1 ? true : false
-                            
-                          )
-                        }
-                      }
-                    }
-                  }).then(async () => {
-                    await prisma.$disconnect()
-        
-                  
-                  })
-                } else if (matchres.Team2 === participant?.team) {
-                  await prisma.league.update({
-                    where: {
-                      id: league.id
-                    },
-                    data: {
-                      TeamResult: {
-                        create: {
-                          name: matchres.Team2,
-                          game: matchres.GameId,
-                          date: dayjs(matchres.DateTime_UTC).toDate().toISOString(),
-                          teamKills: matchres.Team2Kills,
-                          dragonKills: matchres.Team2Dragons,
-                          riftHeraldKills: matchres.Team2RiftHeralds,
-                          turretKills: matchres.Team2Towers,
-                          baronKills: matchres.Team2Barons,
-                          inhibitorKills: matchres.Team2Inhibitors,
-                          didWin: matchres.Winner === 2 ? true : false,
-                          participantId: participant?.id,
-                          points: calculateTeamScore(
-                            matchres.Team2Kills, matchres.Team2Dragons, matchres.Team2RiftHeralds, matchres.Team2Towers, matchres.Team2Inhibitors, matchres.Team2Barons, matchres.Winner === 1 ? true : false
-                            
-                          )
-
-                        }
-                      }
-                    }
-                  }).then(async () => {
-                    await prisma.$disconnect()
-        
-                  
-                  
-                  })
-                  
+              ),
+              league: {
+                connect: {
+                  name: leaguename
                 }
               }
-
-     
-            })
-          }
-        })
-      })
-
+              
+            },
+            update: {
+              teamKills: team.Team1Kills,
+              dragonKills: team.Team1Dragons,
+              riftHeraldKills: team.Team1RiftHeralds,
+              turretKills: team.Team1Towers,
+              baronKills: team.Team1Barons,
+              inhibitorKills: team.Team1Inhibitors,
+              didWin: team.Winner === 1 ? true : false,
+              points: calculateTeamScore(
+                team.Team1Kills, team.Team1Dragons, team.Team1RiftHeralds, team.Team1Towers, team.Team1Inhibitors, team.Team1Barons, team.Winner === 1 ? true : false
+                
+              ),
+              
+            }
+          })
+        
+      } else if (team.Team2 === participant?.team) { 
       
+        await  prisma.teamResult.upsert({
+            where: {
+              name_game_participantId: {
+                name: team.Team2,
+                game: team.GameId,
+                participantId: participant?.id as number,
+              }
+            },
+            create: {
+              name: team.Team2,
+              game: team.GameId,
+              date: dayjs(team.DateTime_UTC).toDate().toISOString(),
+              teamKills: team.Team2Kills,
+              dragonKills: team.Team2Dragons,
+              riftHeraldKills: team.Team2RiftHeralds,
+              turretKills: team.Team2Towers,
+              baronKills: team.Team2Barons,
+              inhibitorKills: team.Team2Inhibitors,
+              didWin: team.Winner === 2 ? true : false,
+              participantId: participant?.id as number,
+              points: calculateTeamScore(
+                team.Team2Kills, team.Team2Dragons, team.Team2RiftHeralds, team.Team2Towers, team.Team2Inhibitors, team.Team2Barons, team.Winner === 2 ? true : false
+                
+              ),
+              league: {
+                connect: {
+                  name: leaguename
+                }
+              }
+              
+            },
+            update: {
+              teamKills: team.Team2Kills,
+              dragonKills: team.Team2Dragons,
+              riftHeraldKills: team.Team2RiftHeralds,
+              turretKills: team.Team2Towers,
+              baronKills: team.Team2Barons,
+              inhibitorKills: team.Team2Inhibitors,
+              didWin: team.Winner === 2 ? true : false,
+              points: calculateTeamScore(
+                team.Team2Kills, team.Team2Dragons, team.Team2RiftHeralds, team.Team2Towers, team.Team2Inhibitors, team.Team2Barons, team.Winner === 2 ? true : false
+                
+              ),
+              
+            }
+          })
+        
+      }
+
+    })
 
 
-      
+    const playerres = await prisma.playerResult.findMany({
+      where: {
+        participantId: participant?.id
+      }
+    })
 
+    const teamres = await prisma.teamResult.findMany({
+      where: {
+        participantId: participant?.id
+      }
+    })
 
-
-    
-    } catch (error) {
-      console.log(error)
-    } finally { 
-      await prisma.$disconnect()
-      res.status(200).json('success')
-    }
-
-
-    
-
+    res.status(200).json(JSON.stringify({playerres, teamres}))
+   
   }
-
 
 }

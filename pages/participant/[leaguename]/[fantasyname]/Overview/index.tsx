@@ -16,22 +16,11 @@ import { PlayerResults } from "@components"
 
 
 
-function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const refreshData = () => {
     router.replace(router.asPath);
   }
-  const results =JSON.parse(leagueResults)
-  const team = JSON.parse(teamResults)
-
-
- 
-  
-  
-
-
-      
-  
 
 
 
@@ -46,13 +35,13 @@ function ParticipantTeamPage({ participant, leagueResults, teamResults }: InferG
       <p>leaguename: {participant.leaguename}</p>
      
           <PlayerResults
-          playerresults={results}
+          
             top={participant.top}
             jungle={participant.jungle}
             mid={participant.mid}
             adc={participant.adc}
             support={participant.support}
-            results={team}
+            
             teamname={participant.team}
             leaguename={participant.leaguename}
             fantasyname={participant.fantasyname}
@@ -83,81 +72,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       fantasyname: context.params?.fantasyname as string,
     }
   }).then(async (data) => {
-    fetch("http://localhost:3000/api/populateleague/" + data?.leaguename, {
-      method: "POST",
-      body: JSON.stringify({
-        fantasyname: data?.fantasyname,
-      }),
-    }).then((res) => { 
-      res.text().then((info) => {
-        console.log(info);
-      
-       })
-    })
-
-    const leagueResult =  await prisma.playerResult.findMany({
-
-      where: {
-        participantId: data?.id,
-        
-  
-      }
-    }).then(data => {
-  
-      return data
-    })
-    const teamResult = await prisma.teamResult.findMany({
-      where: {
-        participantId: data?.id,
-       
-      
-  
-      }
-    }).then((data) => {
+    
        
       return data
     })
   
-   
-     
-  
-    const teamResults = JSON.stringify(teamResult)
-    const leagueResults = JSON.stringify(leagueResult)
- 
-  
-    await prisma.$disconnect()
-    return {
-       data, leagueResults, teamResults}
-    
-    
-    
-   
-  })
-
-
-
-
-  
-
 
  
-  
-
-  if(!participantd) {
-    return {
-      notFound: true,
-    }
-  }
-  const teamResults = participantd.teamResults
-  const leagueResults = participantd.leagueResults
-
-  const participant = participantd.data
-
-
 
   return {
-    props: { participant, leagueResults, teamResults}, 
-  }
+    props: {
+      participant: participantd,
+    }
+    }
+    
+
+
+
+
+  
+
+
+ 
+  
+
+
   
   
 }
