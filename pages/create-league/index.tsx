@@ -62,7 +62,7 @@ const CreateaLeague = () => {
 const body = newLeaguedata
 
   
-    await fetch("/api/makeleague", {
+    await fetch("/api/create-league", {
       method: 'POST',
       body: JSON.stringify(body)
     }).then((res) => {
@@ -182,13 +182,7 @@ const body = newLeaguedata
                 console.log(newLeaguedata)
               }
             } /></label><br/>
-            <label htmlFor="houseFee">houseFee  &nbsp;  &nbsp;    <input type="number" placeholder="houseFee" name="houseFee"  onChange={
-              (e) => { 
-                const theval = e.target.value
-                setNewLeaguedata({ ...newLeaguedata, houseFee: Number(theval) })
-                console.log(newLeaguedata)
-              }
-            } /></label><br/>
+        
             <button type="submit"  onClick={submitLeague} >submit</button>
             </div>
          
@@ -198,7 +192,7 @@ const body = newLeaguedata
       <div className={s.container}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {
-            leaguelink !="" ?  <a href={`/leagues/${leaguelink}`}>click link to your new league </a> : null
+            leaguelink !="" ?  <a href={`/league-summary/${leaguelink}`}>click link to your new league </a> : null
        }
         </div>
       </div>

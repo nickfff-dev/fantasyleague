@@ -18,7 +18,7 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
 
 
   const getResults = async () => {
-     await fetch(`/api/populateleague/${leaguename}/`, {
+     await fetch(`/api/populate-fantasy/${leaguename}/`, {
       method: 'POST',
       body: JSON.stringify({
         fantasyname: fantasyname,

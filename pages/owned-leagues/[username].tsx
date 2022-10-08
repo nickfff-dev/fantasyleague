@@ -29,7 +29,7 @@ const MyLeagues = ({ leagues , username} :  InferGetServerSidePropsType<typeof g
               <p>region: {league.region}</p>
               <p>owner: {league.owner}</p>
               <p>duration: {league.duration} days</p>
-              <a href={`/leagues/${league.name}` }> link to league</a>
+              <a href={`/league-summary/${league.name}` }> link to league</a>
 
             </div>
        )

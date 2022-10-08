@@ -114,7 +114,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
               <h2 className={s.subtitle}>League Owner: {league.owner}</h2>
               <h2 className={s.subtitle}>League Region: {league.region}</h2>
               <h2 className={s.subtitle}>League buyinFee: {league.buyInFee}</h2>
-              <h2 className={s.subtitle}> <a href={`/leagues/${league.name}`} target="_blank" >LinktoLeague</a></h2>
+              <h2 className={s.subtitle}> <a href={`/league-summary/${league.name}`} target="_blank" >LinktoLeague</a></h2>
                
               <h2 className={s.subtitle}></h2></div>)
         })

@@ -26,7 +26,7 @@ const JoinLeague = ({ league }:  InferGetServerSidePropsType<typeof getServerSid
     let teamname = teamName
     
     try {
-      await fetch(`/api/joinaleague`, {
+      await fetch(`/api/optin-league`, {
         method: 'POST',
         body: JSON.stringify({
           leaguename,

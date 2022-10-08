@@ -14,7 +14,7 @@ const LeaguePage = ({ league, teams, players, fixtures, participants}: InferGetS
   const [leagueResults, setLeagueResults] = useState([] as any) 
   const [isOldLeague, setIsOldLeague] = useState(false)
   const getresults = async () => {
-    await fetch("/api/leagueresults/" + league.name, {
+    await fetch("/api/league-results/" + league.name, {
       method: "GET",
     }).then((res) => res.json().then((data) => {
       
@@ -65,7 +65,7 @@ const LeaguePage = ({ league, teams, players, fixtures, participants}: InferGetS
           <p>isBuyin: {`${league.buyIn}`}</p>
           <p>duration: { league.duration} days</p>
           <p>id: {league.id}</p>
-          <a href={`/joinaleague/${league.name}`}>join the league via this link</a>
+          <a href={`/optin-league/${league.name}`}>join the league via this link</a>
         </div>
        
 
@@ -184,6 +184,15 @@ const LeaguePage = ({ league, teams, players, fixtures, participants}: InferGetS
 export const getServerSideProps: GetServerSideProps = async (context) => { 
   
   const name = context.params?.name
+  const session = await getSession(context)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }
   const league = await prisma.league.findUnique({
     where: {
       name: name?.toString()
