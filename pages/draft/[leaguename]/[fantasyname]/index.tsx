@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useEffect, useState } from "react";
 import io, { Socket } from 'Socket.IO-client'
-
+import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import { InferGetServerSidePropsType } from 'next'
 
 
@@ -516,7 +516,17 @@ teamname:  {focusonparticipant.fantasyname}
 
 
 
-export const getServerSideProps: GetServerSideProps = async (context) => { 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  
+  const session = await getSession(context)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }
   const leaguename = context.params?.leaguename as string
   const fantasyname = context.params?.fantasyname as string
   const focusonleague = await prisma.league.findUnique({

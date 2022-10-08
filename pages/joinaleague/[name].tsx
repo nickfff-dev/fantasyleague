@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signIn, getSession, signOut } from 'next-auth/react';
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 
@@ -94,6 +94,16 @@ const JoinLeague = ({ league }:  InferGetServerSidePropsType<typeof getServerSid
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
+
+  const session = await getSession(context)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }
   const name = context.params?.name
   const league  = await prisma.league.findUnique({
     where: {

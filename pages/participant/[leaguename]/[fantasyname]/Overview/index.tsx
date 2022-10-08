@@ -7,7 +7,7 @@ import { getPrivateLeagueResults, getPrivateLeagueMatches } from "@lib/cargoQuer
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
 import { Grid } from '@components/ui';
 import { useRouter } from 'next/router';
-
+import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import { InferGetServerSidePropsType } from 'next'
 import { PlayerResults } from "@components"
 
@@ -21,7 +21,6 @@ function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof
   const refreshData = () => {
     router.replace(router.asPath);
   }
-
 
 
   return (
@@ -65,8 +64,15 @@ function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
 
-  
-
+  const session = await getSession(context)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }
   const participantd = await prisma.participant.findUnique({
     where: {
       fantasyname: context.params?.fantasyname as string,

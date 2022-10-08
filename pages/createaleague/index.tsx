@@ -16,7 +16,11 @@ const CreateaLeague = () => {
   const { data: session } = useSession();
 
 
-
+  useEffect(() => { 
+    if(!session) {
+      signIn();
+    }
+  }, [session]);
   const[leaguelink, setLeagueLink] = useState("")
  
   const [league, setLeague] = useState<Mchezo>();

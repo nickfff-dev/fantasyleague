@@ -5,6 +5,7 @@ import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
+import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 
 
 
@@ -181,6 +182,7 @@ const LeaguePage = ({ league, teams, players, fixtures, participants}: InferGetS
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
+  
   const name = context.params?.name
   const league = await prisma.league.findUnique({
     where: {

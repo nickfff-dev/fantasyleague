@@ -5,7 +5,7 @@ import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useEffect, useState} from "react";
 
 import { InferGetServerSidePropsType } from 'next'
-
+import { useSession, signIn, getSession, signOut } from 'next-auth/react';
 
 
 
@@ -34,8 +34,17 @@ function ParticipantPage({ participant, top, jungle }: InferGetServerSidePropsTy
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
+  
   const leaguename = context.params?.leaguename
-
+  const session = await getSession(context)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }
 
   const participant = await prisma.participant.findUnique({
     where: {
