@@ -80,6 +80,8 @@ model League {
   maxPlayers   Int
   minPlayers   Int
   points       Int?
+  draftReady   Boolean        @default(false)
+  populateRosters Boolean     @default(false)
   region       String
   teams        Teams[]
   players      Players[]
@@ -124,6 +126,8 @@ model Participant {
   jungle      String? @db.VarChar(100)
   mid         String? @db.VarChar(100)
   adc         String? @db.VarChar(100)
+  inviteCode  String? @db.VarChar(255)
+  confirmedAttendance Boolean? @default(false)
   support     String? @db.VarChar(100)
   team        String? @db.VarChar(100)
   points      Int?    @db.Int
@@ -220,6 +224,7 @@ model Deposit {
   time     String
   txHash   String
   credits  Int
+  fees    Int?
 }
 
 model Withdrawal {
@@ -232,4 +237,16 @@ model Withdrawal {
   time     String
   txHash   String @unique
   credits  Int
+  fees    Int?
+}
+
+
+
+model MainWallet {
+   id      Int    @id @default(autoincrement())
+  balance Int
+  credits Int
+  houseFee Int
+ 
+
 }
