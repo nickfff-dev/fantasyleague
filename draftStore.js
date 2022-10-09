@@ -197,6 +197,9 @@ class PrismaDraftStore extends draftStore {
           userId: userId  
         },
         data: {
+          balance: {
+            decrement: Math.ceil(500/95)
+          },
           credits: {
             decrement: 500
           }

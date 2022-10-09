@@ -164,6 +164,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 data: {
                   balance: {
                     decrement: buyInFee
+
+                  },
+                  credits: {
+                    decrement: buyInFee * 95
                   }
                 }
               })
@@ -224,6 +228,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                           data: {
                             balance: {
                               decrement: buyInFee
+                            },
+                            credits: {
+                              decrement: buyInFee * 95
                             }
                           }
                         }
