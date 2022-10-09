@@ -75,18 +75,22 @@ class PrismaDraftStore extends draftStore {
 
   async saveDraft(draft) {
     try {
-      await this.prisma.league.update({
-        where: {
+      await this.prisma.draft.upsert({
+        where: { 
           name: draft.name
+        }, 
+        update: {
+          name: draft.name,
         },
-        data: {
-          Draft: {
-            create: {
+        create: {
+          name: draft.name,
+          League: {
+            connect: {
               name: draft.name
             }
           }
         }
-      })
+     })
     } catch (err) { console.log(err) 
     }
     finally {

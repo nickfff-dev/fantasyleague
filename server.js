@@ -1,28 +1,25 @@
-const app = require('express')()
-const server = require('http').Server(app)
-const io = require('socket.IO')(server)
-const next = require('next')
+const app = require("express")();
+const server = require("http").Server(app);
+const io = require("socket.IO")(server);
+const next = require("next");
 
-const port = parseInt(process.env.PORT, 10) || 3000
-const hostname = 'localhost'
-const dev = process.env.NODE_ENV !== 'production'
-const nextApp = next({ dev, hostname, port })
-const nextHandler = nextApp.getRequestHandler()
+const port = parseInt(process.env.PORT, 10) || 3000;
+const hostname = "localhost";
+const dev = process.env.NODE_ENV !== "production";
+const nextApp = next({ dev, hostname, port });
+const nextHandler = nextApp.getRequestHandler();
 const crypto = require("crypto");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 const { InMemorySessionStore } = require("./sessionStore");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { PrismaDraftStore } = require("./draftStore");
-const draftStore = new PrismaDraftStore()
+const draftStore = new PrismaDraftStore();
 const { instrument } = require("@socket.io/admin-ui");
-
-
 
 instrument(io, {
   auth: false,
 });
-
 
 const sessionStore = new InMemorySessionStore();
 io.use((socket, next) => {
@@ -50,21 +47,11 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-
-
-  
-
-sessionStore.saveSession(socket.sessionID, {
-        userID: socket.userID,
-        username: socket.username,
-        connected: true,
-      });
-
-    
-  
-
-
- 
+  sessionStore.saveSession(socket.sessionID, {
+    userID: socket.userID,
+    username: socket.username,
+    connected: true,
+  });
 
   // emit session details
   socket.emit("session", {
@@ -74,143 +61,110 @@ sessionStore.saveSession(socket.sessionID, {
 
   // join the "league" room
   socket.on("joinRoom", async (room) => {
-
-  
-    const people = io.sockets.adapter.rooms.get(room); 
+    const people = io.sockets.adapter.rooms.get(room);
     if (people) {
-      const roomppl = []
+      const roomppl = [];
       for (const person of people) {
         let personsocket = io.sockets.sockets.get(person);
         if (personsocket.username === socket.username) {
-          socket.emit("message", personsocket.username + " is already in the room");
-         
-  
-        }
-        else {
+          socket.emit(
+            "message",
+            personsocket.username + " is already in the room"
+          );
+        } else {
           socket.join(room);
           socket.room = room;
           socket.emit("message", socket.username + " joined the room " + room);
-
-  
-    
-      
-        
         }
-     
-
-
       }
-
-      
-       
-
-    }
-    else { 
+    } else {
       socket.join(room);
       socket.room = room;
       socket.emit("message", socket.username + " You joined the room " + room);
-
-  
-    
-  
-      
     }
-
-  
-    
   });
+
+
+
   
   socket.on("preparedraft", async (room) => {
-   
     const addTodraft = io.sockets.adapter.rooms.get(room);
-  
+
     const draft = {
       name: room,
-    }
-    try {
-     draftStore.saveDraft(draft).then(() => {
-  for (const newMember of addTodraft) { 
-    const memberSocket = io.sockets.sockets.get(newMember);
-    const member = {
-      fantasyname: memberSocket.username,
     };
-    const draftName = room;
-    draftStore.addDraftMember(draftName, member);
-  }
- })}catch (e) {
-  console.log(e);
-    }  
 
-
-  
-  
-  })
-
-  
-  socket.on("draftposition", async (room) => { 
-    try {
-
-      const draftMemmbers = draftStore.getDraftMembers(room);
-      draftMemmbers.then((draftMemmbers) => {
-        const draftMemmbersLength = draftMemmbers.length;
-  
-        const draftposition = [];
-        for (let i = 0; i < draftMemmbersLength; i++) {
-          draftposition.push(i);
+    await draftStore
+      .saveDraft(draft)
+      .then(async () => {
+        for (const newMember of addTodraft) {
+          const memberSocket = io.sockets.sockets.get(newMember);
+          const member = {
+            fantasyname: memberSocket.username,
+          };
+          const draftName = room;
+          await draftStore.addDraftMember(draftName, member);
         }
-  
-        const shuffled = draftposition.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, draftMemmbersLength);
-  
-        for (let i = 0; i < draftMemmbersLength; i++) {
-          draftStore.updateDraftMemberDraftOrder(
-            room,
-            draftMemmbers[i].fantasyname,
-            selected[i]
-          );
-        }
-  
-        io.to(room).emit("message", "draftMemmbers2");
+      })
+      .then(async () => {
+        await draftStore.getDraftMembers(room).then(async (draftMemmbers) => {
+          const draftMemmbersLength = draftMemmbers.length;
+
+          const draftposition = [];
+          for (let i = 0; i < draftMemmbersLength; i++) {
+            draftposition.push(i);
+          }
+
+          const shuffled = draftposition.sort(() => 0.5 - Math.random());
+          const selected = shuffled.slice(0, draftMemmbersLength);
+
+          for (let i = 0; i < draftMemmbersLength; i++) {
+           await draftStore.updateDraftMemberDraftOrder(
+              room,
+              draftMemmbers[i].fantasyname,
+              selected[i]
+            );
+          }
+
+          io.to(room).emit("message", "draftMemmbers2");
+        });
       });
-    
-  
-  }catch (e) {
-  console.log(e);
-    }
-  })
+  });
+
+ 
 
   socket.on("populate", async (room) => {
     const draftMembers = draftStore.getDraftMembers(room);
     draftMembers.then((draftMembers) => {
       io.to(room).emit("people", draftMembers);
-    })
-
-  })
-
+    });
+  });
 
   socket.on("draftPick", async (data) => {
     try {
       const FantasyName = data.fantasyname;
       const updatePosition = data.role;
       const updateValue = data.name;
-      const draftName = data.draftName
-      const leagueId = data.leagueId
-      const choiceId = data.choiceId
+      const draftName = data.draftName;
+      const leagueId = data.leagueId;
+      const choiceId = data.choiceId;
 
-      draftStore.updateDraftPick(FantasyName, updatePosition, updateValue, leagueId, choiceId).then(() => {
-        
-        draftStore.getDraftMembers(draftName).then((data) => {
-          io.to (draftName).emit("people", data)
-        })
-        
-      })
-      
-      
+      draftStore
+        .updateDraftPick(
+          FantasyName,
+          updatePosition,
+          updateValue,
+          leagueId,
+          choiceId
+        )
+        .then(() => {
+          draftStore.getDraftMembers(draftName).then((data) => {
+            io.to(draftName).emit("people", data);
+          });
+        });
     } catch (e) {
       console.log(e);
-    } 
-
-
+    }
   });
 
   socket.on("startDraft", async (room) => {
@@ -270,44 +224,38 @@ sessionStore.saveSession(socket.sessionID, {
       supportRound,
       teamRound,
     ];
- console.log( allRounds)
+    console.log(allRounds);
     const topSess = (round, roundName) => {
       for (let h = 0; h < round.length; h++) {
         try {
           (function (h) {
-               
-      const turntimeOut =  setTimeout(function () {
-        var counter = 10
-        const draftMember = draftMembersWithSocketId.filter((draftMember) => draftMember.draftOrder === round[h])[0];
-        const socket = io.sockets.sockets.get(draftMember.socketId);
-   
-        socket.emit("message2",  draftMember.fantasyname + " turn to pick a " + roundName);
-        socket.emit("counter", counter);
-        const interval = setInterval(() => {
-          counter--;
-          socket.emit("counter", counter);
-          if (counter === 0) { 
-            clearInterval(interval);
-            clearTimeout(turntimeOut)
+            const turntimeOut = setTimeout(function () {
+              var counter = 10;
+              const draftMember = draftMembersWithSocketId.filter(
+                (draftMember) => draftMember.draftOrder === round[h]
+              )[0];
+              const socket = io.sockets.sockets.get(draftMember.socketId);
 
-          }
-     
-      
-        }, 1000);
+              socket.emit(
+                "message2",
+                draftMember.fantasyname + " turn to pick a " + roundName
+              );
+              socket.emit("counter", counter);
+              const interval = setInterval(() => {
+                counter--;
+                socket.emit("counter", counter);
+                if (counter === 0) {
+                  clearInterval(interval);
+                  clearTimeout(turntimeOut);
+                }
+              }, 1000);
 
-        socket.on("draftPick", async (data) => { 
-          clearInterval(interval);
-          clearTimeout(turntimeOut)
-       
-
-          
-        })
-
-    
-
-
-      }, 10000 * h);
-          } )(h);
+              socket.on("draftPick", async (data) => {
+                clearInterval(interval);
+                clearTimeout(turntimeOut);
+              });
+            }, 10000 * h);
+          })(h);
         } catch (e) {
           console.log(e);
         }
@@ -326,15 +274,22 @@ sessionStore.saveSession(socket.sessionID, {
       }, 10000 * (topRound.length + jungleRound.length + midRound.length));
       setTimeout(function () {
         topSess(supportRound, "support");
-      }, 10000 * (topRound.length + jungleRound.length + midRound.length + adcRound.length));
+      }, 10000 *
+        (topRound.length +
+          jungleRound.length +
+          midRound.length +
+          adcRound.length));
       setTimeout(function () {
         topSess(teamRound, "team");
-      }, 10000 * (topRound.length + jungleRound.length + midRound.length + adcRound.length + supportRound.length));
+      }, 10000 *
+        (topRound.length +
+          jungleRound.length +
+          midRound.length +
+          adcRound.length +
+          supportRound.length));
     } catch (e) {
       console.log(e);
-    } 
-
-    
+    }
   });
 
   const users = [];
@@ -344,9 +299,8 @@ sessionStore.saveSession(socket.sessionID, {
       username: session.username,
       connected: session.connected,
     });
-
   });
- console.log(users)
+  console.log(users);
   socket.emit("users", users);
 
   socket.broadcast.emit("user connected", {
@@ -373,21 +327,13 @@ sessionStore.saveSession(socket.sessionID, {
 });
 
 nextApp.prepare().then(() => {
-  app.all('*', (req, res) => {
-    return nextHandler(req, res)
-  })
+  app.all("*", (req, res) => {
+    return nextHandler(req, res);
+  });
   //  add nextauth to express
-  
+
   server.listen(port, (err) => {
-    if (err) throw err
-    console.log(`> Ready on http://${hostname}:${port}`)
-  })
-}
-
-  
-  
-
-
-)
-
-
+    if (err) throw err;
+    console.log(`> Ready on http://${hostname}:${port}`);
+  });
+});
