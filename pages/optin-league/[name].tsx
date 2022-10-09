@@ -14,8 +14,15 @@ import { InferGetServerSidePropsType } from 'next'
 
 
 
-const JoinLeague = ({ league, user }:  InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const JoinLeague = ({ league, user }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  
+  
+  useEffect(() => { 
 
+    if (user.verificationCode === null || user.verificationCode === "" || user.emailVerified=== false) {
+      window.location.href = "/user/verify"
+    }
+  } ,[user.verificationCode])
   const [teamName , setTeamName] = useState("");
   const { data: session } = useSession();
   const [responsetext, setResponseText] = useState("")

@@ -7,15 +7,21 @@ import { calculateLeagueDuration } from "@lib/calculate";
 import { useSession, signIn, getSession, signOut } from 'next-auth/react';
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
+import prisma from '@lib/prisma';
 
 import { Grid } from '@components/ui';
 
 
 
-const CreateaLeague = ({ username }:  InferGetServerSidePropsType<typeof getServerSideProps>) => { 
+const CreateaLeague = ({ username, owner }:  InferGetServerSidePropsType<typeof getServerSideProps>) => { 
     
   
+  useEffect(() => { 
 
+    if (owner.verificationCode === null || owner.verificationCode === "" || owner.emailVerified=== false) {
+      window.location.href = "/user/verify"
+    }
+  } ,[owner.verificationCode])
 
 
   const[leaguelink, setLeagueLink] = useState("")
@@ -211,8 +217,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
   const username = session?.user?.name?.toString()
   console.log(session?.user?.name?.toString())
+
+  const owner = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email as string,
+      
+    }
+  }).then((data) => {
+    return data
+  })
   return {
-    props: { username },
+    props: { username, owner },
   }
 }
 
