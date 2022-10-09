@@ -10,27 +10,17 @@ import { InferGetServerSidePropsType } from 'next'
 
 
 
-const ConfirmDraft = ({ league, draftman } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const ConfirmDraft = ({  draftman } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   
-  const [draftPosition, setDraftPosition] = useState(0); 
-  useEffect(() => { 
-
-    if (draftman.draftOrder) {
-      setDraftPosition(draftman.draftOrder);
-    }
-    
-  },[])
+  const [message, setMessage] = useState(""); 
+ 
   const sendDraft = async () => { 
-    const body = {
-      leagueId: league.id,
-      draftmanid: draftman.id,
-      draftmanfantasyname: draftman.fantasyname,
-    }
-    await fetch("/api/confirmdraft", {
-      method: "POST",
-      body: JSON.stringify(body),
+  
+    await fetch(`/api/confirmdraft/${draftman.fantasyname}`, {
+      method: "GET",
     }).then((res) => res.text().then((text) => {
-      console.log(text)
+      setMessage(text + " " + "the link to draft page" + " " + `http://localhost:3000/draft/${draftman.leaguename}/${draftman.fantasyname}`)
+      window.location.href = `/draft/${draftman.leaguename}/${draftman.fantasyname}`
     }))
 
   }
@@ -39,19 +29,21 @@ const ConfirmDraft = ({ league, draftman } : InferGetServerSidePropsType<typeof 
   return (
     <div className={s.container} style={{color: "white"}}>
       {
-        draftPosition === 0 ? <h1>Confirm Draft</h1> : <h1>Draft confirmed</h1> 
+        draftman.confirmedAttendance ? (<p>you have already confirmed attendance the link to the draft page is <a target ="_blank" href={`/draft/${draftman.leaguename}/${draftman.fantasyname}`}>link to draft</a> </p>) :(<>   <h1>Confirm Draft</h1> 
+        <br/>
+        <p>participating in: { draftman.leaguename }</p>  <br/>
+          
+        <p>
+          fantasyteam name: {draftman.fantasyname}
+        </p> <br/>
+  
+     
+          {
+            message ? (<p>{message}</p>) : null
+          }
+                <button onClick={sendDraft}> click to Confirm Draft</button>
+  </>)
      }
-      <br/>
-      <p>participating in: {league.name }</p>  <br/>
-        
-      <p>
-        fantasyteam name: {draftman.fantasyname}
-      </p> <br/>
-
-   
-      {
-        draftPosition > 0 ? <p>draft position: {draftPosition} <br/> you have already confirmed </p> :       <button onClick={sendDraft}> click to Confirm Draft</button>
-}
 
      
     </div>
@@ -70,17 +62,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     }
   }
-  const leaguename = context.params?.leaguename;
+
   const fantasyname = context.params?.fantasyname;
-  const league = await prisma.league.findUnique({
-    where: {
-      name: leaguename?.toString()
-    }
-  }).then(async (league) => {
-    await prisma.$disconnect()
-    return league
-   
-  })
+
   const draftman = await prisma.participant.findUnique({
     where: {
       fantasyname: fantasyname?.toString()
@@ -91,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
    
   })
   return {
-    props: { league, draftman }
+    props: { draftman }
   }
 }
 

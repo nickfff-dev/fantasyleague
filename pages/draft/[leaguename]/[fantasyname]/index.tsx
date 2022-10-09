@@ -41,7 +41,12 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
 }
 
-  
+  useEffect(() => { 
+
+    if (focusonparticipant.confirmedAttendance === false) {
+      window.location.href = `/draft/${focusonleague.leaguename}/${focusonparticipant.fantasyname}/confirmdraft`
+    }
+  })
   
   
   useEffect(() => { 
@@ -312,7 +317,7 @@ useEffect(() => {
       >startDraft</button><br />
       
     <button style={{color: "#ffd204"}} onClick={prepareDraft}>preparedraft</button><br/>
- </div>
+   </div>
     {/* <button style={{color: "#ffd204"}} onClick={() => {
 
       socket.emit("joinDraft", {
