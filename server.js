@@ -140,31 +140,53 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("draftPick", async (data) => {
-    try {
-      const FantasyName = data.fantasyname;
-      const updatePosition = data.role;
-      const updateValue = data.name;
-      const draftName = data.draftName;
-      const leagueId = data.leagueId;
-      const choiceId = data.choiceId;
 
-      draftStore
-        .updateDraftPick(
-          FantasyName,
-          updatePosition,
-          updateValue,
-          leagueId,
-          choiceId
-        )
-        .then(() => {
-          draftStore.getDraftMembers(draftName).then((data) => {
-            io.to(draftName).emit("people", data);
-          });
-        });
-    } catch (e) {
-      console.log(e);
-    }
+
+  socket.on("draftPick", async (data) => {
+
+    const userId = data.userId;
+    console.log(userId);
+    await draftStore.getDraftMemberWallet(userId).then(async (balance) => {
+      console.log(balance);
+      if (balance > 500) {
+        try {
+          const FantasyName = data.fantasyname;
+          const updatePosition = data.role;
+          const updateValue = data.name;
+          const draftName = data.draftName;
+          const leagueId = data.leagueId;
+          const choiceId = data.choiceId;
+    
+          draftStore
+            .updateDraftPick(
+              FantasyName,
+              updatePosition,
+              updateValue,
+              leagueId,
+              choiceId,
+              userId
+            )
+            .then(() => {
+              draftStore.getDraftMembers(draftName).then((data) => {
+                io.to(draftName).emit("people", data);
+              });
+         
+            }).then( () => {
+              draftStore.getDraftMemberWallet(userId).then((balance) => { 
+                socket.emit("balance", balance)
+              })
+            })
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      else {
+        socket.emit("message", `You don't have enough money to make this pick balance is ${balance}` );
+      }
+
+
+    })
+
   });
 
   socket.on("startDraft", async (room) => {

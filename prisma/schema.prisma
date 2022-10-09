@@ -210,7 +210,6 @@ model Wallet {
   userId  String @unique
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   credits Int?
-
   Deposit    Deposit[]
   Withdrawal Withdrawal[]
 }

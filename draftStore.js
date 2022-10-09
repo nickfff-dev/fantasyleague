@@ -8,6 +8,7 @@ class draftStore {
   updateDraftMemberDraftOrder(draftName, FantasyName, updateValue) { }
   updateDraftPick(FantasyName, updatePosition, updateValue) { }
   deleteDraftMember(draftName, FantasyName) { }
+  getDraftMemberWallet(userId){}
 
 
 }
@@ -48,7 +49,7 @@ class DraftManager extends draftStore {
     })
     
   }
-  deleteDraftMember(draftName, FantasyName,) {
+  deleteDraftMember(draftName, FantasyName) {
    
     const draft = this.drafts.filter(draft => draft.name === draftName)
     const member = draft.members.filter(member => member.fantasyname === FantasyName)
@@ -60,7 +61,7 @@ class DraftManager extends draftStore {
     return draft.members
    
   }
-
+ 
 
   
 
@@ -188,9 +189,22 @@ class PrismaDraftStore extends draftStore {
 
 
   }
-  async updateDraftPick(FantasyName, updatePosition, updateValue, leagueId, choiceId) {
+  async updateDraftPick(FantasyName, updatePosition, updateValue, leagueId, choiceId, userId) {
    
     try {
+      await this.prisma.wallet.update({
+        where: {
+          userId: userId  
+        },
+        data: {
+          credits: {
+            decrement: 500
+          }
+
+        }
+      }).then(async () => { 
+        await this.prisma.$disconnect()
+      })
       if (updatePosition === "Bot") {
            
         await this.prisma.participant.update({
@@ -298,6 +312,23 @@ class PrismaDraftStore extends draftStore {
     await this.prisma.$disconnect()
   }
 
+  } 
+
+  async getDraftMemberWallet(userId) {
+    
+    try {
+      const walletbalance = await this.prisma.wallet.findUnique({
+        where: {
+          userId: userId
+        }
+      })
+      return walletbalance.credits
+    }
+    catch (err) { console.log(err) 
+    }
+    finally {
+      await this.prisma.$disconnect()
+    }
   }
 
 

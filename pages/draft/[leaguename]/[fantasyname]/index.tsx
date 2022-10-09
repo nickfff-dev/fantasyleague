@@ -17,7 +17,7 @@ const socket = io(
   }
  );
 
-function Draft({ focusonleague, focusonparticipant, participants, teams, players }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function Draft({ focusonleague, focusonparticipant, participants, teams, players, userId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
@@ -26,7 +26,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
   const [message, setMessage] = useState("")
   const [message2, setMessage2] =   useState("")
   const [counter, setCounter] = useState(0)
-
+ const [balance, setBalance] = useState(0)
 
 
 
@@ -50,6 +50,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
   
   
   useEffect(() => { 
+  
 
   socket.on("people", (data: any) => {
     console.log(data);
@@ -59,7 +60,22 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
       socket.off("people")
     }
     
-}, [draftPeople])
+  }, [draftPeople])
+  
+
+  useEffect(() => { 
+  
+
+    socket.on("balance", (data: any) => {
+      console.log(data);
+      setBalance(data)
+    })
+      return () => { 
+        socket.off("balance")
+      }
+      
+  }, [balance])
+    
   
   
   
@@ -300,13 +316,7 @@ useEffect(() => {
     <div className={s.root} style={{ textAlign: "center", display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
         <div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <button style={{color: "#ffd204", float: "left"}}  onClick={letmein}>enter room</button><br/>
-    <button style={{color: "#ffd204"}}
-      onClick={
-        () => { 
-          socket.emit("draftposition", focusonleague.name)
-        }
-      }
-      >assigndraftposi</button><br />
+ 
       
     <button style={{color: "#ffd204"}}
       onClick={
@@ -318,14 +328,7 @@ useEffect(() => {
       
     <button style={{color: "#ffd204"}} onClick={prepareDraft}>preparedraft</button><br/>
    </div>
-    {/* <button style={{color: "#ffd204"}} onClick={() => {
 
-      socket.emit("joinDraft", {
-          
-        fantasyname: focusonparticipant.fantasyname,
-        room: focusonleague.name,
-      } )
-    }}>joindraft</button><br/> */}
       
       <div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <h1>users in room</h1>
@@ -341,7 +344,8 @@ useEffect(() => {
 
 
     })}
-      </div>
+        </div>
+        <h1 style={{ color: "#ffd204" }}>{balance == 0 ? null : (<>balance : { balance}</>)}</h1>
       <h1 style={{color: "#ffd204"}}>{counter == 0 ? "wait your turn": "timer: " + counter}</h1>
       
     {
@@ -433,6 +437,7 @@ teamname:  {focusonparticipant.fantasyname}
                         draftName: focusonleague.name,
                         leagueId: focusonleague.id,
                         choiceId: team.id,
+                        userId: userId
                       })
                       
                     }
@@ -484,6 +489,7 @@ teamname:  {focusonparticipant.fantasyname}
                     draftName: focusonleague.name,
                     leagueId: focusonleague.id,
                     choiceId: player.id,
+                    userId: userId
                     
       
                   }
@@ -587,8 +593,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
    
   })
 
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email as string
+    }
+  })
+
+  const userId = user?.id as string
+
   return {
-    props: { focusonleague, focusonparticipant, participants, teams, players },
+    props: { focusonleague, focusonparticipant, participants, teams, players, userId },
   }
 }
 

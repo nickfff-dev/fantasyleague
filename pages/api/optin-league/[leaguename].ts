@@ -74,6 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 leaguename: leaguename,
                 inviteCode: null,
                 inviteComplete: true,
+                userId: userId,
 
 
               }
@@ -112,6 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                       inviteCode: inviteCode,
                       leaguename: leaguename,
                       inviteComplete: false,
+                      userId: userId,
                     }
                   }
 
@@ -148,6 +150,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     inviteCode: null,
                     leaguename: leaguename,
                     inviteComplete: true,
+                    userId: userId,
 
                   }
                 }
@@ -203,6 +206,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                         inviteCode: inviteCode,
                         leaguename: leaguename,
                         inviteComplete: false,
+                        userId: userId,
                       }
                     }
                   }
