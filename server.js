@@ -75,12 +75,30 @@ io.on("connection", (socket) => {
           socket.join(room);
           socket.room = room;
           socket.emit("message", socket.username + " joined the room " + room);
+          try {
+            const draftMembers = await draftStore.getDraftMembers(room);
+            const userbalance = draftMembers.filter((member) => member.fantasyname === socket.username);
+            draftStore.getDraftMemberWallet(userbalance[0].userId).then((wallet) => { 
+              socket.emit("balance", wallet);
+            })
+          }catch (err) { console.log(err) }
+          
+         
         }
       }
     } else {
       socket.join(room);
       socket.room = room;
       socket.emit("message", socket.username + " You joined the room " + room);
+      try {
+        const draftMembers = await draftStore.getDraftMembers(room);
+        const userbalance = draftMembers.filter((member) => member.fantasyname === socket.username);
+        draftStore.getDraftMemberWallet(userbalance[0].userId).then((wallet) => { 
+          socket.emit("balance", wallet);
+        })
+      }catch (err) { console.log(err) }
+   
+
     }
   });
 
@@ -191,6 +209,7 @@ io.on("connection", (socket) => {
 
   socket.on("startDraft", async (room) => {
     const draftMembers = await draftStore.getDraftMembers(room);
+    io.to(room).emit("people", draftMembers);
     const roommembers = io.sockets.adapter.rooms.get(room);
     // add socket
     const draftMembersWithSocketId = draftMembers.map((draftMember) => {
