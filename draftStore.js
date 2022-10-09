@@ -152,6 +152,9 @@ class PrismaDraftStore extends draftStore {
       const draftMembers = await this.prisma.participant.findMany({
         where: {
           draftName: draftName,
+        }, 
+        include: {
+          Wallet: true
         }
       })
       return draftMembers
@@ -198,7 +201,7 @@ class PrismaDraftStore extends draftStore {
         },
         data: {
           balance: {
-            decrement: Math.ceil(500/95)
+            decrement: 500 /95
           },
           credits: {
             decrement: 500

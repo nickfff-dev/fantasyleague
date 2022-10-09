@@ -8,6 +8,7 @@ import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
 import Link from "next/link";
 import dayjs from "dayjs";
+import { Leagueview } from "@components";
 
 
 
@@ -108,15 +109,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
         
         leagues?.map((league: League) => { 
           return (
-            <div key={league.id} className={s.container}>
-              <h1 className={s.title}>League: {league.name}</h1>
-              <h2 className={s.subtitle}>League ID: {league.id}</h2>
-              <h2 className={s.subtitle}>League Owner: {league.owner}</h2>
-              <h2 className={s.subtitle}>League Region: {league.region}</h2>
-              <h2 className={s.subtitle}>League buyinFee: {league.buyInFee}</h2>
-              <h2 className={s.subtitle}> <a href={`/league-summary/${league.name}`} target="_blank" >LinktoLeague</a></h2>
-               
-              <h2 className={s.subtitle}></h2></div>)
+                  <Leagueview league={league} key={league.name} />)
         })
       }
         
@@ -160,8 +153,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
       }
 
-    }
+    },
+    include: {
+      members: true
+    } 
   })
+
   return {
     props: {
       owner, leagues
