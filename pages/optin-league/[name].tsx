@@ -52,21 +52,26 @@ const JoinLeague = ({ league, user }:  InferGetServerSidePropsType<typeof getSer
         })
       }).then((res) => {
         res.text().then((data) => {
-          if (data === "success") { 
-              console.log(data)
+          if (data === "success") {
+            console.log(data)
             setInitiateInvite(false)
             setResponseText("You have successfully enrolled in this league")
             window.location.href = `/league-summary/${league.name}`
           } else if (data.startsWith("sent code to")) {
             console.log(data)
             setInitiateInvite(true)
-            setTeamName( data.split("sent code to")[1])
+            setTeamName(data.split("sent code to")[1])
             setResponseText(`This league is invite only, please enter the invite code sent to ${user.email}`)
           } else if (data === "insufficient funds") {
             console.log(data)
             setResponseText("You do not have enough funds to enroll in this league please deposit more funds")
              
             window.location.href = "/user/wallet"
+          } else if (data === "league full") { 
+            console.log(data)
+            setResponseText("This league is full")
+
+
           }
          
           

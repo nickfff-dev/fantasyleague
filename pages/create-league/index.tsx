@@ -4,23 +4,20 @@ import { League as Mchezo,Fixture, Teams,  Players } from "@prisma/client"
 import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import { calculateLeagueDuration } from "@lib/calculate";
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { getCurrentGames, getCurrentTeams, getPrivateLeagueTeams, getPrivateLeagueMatches, getPrivateLeaguePlayers,getPrivateLeagueResults,getLeagueFixture } from '@lib/cargoQueries';
+import { useSession, signIn, getSession, signOut } from 'next-auth/react';
+import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
 
 import { Grid } from '@components/ui';
 
 
 
-const CreateaLeague = () => { 
+const CreateaLeague = ({ username }:  InferGetServerSidePropsType<typeof getServerSideProps>) => { 
     
-  const { data: session } = useSession();
+  
 
 
-  useEffect(() => { 
-    if(!session) {
-      signIn();
-    }
-  }, [session]);
+
   const[leaguelink, setLeagueLink] = useState("")
  
   const [league, setLeague] = useState<Mchezo>();
@@ -108,11 +105,11 @@ const body = newLeaguedata
             
             </label><br/>
 
-            <label htmlFor="owner">Owner  &nbsp;  &nbsp; <input type="text" placeholder="your login username" name="owner" id="owner" value={newLeaguedata.owner}
+            <label htmlFor="owner">Owner  &nbsp;  &nbsp; <input style={{color: "black"}} placeholder={username} type="text" name="owner" id="owner" defaultValue ={username}
              
               onChange={
                 (e) => { 
-                  setNewLeaguedata({ ...newLeaguedata, owner: e.target.value })
+                  setNewLeaguedata({ ...newLeaguedata, owner: username })
                 }
              }
             /></label><br/>
@@ -200,6 +197,29 @@ const body = newLeaguedata
 )
   
 }
+ 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const session = await getSession(context)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    }
+  }
+  const username = session?.user?.name?.toString()
+  console.log(session?.user?.name?.toString())
+  return {
+    props: { username },
+  }
+}
+
+
+ 
+
+
 
 
 export default CreateaLeague
