@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
     const purchase = credits()
-    const depositFee = Math.ceil( 0.05 * data.amount) +1
+    const depositFee = 0.05 * data.amount
 
 
     if (data.walletkey === user?.walletkey) {
@@ -64,13 +64,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           credits: { increment: purchase },
           Deposit: {
             create: {
-            amount: data.amount as number - depositFee,
+            amount: data.amount - depositFee,
             txHash: txHsh as string,
             date: dayjs().toDate().toISOString().slice(0,10) as string,
             time: dayjs().toDate().toISOString().slice(11, 19) as string,
             userId: data.userId as string,
-            credits: credits() as number,
-            fees: depositFee as number,
+            credits: credits(),
+            fees: depositFee,
          } },
 
         },
@@ -80,18 +80,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           user: { connect: { id: user?.id } },
           Deposit: {
             create: {
-            amount: data.amount as number - depositFee,
+            amount: data.amount - depositFee,
             txHash: txHsh as string,
             date: dayjs().toDate().toISOString().slice(0,10) as string,
             time: dayjs().toDate().toISOString().slice(11, 19) as string,
             userId: data.userId as string,
-            credits: credits() as number,
-            fees: depositFee as number,
+            credits: credits(),
+            fees: depositFee,
          } },
 
 
         }
-      }).then( async() => { 
+      }).then( async() => {
 
 
         await prisma.mainWallet.update({
@@ -116,32 +116,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const txHsh = createHmac("sha256", secret).update(
       data.amount.toString()+ dayjs().toDate().toString()
     ).digest("hex")
-
-    const withdrawalFee = Math.ceil( 0.03 * data.amount) + 1
+     const withdrawalAmount = data.amount / 100
+    const withdrawalFee =  0.05 * withdrawalAmount
     
     const walletBalance = await prisma.wallet.findUnique({
       where: { userId: user?.id },
     })
 
-    if (walletBalance?.balance as number  < (data.amount + withdrawalFee)) {
-      res.json(`insufficient balance to withdraw $${data.amount} your balance is $${walletBalance?.balance}`  )
+    if (walletBalance?.credits as number  < (data.amount)) {
+      res.json(`insufficient balance to withdraw $${data.amount} credits your balance is $${walletBalance?.credits}`  )
     }
 
     else {
       await prisma.wallet.update({
         where: { userId: user?.id },
         data: {
-          balance: { decrement: (data.amount  + withdrawalFee) },
-          credits: { decrement: (data.amount as number * 95)},
+          balance: { decrement: (withdrawalAmount + withdrawalFee) },
+          credits: { decrement: data.amount},
           Withdrawal: {
             create: {
-              amount: data.amount as number - withdrawalFee,
+              amount: withdrawalAmount,
               txHash: txHsh as string,
               date: dayjs().toDate().toISOString().slice(0, 10) as string,
               time: dayjs().toDate().toISOString().slice(11, 19) as string,
               userId: data.userId as string,
-              credits: data.amount as number * 95 as number,
-              fees:  withdrawalFee as number,
+              credits: data.amount,
+              fees:  withdrawalFee,
         
             }
           }
@@ -152,10 +152,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           where: { id: 1 },
           data: {
             balance: { increment: withdrawalFee },
-            credits: { increment: data.amount * 95 },
+            credits: { increment: data.amount },
           },
         }).then(() => { 
-          res.status(200).json(`successfull withdrawal of $${data.amount} and $${withdrawalFee} withdrawal fee applied credits forfeited $${data.amount * 95}`);
+          res.status(200).json(`successfull withdrawal of $${withdrawalAmount}  and $${withdrawalFee} withdrawal fee applied credits forfeited $${data.amount }`);
         })
        
       })

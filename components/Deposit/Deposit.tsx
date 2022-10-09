@@ -74,8 +74,17 @@ const DepositsPage = ({  owner, wallet }: {  owner: User , wallet: Wallet}) => {
           })
         }
         <button onClick={onDepositAmountSubmit}>Confirm</button>
+        <p>
+            fees charged : {
+             depositAmount * 0.05
+            }
+        </p>
+        
+        <p>amount you will get {
+        
+        depositAmount - (depositAmount * 0.05)
+        }</p>
        
-        <p>balance: ${wallet.balance}</p>
         <p>
           new balance: $ {wallet.balance}
           

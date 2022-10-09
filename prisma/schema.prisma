@@ -206,7 +206,7 @@ model TeamResult {
 
 model Wallet {
   id      Int    @id @default(autoincrement())
-  balance Int
+  balance Float  
   userId  String @unique
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   credits Int?
@@ -216,7 +216,7 @@ model Wallet {
 
 model Deposit {
   id       Int    @id @default(autoincrement())
-  amount   Int
+  amount   Float
   userId   String
   walletId Int
   wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
@@ -224,12 +224,12 @@ model Deposit {
   time     String
   txHash   String
   credits  Int
-  fees    Int?
+  fees     Float?
 }
 
 model Withdrawal {
   id       Int    @id @default(autoincrement())
-  amount   Int
+  amount   Float
   userId   String
   walletId Int
   wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
@@ -237,14 +237,14 @@ model Withdrawal {
   time     String
   txHash   String @unique
   credits  Int
-  fees    Int?
+  fees     Float?
 }
 
 
 
 model MainWallet {
    id      Int    @id @default(autoincrement())
-  balance Int
+  balance Float
   credits Int
   houseFee Int
  

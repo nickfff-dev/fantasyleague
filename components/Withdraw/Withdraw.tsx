@@ -68,14 +68,23 @@ const WithdrawPage = ({ owner, wallet }: { owner: User, wallet: Wallet }) => {
       <Grid>
   
         <div className={s.container} >
-        <label htmlFor="withdrawAmount" >Withdraw Amount
-            <input type="number" name="withdrawAmount" style={{ color: "black" }} onChange={onWithdrawAmountChange} />  </label><br/>
-          <button onClick={onWithdrawAmountSubmit}>confirm</button>
-
-          <p>balance: ${wallet.balance}</p>
+        <label htmlFor="withdrawAmount" >Credits to withdraw
+            <input type="number" name="withdrawAmount" style={{ color: "black" }} onChange={onWithdrawAmountChange}  />  </label><br/>
+          <button onClick={onWithdrawAmountSubmit}>confirm</button><br/>
+          <p>amount you will get: {
+            
+            withdrawAmount / 100
+          
+          }</p><br/>
+          <p>
+            fees charged : {
+              withdrawAmount / 100 * 0.05
+            }
+          </p> <br/>
+          
           <p>new balance: 
             ${wallet.balance}
-          </p>
+          </p><br/>
           <p>{responsetext}</p>
     </div>
       
