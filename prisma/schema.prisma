@@ -127,6 +127,7 @@ model Participant {
   mid         String? @db.VarChar(100)
   adc         String? @db.VarChar(100)
   inviteCode  String? @db.VarChar(255)
+  inviteComplete Boolean? @default(false)
   confirmedAttendance Boolean? @default(false)
   support     String? @db.VarChar(100)
   team        String? @db.VarChar(100)
