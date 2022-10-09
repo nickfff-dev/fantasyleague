@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               visionScore: team.VisionScore,
               teamTotalKills: team.TeamKills,
               participantId: participant?.id as number,
-              points: Math.ceil(Number(calculatePlayerScore(team.Kills, team.Assists, team.Deaths, team.CS, team.VisionScore, team.TeamKills))),
+              points: Number(calculatePlayerScore(team.Kills, team.Assists, team.Deaths, team.CS, team.VisionScore, team.TeamKills)),
               league: {
                 connect: {
                   name: leaguename

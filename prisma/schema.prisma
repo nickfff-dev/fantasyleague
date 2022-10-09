@@ -79,7 +79,7 @@ model League {
   owner        String
   maxPlayers   Int
   minPlayers   Int
-  points       Int?
+  points      Float?
   draftReady   Boolean        @default(false)
   populateRosters Boolean     @default(false)
   region       String
@@ -101,7 +101,7 @@ model Teams {
   mid      String  @db.VarChar(100)
   adc      String  @db.VarChar(100)
   support  String  @db.VarChar(100)
-  points   Int     @db.Int
+  points   Float?
   leagueId Int?
   League   League? @relation(fields: [leagueId], references: [id])
   selected Boolean @default(false)
@@ -113,7 +113,7 @@ model Players {
   slug     String?  @db.VarChar(255)
   team     String?  @db.VarChar(100)
   position String   @db.VarChar(100)
-  points   Int?     @db.Int
+  points  Float?     
   leagueId Int?
   League   League?  @relation(fields: [leagueId], references: [id])
   selected Boolean? @default(false)
@@ -131,7 +131,7 @@ model Participant {
   confirmedAttendance Boolean? @default(false)
   support     String? @db.VarChar(100)
   team        String? @db.VarChar(100)
-  points      Int?    @db.Int
+  points      Float?   
   draftOrder  Int?    @db.Int
   leaguename  String? @db.VarChar(255)
   leagueId    Int?
@@ -174,7 +174,7 @@ model PlayerResult {
   assists        Int?
   game           String
   teamTotalKills Int?
-  points         Int?
+  points         Float?
   leagueId       Int?
   league         League? @relation(fields: [leagueId], references: [id])
   date           String?
@@ -194,7 +194,7 @@ model TeamResult {
   inhibitorKills  Int?
   baronKills      Int?
   didWin          Boolean?
-  points          Int?
+  points          Float?
   leagueId        Int?
   league          League?  @relation(fields: [leagueId], references: [id])
   date            String?

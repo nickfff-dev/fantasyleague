@@ -205,7 +205,9 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         }
         <h1>number of games</h1>
         {
-          calculateplayerpoints(playerresults).midPPoints
+          playerresults?.filter((result: any) => result.name === mid && result.role === "Mid").reduce(
+            (acc: number, result: any) => acc + 1, 0
+            )
         }
 
         <Grid>
