@@ -46,7 +46,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
     if (focusonparticipant.confirmedAttendance === false) {
       window.location.href = `/draft/${focusonleague.leaguename}/${focusonparticipant.fantasyname}/confirmdraft`
     }
-  })
+  } , [focusonparticipant])
   
   
   useEffect(() => { 

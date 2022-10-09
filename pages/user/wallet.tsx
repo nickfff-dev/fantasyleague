@@ -16,7 +16,12 @@ const UserWallet = ({ owner, wallet, withdrawals, deposits }: InferGetServerSide
  
 
 
+  useEffect(() => { 
 
+    if (owner.verificationCode === null || owner.verificationCode === "" || owner.emailVerified=== false) {
+      window.location.href = "/user/verify"
+    }
+  } ,[owner.verificationCode])
  
  
   
