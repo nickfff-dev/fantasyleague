@@ -16,7 +16,7 @@ import { PlayerResults } from "@components"
 
 
 
-function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function ParticipantTeamPage({ participant, results }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const refreshData = () => {
     router.replace(router.asPath);
@@ -34,7 +34,7 @@ function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof
       <p>leaguename: {participant.leaguename}</p>
      
           <PlayerResults
-          
+           smdata={results}
             top={participant.top}
             jungle={participant.jungle}
             mid={participant.mid}
@@ -53,7 +53,8 @@ function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof
 
        
    
-      </div>
+        </div>
+        
  
       </Grid>
      </div>
@@ -63,7 +64,8 @@ function ParticipantTeamPage({ participant }: InferGetServerSidePropsType<typeof
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => { 
-
+  const fantasyname = context?.params?.fantasyname as string;
+  const leaguename = context?.params?.leaguename as string;
   const session = await getSession(context)
   if (!session) {
     return {
@@ -83,12 +85,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return data
     })
   
-
- 
+  const mavitu = await fetch(`http://localhost:3000/api/populate-fantasy/${leaguename}/`, {
+    method: 'POST',
+    body: JSON.stringify({
+      fantasyname: fantasyname,
+    }),
+  }).then((res) =>
+    res.json().then((data) => { 
+      return JSON.parse(data)
+    }))
+   
 
   return {
     props: {
       participant: participantd,
+      results : mavitu
     }
     }
     

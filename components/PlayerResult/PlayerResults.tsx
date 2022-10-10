@@ -11,35 +11,35 @@ import { useRouter } from 'next/router';
 
 
 
-const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname, fantasyname }: {  top: String,leaguename:String, mid: String,jungle: String,adc: String,support: String, teamname: String, fantasyname:String  }) => { 
-  const [playerresults, setPlayerResults] = useState<any>([]);
-  const [results, setResults] = useState<any>([]);
-  const [resultLoaded, setResultLoaded] = useState<boolean>(false);
+const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname, fantasyname, smdata }: {  top: String,leaguename:String, mid: String,jungle: String,adc: String,support: String, teamname: String, fantasyname:String, smdata: any  }) => { 
+  // const [playerresults, setPlayerResults] = useState<any>([]);
+  // const [results, setResults] = useState<any>([]);
+  // const [resultLoaded, setResultLoaded] = useState<boolean>(false);
 
 
-  const getResults = async () => {
-     await fetch(`/api/populate-fantasy/${leaguename}/`, {
-      method: 'POST',
-      body: JSON.stringify({
-        fantasyname: fantasyname,
-      }),
-    }).then((res) =>
-      res.json().then((data) => { 
+  // const getResults = async () => {
+  //    await fetch(`/api/populate-fantasy/${leaguename}/`, {
+  //     method: 'POST',
+  //     body: JSON.stringify({
+  //       fantasyname: fantasyname,
+  //     }),
+  //   }).then((res) =>
+  //     res.json().then((data) => { 
         
-        setResults(JSON.parse(data).teamres);
-        setPlayerResults(JSON.parse(data).playerres);
-        setResultLoaded(true);
-      })   
-    );
+  //       setResults(JSON.parse(data).teamres);
+  //       setPlayerResults(JSON.parse(data).playerres);
+  //       setResultLoaded(true);
+  //     })   
+  //   );
   
    
-  }
-  useEffect(() => { 
+  // }
+  // useEffect(() => { 
  
-     if (resultLoaded === false  ) {
-      getResults();
-    } 
-  }, [resultLoaded])
+  //    if (resultLoaded === false  ) {
+  //     getResults();
+  //   } 
+  // }, [resultLoaded])
   
 
   const router = useRouter();
@@ -111,7 +111,7 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
      
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
-            {playerresults?.map((result: any, index: number) => {
+            {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === top &&  result.role === "Top") {
                 return (
                   <div className={s.item} key={index}>
@@ -134,18 +134,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         </Grid>
         <h1>total points</h1>
         {
-            calculateplayerpoints(playerresults).toPPoints
+            calculateplayerpoints(smdata.playerres).toPPoints
         }
         <h1>number of games</h1>
         {
-           playerresults?.filter((result: any) => result.name === top && result.role === "Top").reduce(
+           smdata.playerres?.filter((result: any) => result.name === top && result.role === "Top").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
              
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
-            {playerresults?.map((result: any, index: number) => {
+            {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === jungle && result.role === "Jungle") {
                 return (
                   <div className={s.item} key={index}>
@@ -168,17 +168,17 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         </Grid>
         <h1>total points</h1>
         {
-            calculateplayerpoints(playerresults).jgPPoints
+            calculateplayerpoints(smdata.playerres).jgPPoints
         }
         <h1>number of games</h1>
         {
-          playerresults?.filter((result: any) => result.name === jungle && result.role === "Jungle").reduce(
+          smdata.playerres?.filter((result: any) => result.name === jungle && result.role === "Jungle").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
-            {playerresults?.map((result: any, index: number) => {
+            {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === mid) {
                 return (
                   <div className={s.item} key={index}>
@@ -201,18 +201,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         </Grid>
         <h1>total points</h1>
         {
-            calculateplayerpoints(playerresults).midPPoints
+            calculateplayerpoints(smdata.playerres).midPPoints
         }
         <h1>number of games</h1>
         {
-          playerresults?.filter((result: any) => result.name === mid && result.role === "Mid").reduce(
+          smdata.playerres?.filter((result: any) => result.name === mid && result.role === "Mid").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
 
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
-            {playerresults?.map((result: any, index: number) => {
+            {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === adc ) {
                 return (
                   <div className={s.item} key={index}>
@@ -235,18 +235,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         </Grid>
         <h1>total points</h1>
         {
-             calculateplayerpoints(playerresults).adcPPoints
+             calculateplayerpoints(smdata.playerres).adcPPoints
         }
         <h1>number of games</h1>
         {
-          playerresults?.filter((result: any) => result.name === adc && result.role === "Bot").reduce(
+          smdata.playerres?.filter((result: any) => result.name === adc && result.role === "Bot").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
         
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
-            {playerresults?.map((result: any, index: number) => {
+            {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === support ) {
                 return (
                   <div className={s.item} key={index}>
@@ -272,11 +272,11 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         </Grid>
      <h1>total points</h1>
         {
-            calculateplayerpoints(playerresults).supPPoints
+            calculateplayerpoints(smdata.playerres).supPPoints
         }
         <h1>number of games</h1>
         {
-          playerresults?.filter((result: any) => result.name === support && result.role === "Support").reduce(
+          smdata.playerres?.filter((result: any) => result.name === support && result.role === "Support").reduce(
             (acc: number, result: any) => acc + 1, 0
             )
         }
@@ -291,11 +291,11 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
      
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row"}}>
-            {results?.map((result: any) => {
+            {smdata.teamres?.map((result: any) => {
              
               if (result.name === teamname) {   
                 return (
-                  <div className={s.item} key={results.indexOf(result)}>
+                  <div className={s.item} key={smdata.teamres.indexOf(result)}>
                   <p>team: {result.name }</p>
                 
                         
@@ -327,11 +327,11 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
 
         <h1>totalpoints </h1>
           {
-            teamPPoints(results)
+            teamPPoints(smdata.teamres)
         }
         
         <h1>number of games</h1>{
-          results?.filter((result: any) => result.name === teamname ).reduce((acc: number, result: any) => {
+          smdata.teamres?.filter((result: any) => result.name === teamname ).reduce((acc: number, result: any) => {
             return acc + 1
           }, 0)
         }
@@ -343,8 +343,8 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
       <h1>total player points</h1>
       {
         calculateplayerpoints(
-          playerresults
-        ).playerPointstotal  + teamPPoints( results)
+          smdata.playerres
+        ).playerPointstotal  + teamPPoints(smdata.teamres)
       }
     </Grid>
   </>)

@@ -190,12 +190,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const playerres = await prisma.playerResult.findMany({
       where: {
         participantId: participant?.id
+      },
+      orderBy: {
+        game : "desc"
       }
     })
 
     const teamres = await prisma.teamResult.findMany({
       where: {
         participantId: participant?.id
+      },orderBy: {
+        game : "desc"
       }
     })
 
