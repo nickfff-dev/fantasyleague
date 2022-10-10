@@ -25,7 +25,7 @@ const Leagueview = ({ league }: { league: any  }) => {
             {
               league.members.map((participant: Participant) => { 
                 return (
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }} key={participant.id}>
                     <a target="_blank" href={`/participant/${league.name}/${participant.fantasyname}/Overview/`}><p>{participant.fantasyname}</p></a>
                     <p>{participant.points} points</p>
                   </div>

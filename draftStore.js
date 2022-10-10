@@ -152,9 +152,6 @@ class PrismaDraftStore extends draftStore {
       const draftMembers = await this.prisma.participant.findMany({
         where: {
           draftName: draftName,
-        }, 
-        include: {
-          Wallet: true
         }
       })
       return draftMembers
