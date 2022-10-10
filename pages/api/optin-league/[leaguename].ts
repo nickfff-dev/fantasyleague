@@ -92,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             from: MY_GMAIL,
             to: email,
             subject: `InviteCode to ${leaguename}`,
-            message: `Hello ${teamname}, you have been invited to join ${leaguename}. Your invite code is ${inviteCode}`
+            text: `Hello ${teamname}, you have been invited to join ${leaguename}. Your invite code is ${inviteCode}`
 
           }
           transporter.sendMail(mailOptions, async (err, data) => {
@@ -190,7 +190,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               from: MY_GMAIL,
               to: email,
               subject: `InviteCode to ${leaguename}`,
-              message: `Hello ${teamname}, you have been invited to join ${leaguename}. Your invite code is ${inviteCode}`
+              text: `Hello ${teamname}, you have been invited to join ${leaguename}. Your invite code is ${inviteCode}`
 
             }
             transporter.sendMail(mailOptions, async (err, data) => {

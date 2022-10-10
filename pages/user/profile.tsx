@@ -16,6 +16,13 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
   const [usernewname, setUser] = useState("");
   const [birthDate, setBirthDate] = useState(owner.birthDate);
   
+
+  useEffect(() => { 
+
+    if (owner.verificationCode === null || owner.verificationCode === "" || owner.emailVerified=== false) {
+      window.location.href = "/user/verify"
+    }
+  } ,[owner.verificationCode])
   const onUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
     setUser(e.target.value);
 
@@ -64,8 +71,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
   return (
     <Grid>
-      {
-        owner.verificationCode ? (<>
+      
           <div className={s.container}>
         <h1 className={s.title}>Account</h1>
         <h2 className={s.subtitle}>Welcome {owner.name}</h2>
@@ -113,8 +119,8 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
         })
       }
         
-        </>) : (<div ><a href="/user/verify">click here to verify</a></div>)
-      }
+       
+      
       
     </Grid>
   )

@@ -12,7 +12,7 @@ const MY_GMAIL ="jumanaturetech@gmail.com"
   const MY_GMAIL_PASSWORD = "jytm khdc rxwu kxwy"
   const subject = "Welcome to Jumanature"
   const verificationCode = Math.floor(Math.random() * 1000000)
-  const text = `Hello ${resdata.name}, welcome to Jumanature. Your verification code is ${verificationCode}`
+
   const transporter = nodemailer.createTransport(({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -27,7 +27,7 @@ const MY_GMAIL ="jumanaturetech@gmail.com"
     from: MY_GMAIL,
   to: resdata.email,
     subject: subject,
-    message: text,
+    text: `Hello ${resdata.name}, welcome to Jumanature. Your verification code is ${verificationCode}`,
   }
   
   transporter.sendMail(mailOptions, async (err, data) => { 
@@ -38,12 +38,10 @@ const MY_GMAIL ="jumanaturetech@gmail.com"
       await prisma.user.update({
         where: { email: resdata.email },
         data: {verificationCode: verificationCode, emailVerified: true}
-      }).then(() => {
-        res.status(200).json("success")
       })
     }
      
   })
-
+  res.status(200).send(`success ${verificationCode}`)
 
 }
