@@ -4,7 +4,7 @@ import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useSession, signIn, getSession, signOut } from 'next-auth/react';
-
+import { Leagueview } from "@components";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 
@@ -24,16 +24,10 @@ const MyLeagues = ({ leagues , username} :  InferGetServerSidePropsType<typeof g
       <h1>My Leagues</h1>
         {leagues.map((league: League) => {
           return (
-            <div key={league.id}>
-              <h2>name: {league.name}</h2>
-              <p>region: {league.region}</p>
-              <p>owner: {league.owner}</p>
-              <p>duration: {league.duration} days</p>
-              <a href={`/league-summary/${league.name}` }> link to league</a>
-
-            </div>
+       <Leagueview league={league} key={league.id} />
        )
-     })}
+        })}
+        
 
     </div>
 </Grid>
@@ -61,17 +55,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
    
    const leagues = await prisma.league.findMany({
     where: {
-      members: {
-        some: {
-          username: username?.toString()
-        }
-    }
-  }
+      owner: username as string
+     },
+     include: {
+      members: true
+     }
    }).then(async (leagues) => {
     await prisma.$disconnect()
     return leagues
    
-  })
+   })
+  
+   console.log(leagues)
    
    return {
      props: {

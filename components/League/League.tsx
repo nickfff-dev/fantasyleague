@@ -27,7 +27,7 @@ const Leagueview = ({ league }: { league: any  }) => {
                 return (
                   <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }} key={participant.id}>
                     <a target="_blank" href={`/participant/${league.name}/${participant.fantasyname}/Overview/`}><p>{participant.fantasyname}</p></a>
-                    <p>{participant.points} points</p>
+                    <p>{participant.points}</p>
                   </div>
                 )
               })
