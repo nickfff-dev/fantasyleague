@@ -6,6 +6,7 @@ import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
+import { Leagueview } from "@components";
 
 
 const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -17,14 +18,7 @@ const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServe
       <h1>Open Leagues</h1>
       {
         leagues.map((league:League) => (
-          <div key={league.id} className={s.container}>
-            <p>name: {league?.name}</p>
-            <p>region: {league?.region}</p>
-            <p>owner: {league?.owner}</p>
-            <p>duration {league?.duration} days</p>
-            <a href={`/optin-league/${league.name}`}>join league link</a>
-
-          </div>
+          <Leagueview key={league.id} league={league} />
         ))
       }
 
@@ -56,6 +50,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
   const leagues = await prisma.league.findMany({
+
+    include: {
+      members: true,
+    }
   }).then(async (leagues) => {
     await prisma.$disconnect()
     return leagues

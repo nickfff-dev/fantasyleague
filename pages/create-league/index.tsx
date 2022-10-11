@@ -121,12 +121,7 @@ const body = newLeaguedata
             /></label><br/>
 
             
-            <label htmlFor="inviteCode">Invite Code &nbsp;  &nbsp;     <input type="text" placeholder="Invite Code" name="inviteCode" value={newLeaguedata.inviteCode} onChange={
-              (e) => {
-                setNewLeaguedata({ ...newLeaguedata, inviteCode: e.target.value })
-                console.log(newLeaguedata)
-              }
-            } /></label><br/>
+      
             <label htmlFor="draftTime">Draft Time   &nbsp;  &nbsp;   <input type="datetime-local" placeholder="Draft Time" name="draftTime" onChange={
               (e) => {
                 const theval = e.target.value

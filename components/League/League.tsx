@@ -16,10 +16,13 @@ const Leagueview = ({ league }: { league: any  }) => {
     
     <div style={{color:"white"}}>
       <Grid>
-        <div className={s.container} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between",width: "500px" }}>
-         <a target="_blank" href={ `/league-summary/${league.name}/`}> <p > name: {league.name}</p></a>
-          <p>region: {league.region}</p>
-
+        <div className={s.container} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between",width: "800px" }}>
+          <a target="_blank" href={`/league-summary/${league.name}/`}>
+            <p > name: {league.name}</p></a>
+  <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between" }}>        <p>region: {league.region}</p>
+          <p>buyInFee: ${league.buyInFee}</p>
+          <p>InviteOnly: { league.inviteOnly}</p>
+</div>
           
           <div className={s.container} style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" , width: "500px"}}>
             {
@@ -27,14 +30,19 @@ const Leagueview = ({ league }: { league: any  }) => {
                 return (
                   <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }} key={participant.id}>
                     <a target="_blank" href={`/participant/${league.name}/${participant.fantasyname}/Overview/`}><p>{participant.fantasyname}</p></a>
-                    <p>{participant.points}</p>
+                    <p>{Math.ceil(participant.points as number)}</p>
                   </div>
                 )
               })
             }
 
           </div>
-          <p>totalpoints: {league.points}</p>
+
+          <p>totalpoints: {Math.ceil(league.points)}</p>
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+          <p> link to league: <a target="_blank" href={`/league-summary/${league.name}`}>{league.name}</a></p>
+          <p>join link: <a target="_blank" href={`/optin-league/${league.name}`}>click to join</a></p>
+          </div>
 
 
         </div>

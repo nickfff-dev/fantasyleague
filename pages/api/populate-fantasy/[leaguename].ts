@@ -39,8 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     playerdata?.map(async (team: any) => { 
       if ((team.Link === participant?.top && team.Role === "Top") || (team.Link === participant?.jungle && team.Role === "Jungle") || (team.Link === participant?.mid && team.Role === "Mid") || (team.Link === participant?.adc && team.Role === "Bot") || (team.Link === participant?.support && team.Role === "Support")) {
-       
-         await prisma.playerResult.upsert({
+      
+        await prisma.playerResult.upsert({
             where: {
               name_game_participantId: {
                 name: team.Link,
@@ -53,14 +53,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               game: team.GameId,
               role: team.Role,
               team: team.Team,
+              date: dayjs(team.DateTime_UTC).toDate().toISOString(),
               kills: team.Kills,
               deaths: team.Deaths,
+              team1: team.Team1,
+              team2: team.Team2,
               assists: team.Assists,
-              creepScore: team.CreepScore,
+              creepScore: team.CS,
               visionScore: team.VisionScore,
               teamTotalKills: team.TeamKills,
               participantId: participant?.id as number,
-              points: Number(calculatePlayerScore(team.Kills, team.Assists, team.Deaths, team.CS, team.VisionScore, team.TeamKills)),
+              points:Number(calculatePlayerScore(team.Kills, team.Assists, team.Deaths, team.CS, team.VisionScore, team.TeamKills)),
               league: {
                 connect: {
                   name: leaguename
@@ -71,9 +74,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               kills: team.Kills,
               deaths: team.Deaths,
               assists: team.Assists,
-              creepScore: team.CreepScore,
+              date: dayjs(team.DateTime_UTC).toDate().toISOString(),
+              creepScore: team.CS,
               visionScore: team.VisionScore,
               teamTotalKills: team.TeamKills,
+              points:Number(calculatePlayerScore(team.Kills, team.Assists, team.Deaths, team.CS, team.VisionScore, team.TeamKills)),
+
 
             }
           })
@@ -103,13 +109,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               riftHeraldKills: team.Team1RiftHeralds,
               turretKills: team.Team1Towers,
               baronKills: team.Team1Barons,
+              team1: team.Team1,
+              team2: team.Team2,
               inhibitorKills: team.Team1Inhibitors,
               didWin: team.Winner === 1 ? true : false,
               participantId: participant?.id as number,
-              points: calculateTeamScore(
+              points: Number(calculateTeamScore(
                 team.Team1Kills, team.Team1Dragons, team.Team1RiftHeralds, team.Team1Towers, team.Team1Inhibitors, team.Team1Barons, team.Winner === 1 ? true : false
                 
-              ),
+              )),
               league: {
                 connect: {
                   name: leaguename
@@ -125,10 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               baronKills: team.Team1Barons,
               inhibitorKills: team.Team1Inhibitors,
               didWin: team.Winner === 1 ? true : false,
-              points: calculateTeamScore(
+              points: Number(calculateTeamScore(
                 team.Team1Kills, team.Team1Dragons, team.Team1RiftHeralds, team.Team1Towers, team.Team1Inhibitors, team.Team1Barons, team.Winner === 1 ? true : false
                 
-              ),
+              )),
               
             }
           })
@@ -146,6 +154,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             create: {
               name: team.Team2,
               game: team.GameId,
+              team1: team.Team1,
+              team2: team.Team2,
               date: dayjs(team.DateTime_UTC).toDate().toISOString(),
               teamKills: team.Team2Kills,
               dragonKills: team.Team2Dragons,
@@ -155,10 +165,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               inhibitorKills: team.Team2Inhibitors,
               didWin: team.Winner === 2 ? true : false,
               participantId: participant?.id as number,
-              points: calculateTeamScore(
+              points:Number( calculateTeamScore(
                 team.Team2Kills, team.Team2Dragons, team.Team2RiftHeralds, team.Team2Towers, team.Team2Inhibitors, team.Team2Barons, team.Winner === 2 ? true : false
                 
-              ),
+              )),
               league: {
                 connect: {
                   name: leaguename
@@ -171,13 +181,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               dragonKills: team.Team2Dragons,
               riftHeraldKills: team.Team2RiftHeralds,
               turretKills: team.Team2Towers,
+              team1: team.Team1,
+              team2: team.Team2,
               baronKills: team.Team2Barons,
               inhibitorKills: team.Team2Inhibitors,
               didWin: team.Winner === 2 ? true : false,
-              points: calculateTeamScore(
+              points: Number( calculateTeamScore(
                 team.Team2Kills, team.Team2Dragons, team.Team2RiftHeralds, team.Team2Towers, team.Team2Inhibitors, team.Team2Barons, team.Winner === 2 ? true : false
                 
-              ),
+              )),
               
             }
           })

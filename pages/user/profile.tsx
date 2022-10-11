@@ -111,6 +111,8 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
       
  <div  ><h1 className={s.title} style={{textAlign:"center"}}>Leagues</h1></div>
+     
+      <Grid>
       {
         
         leagues?.map((league: League) => { 
@@ -118,7 +120,8 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
                   <Leagueview league={league} key={league.name} />)
         })
       }
-        
+  </Grid>
+
        
       
       

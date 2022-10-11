@@ -61,16 +61,18 @@ const VerifyUser = ({ owner }: InferGetServerSidePropsType<typeof getServerSideP
     }
   }
 
-  return (<>
-  
+  return (<Grid>
+    <div className={s.container} style={{color: "white"}}> 
+        
     {
       verified ? (
-       <label htmlFor="verificationcode">check your email and enter code<input name="verificationcode" type="text"  onChange={onVerificationCodeChange} />
+       <label  htmlFor="verificationcode">check your email and enter code<input name="verificationcode" type="text"  onChange={onVerificationCodeChange} />
         <button onClick={onVerificationCodeSubmit}  type ="submit" value="Submit">submit</button></label>
     ) : (<><button onClick={onVerifyUser}>click to send verification code</button></>)
     }
+</div>
   
-  </>)
+  </Grid>)
 }
 
 

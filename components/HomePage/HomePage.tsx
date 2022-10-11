@@ -35,34 +35,7 @@ const HomePage = () => {
  
   }
 
-  // getPrivateLeagueResults(league).then(
-  //   (teams) => {
-  //     console.log(teams)
-  //   }
-  // )
-  // populateTeams().then((teams) => {
-  //   console.log(teams)
-  // })
-  // getCurrentGames().then((data) => { 
-  //   console.log(data)
-  // })
-  // populatePlayers().then((players) => { 
-  //   console.log(players)
-  // })
-  
 
-  // getLeagueFixture(league.startDate, league.endDate, league.region).then((data) => {
-
-
-    
-  //   console.log(data)
-  // })
-
-
-  // getPrivateLeagueTeams(league).then((data) => {
-  //   if(!data) return;
-  //   for(let i = 0; i < data.length; i++){
-  // console.log(data[i])}})
   
 
 

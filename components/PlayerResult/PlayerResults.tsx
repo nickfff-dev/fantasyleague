@@ -110,17 +110,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
       
      
 <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
+    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
             {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === top &&  result.role === "Top") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.role}<br /> {result.name}</p>
-                  <p>fixture: {result.game}</p>
-                  
+               <p>Role: {result.role}<br /> name: {result.name}</p>
+                  <p> game: {result.team1} vs {result.team2 }</p>
+                  <p>tab: {result.game.split("_").slice(1).join("_")}</p>
+                    
                   <p>kills: {result.kills}</p>
                     <p>deaths: {result.deaths}</p>
-                    <p>gamename: { result.game}</p>
+                    
                   <p>assists: {result.assists}</p>
                   <p>teamkills: {result.teamTotalKills}</p>
                   <p>CS: {result.creepScore}</p>
@@ -144,17 +145,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         }
              
 <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
+    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
             {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === jungle && result.role === "Jungle") {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.role}<br /> {result.name}</p>
-                  <p>fixture: {result.game}</p>
-                  
+              <p>Role: {result.role}<br /> name: {result.name}</p>
+                    <p>game: {result.team1} vs {result.team2 }</p>
+                  <p>tab: {result.game.split("_").slice(1).join("_")}</p>
+                 
                   <p>kills: {result.kills}</p>
                     <p>deaths: {result.deaths}</p>
-                    <p>gamename: { result.game}</p>
+                  
                   <p>assists: {result.assists}</p>
                   <p>teamkills: {result.teamTotalKills}</p>
                   <p>CS: {result.creepScore}</p>
@@ -177,17 +179,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
             )
         }
         <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
+    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
             {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === mid) {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.role}<br /> {result.name}</p>
-                  <p>fixture: {result.game}</p>
-                  
+                    <p>Role: {result.role}<br /> name: {result.name}</p>
+                    <p>game: {result.team1} vs {result.team2 }</p>
+                  <p>tab: {result.game.split("_").slice(1).join("_")}</p>
+             
                   <p>kills: {result.kills}</p>
                     <p>deaths: {result.deaths}</p>
-                    <p>gamename: { result.game}</p>
+                   
                   <p>assists: {result.assists}</p>
                   <p>teamkills: {result.teamTotalKills}</p>
                   <p>CS: {result.creepScore}</p>
@@ -211,17 +214,18 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         }
 
         <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
+    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
             {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === adc ) {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.role}<br /> {adc}</p>
-                  <p>fixture: {result.game}</p>
-                  
+                    <p>{result.role}<br /> {adc}</p>
+                    <p>game: {result.team1} vs {result.team2 }</p>
+                  <p>tab: {result.game.split("_").slice(1).join("_")}</p>
+        
                   <p>kills: {result.kills}</p>
                     <p>deaths: {result.deaths}</p>
-                    <p>gamename: { result.game}</p>
+                  
                   <p>assists: {result.assists}</p>
                   <p>teamkills: {result.teamTotalKills}</p>
                   <p>CS: {result.creepScore}</p>
@@ -245,17 +249,19 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
         }
         
         <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row",}}>
+    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1500px"}}>
             {smdata.playerres?.map((result: any, index: number) => {
               if (result.name === support ) {
                 return (
                   <div className={s.item} key={index}>
-                  <p>{result.role}<br /> {result.name}</p>
-                  <p>fixture: {result.game}</p>
-                  
+                    <p>{result.role}<br /> {result.name}</p>
+                    <p> game: {result.team1} vs {result.team2}</p>
+                    <p>date { result.date}</p>
+                  <p>tab: {result.game.split("_").slice(1).join("_")}</p>
+   
                   <p>kills: {result.kills}</p>
                     <p>deaths: {result.deaths}</p>
-                    <p>gamename: { result.game}</p>
+                 
                   <p>assists: {result.assists}</p>
                   <p>teamkills: {result.teamTotalKills}</p>
                   <p>CS: {result.creepScore}</p>
@@ -290,7 +296,7 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
       
      
 <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row"}}>
+    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1500px"}}>
             {smdata.teamres?.map((result: any) => {
              
               if (result.name === teamname) {   
@@ -298,8 +304,8 @@ const PlayerResults = ({  top, jungle, mid, adc, support, leaguename,  teamname,
                   <div className={s.item} key={smdata.teamres.indexOf(result)}>
                   <p>team: {result.name }</p>
                 
-                        
-                        <p>fixture: {result.game}</p>
+                  <p> game:  {result.team1} vs {result.team2 }</p>
+                        <p>tab: {result.game.split("_").slice(1).join("_")}</p>
                         <p>dragonkills: {result.dragonKills}</p>
                         <p>baronkills: {result.baronKills}</p>
                         <p>heraldkills: {result.riftHeraldKills}</p>

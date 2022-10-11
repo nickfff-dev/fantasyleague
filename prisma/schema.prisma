@@ -169,6 +169,8 @@ model PlayerResult {
   role           String
   creepScore     Int?
   visionScore    Int?
+  team1           String?
+  team2           String?
   kills          Int?
   deaths         Int?
   assists        Int?
@@ -192,6 +194,8 @@ model TeamResult {
   riftHeraldKills Int?
   turretKills     Int?
   inhibitorKills  Int?
+  team1          String?
+  team2          String?
   baronKills      Int?
   didWin          Boolean?
   points          Float?

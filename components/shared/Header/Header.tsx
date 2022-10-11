@@ -19,7 +19,7 @@ import Logo from '@public/images/logo.svg';
 import { type } from 'os';
 
 
-const navLinks = ['Home', 'Stats', 'Rules', 'My Leagues', 'Join a League', 'Create a League'];
+const navLinks = ['Home', 'My Leagues', 'Join a League', 'Create a League'];
 
 const Header = ({ 
   
@@ -42,7 +42,12 @@ const Header = ({
       </div>
 
       <nav className={navClassNames}>
-        {navLinks.map((link) => {
+        <Link href='/user/profile'> My account </Link>
+        <Link href='/user/wallet'> wallet </Link>
+        <Link href='/alleagues'> leagues </Link>
+        <Link href='/create-league'> create-league </Link>
+
+        {/* {navLinks.map((link) => {
           const slug = link.replaceAll(' ', '').toLowerCase();
           if (slug === "myleagues") 
           {
@@ -62,7 +67,7 @@ const Header = ({
               <a>{link}</a>
             </Link>
           );
-        })}
+        })} */}
       </nav>
 
       <div className={s.btns}>
