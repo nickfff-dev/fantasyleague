@@ -65,70 +65,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
   if (playerdataz.length >0  || teamdata.length>0) {
-    const totalTeamPoints = (teamdata: any, playerdata: any) => {
+    
+
+    const partcipantpo = await prisma.participant.groupBy({
+      by: ["leagueId"],
+      where: {
+        leagueId: league?.id
+      },
+      _sum: {
+        points: true
+      }
+    }).then(async (data) => {
+      await prisma.$disconnect();
+      return data;
   
-      const teampoints = teamdata.reduce((acc: number, team: any) => {
-        return acc + team._sum.points;
-  
-      }, 0)
-  
-      const playerpoints = playerdata.reduce((acc: number, player: any) => {
-        return acc + player._sum.points;
-      }, 0)
-
-
-      const totalpoints = teampoints + playerpoints;
-      return totalpoints;
-    }
+    })
+    
 
 
 
-    // const findPlayerTotalPoints = async (participantId: number, teamdata: any) => {
-
-
-
-    //   const player = playerdataz.find((player: any) => player.participantId === participantId);
-    //   const team = teamdata.find((team: any) => team.participantId === participantId);
-    //   const totalpoints = player?._sum.points + team?._sum.points
-    //   try {
-    //     await prisma.league.update({
-    //       where: {
-    //         id: league?.id
-    //       },
-    //       data: {
-    //         members: {
-    //           update: {
-    //             where: {
-    //               id: participantId
-    //             },
-    //             data: {
-    //               points: totalpoints
-    //             }
-    //           }
-    //         }
-    //       }
-    //     })
-    //   }
-  
-    //   catch (error: any) {
-    //     console.log(error)
-    //   }
-
-
-    // }
-
-    // await prisma.participant.findMany({
-    //   where: {
-    //     leagueId: league?.id
-    //   }
-    // }).then((data) => {
-    //   data.forEach(async (participant) => {
-    //     await findPlayerTotalPoints(participant.id, teamdata);
-    //   })
-    // }).catch((err) => {
-    //   console.log(err);
-
-    // })
 
 
     try {
@@ -137,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           id: league?.id
         },
         data: {
-          points: totalTeamPoints(teamdata, playerdataz),
+          points: partcipantpo[0]._sum.points,
     
     
         }
