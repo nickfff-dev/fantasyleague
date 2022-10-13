@@ -16,7 +16,7 @@ import { PlayerResults } from "@components"
 
 
 
-function ParticipantTeamPage({ participant, results }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function ParticipantTeamPage({ participant, results}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const refreshData = () => {
     router.replace(router.asPath);
@@ -35,15 +35,8 @@ function ParticipantTeamPage({ participant, results }: InferGetServerSidePropsTy
      
           <PlayerResults
            smdata={results}
-            top={participant.top}
-            jungle={participant.jungle}
-            mid={participant.mid}
-            adc={participant.adc}
-            support={participant.support}
-            
-            teamname={participant.team}
-            leaguename={participant.leaguename}
-            fantasyname={participant.fantasyname}
+            participant={participant}
+           
             
 
           
@@ -75,15 +68,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     }
   }
-  const participantd = await prisma.participant.findUnique({
+  const league = await prisma.league.findUnique({
     where: {
-      fantasyname: context.params?.fantasyname as string,
+      name: leaguename
+    },
+    include: {
+      members: true,
+      
     }
-  }).then(async (data) => {
-    
-       
-      return data
-    })
+  })
+  const participantd = league?.members.find((participant) => participant.fantasyname === fantasyname)
+
   
   const mavitu = await fetch(`http://localhost:3000/api/populate-fantasy/${leaguename}/`, {
     method: 'POST',
@@ -99,7 +94,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       participant: participantd,
-      results : mavitu
+      results: mavitu,
+      
     }
     }
     

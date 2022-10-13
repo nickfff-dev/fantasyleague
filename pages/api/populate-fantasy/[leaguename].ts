@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@lib/prisma';
-import { Fixture, Teams, League, Players, Participant, TeamResult, PrismaClient, Prisma} from "@prisma/client"
+import { Fixture, Teams, League, Players, Participant, TeamResult, PrismaClient, Prisma, PlayerResult} from "@prisma/client"
 import dayjs from 'dayjs';
 import { getPrivateLeagueResults, getPrivateLeagueMatches,getPrivateLeaguePlayers } from "@lib/cargoQueries";
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
@@ -9,6 +9,11 @@ import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) { 
 
+  function getPlayerTeam(playerarray: any[], playername: string) {
+    const player = playerarray.find((player) => player.name === playername);
+    return player.team;
+   
+  }
 
   const leaguename = req.query.leaguename as string;
   const fantasyname = JSON.parse(req.body).fantasyname as string;
@@ -16,20 +21,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const league = await prisma.league.findUnique({
     where: {
       name: leaguename
+    },
+    include: {
+      players: true,
+      members: true,
     }
-  }).then((data) => { 
 
+  }).then(async (data) => { 
+    await prisma.$disconnect();
     return data
   })
 
-  const participant = await prisma.participant.findUnique({
-    where: {
-      fantasyname: fantasyname
-    }
-  }).then((data) => { 
-      
-      return data
-  })
+  const participant =  league?.members.find((participant) => participant.fantasyname === fantasyname)
 
 
 
@@ -38,7 +41,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const teamdata = await getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string)
 
     playerdata?.map(async (team: any) => { 
-      if ((team.Link === participant?.top && team.Role === "Top") || (team.Link === participant?.jungle && team.Role === "Jungle") || (team.Link === participant?.mid && team.Role === "Mid") || (team.Link === participant?.adc && team.Role === "Bot") || (team.Link === participant?.support && team.Role === "Support")) {
+      if (((team.Link === participant?.top && team.Role === "Top") || (team.Role === "Top" && team.Team === getPlayerTeam(league?.players, participant?.top as string)))
+        || ((team.Link === participant?.jungle && team.Role === "Jungle") || (team.Role === "Jungle" && team.Team === getPlayerTeam(league?.players, participant?.jungle as string)))
+        || ((team.Link === participant?.mid && team.Role === "Mid") || (team.Role === "Mid" && team.Team === getPlayerTeam(league?.players, participant?.mid as string)))
+        || ((team.Link === participant?.adc && team.Role === "Bot") || (team.Role === "Bot" && team.Team === getPlayerTeam(league?.players, participant?.adc as string)))
+        || ((team.Link === participant?.support && team.Role === "Support") || (team.Role === "Support" && team.Team === getPlayerTeam(league?.players, participant?.support as string)))
+
+       
+      ) {
       
         await prisma.playerResult.upsert({
             where: {
@@ -82,6 +92,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
             }
+          }).then(async () => { 
+            await prisma.$disconnect();
+          
           })
         
 
@@ -139,6 +152,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               )),
               
             }
+          }).then(async () => { 
+            await prisma.$disconnect();
+           
           })
         
       } else if (team.Team2 === participant?.team) { 
@@ -192,6 +208,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               )),
               
             }
+          }).then(async () => { 
+            await prisma.$disconnect();
+            
           })
         
       }
@@ -201,21 +220,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const playerres = await prisma.playerResult.findMany({
       where: {
-        participantId: participant?.id
+        participantId: participant?.id,
+        
       },
       orderBy: {
         game : "desc"
       }
+    }).then(async (data) => { 
+   
+      return data
     })
 
     const teamres = await prisma.teamResult.findMany({
       where: {
-        participantId: participant?.id
+        participantId: participant?.id,
       },orderBy: {
         game : "desc"
       }
-    })
-
+    }).then(async (data) => { 
+    await prisma.$disconnect();
+    return data
+  })
+      const totalpoints = playerres?.reduce((a, b: any) => a + b.points, 0) + teamres?.reduce((a, b: any) => a + b.points, 0)
+    
+  await prisma.participant.update({
+    where: {
+      id: participant?.id as number
+    },
+    data: {
+      points:  totalpoints
+    }
+  }).then(async () => { 
+    await prisma.$disconnect();
+  })
+    
     res.status(200).json(JSON.stringify({playerres, teamres}))
    
   }

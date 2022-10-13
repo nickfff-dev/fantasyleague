@@ -23,14 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   })
 
 
-  const fixtures = await prisma.fixture.findMany({
-    where: {
-      leagueId: league?.id
-    }
-  }).then(async (data) => {
-    await prisma.$disconnect();
-    return data;
-  });
+
 
 
   
@@ -90,52 +83,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
 
-    const findPlayerTotalPoints = async (participantId: number, teamdata: any) => {
+    // const findPlayerTotalPoints = async (participantId: number, teamdata: any) => {
 
 
 
-      const player = playerdataz.find((player: any) => player.participantId === participantId);
-      const team = teamdata.find((team: any) => team.participantId === participantId);
-      const totalpoints = player?._sum.points + team?._sum.points
-      try {
-        await prisma.league.update({
-          where: {
-            id: league?.id
-          },
-          data: {
-            members: {
-              update: {
-                where: {
-                  id: participantId
-                },
-                data: {
-                  points: totalpoints
-                }
-              }
-            }
-          }
-        })
-      }
+    //   const player = playerdataz.find((player: any) => player.participantId === participantId);
+    //   const team = teamdata.find((team: any) => team.participantId === participantId);
+    //   const totalpoints = player?._sum.points + team?._sum.points
+    //   try {
+    //     await prisma.league.update({
+    //       where: {
+    //         id: league?.id
+    //       },
+    //       data: {
+    //         members: {
+    //           update: {
+    //             where: {
+    //               id: participantId
+    //             },
+    //             data: {
+    //               points: totalpoints
+    //             }
+    //           }
+    //         }
+    //       }
+    //     })
+    //   }
   
-      catch (error: any) {
-        console.log(error)
-      }
+    //   catch (error: any) {
+    //     console.log(error)
+    //   }
 
 
-    }
+    // }
 
-    await prisma.participant.findMany({
-      where: {
-        leagueId: league?.id
-      }
-    }).then((data) => {
-      data.forEach(async (participant) => {
-        await findPlayerTotalPoints(participant.id, teamdata);
-      })
-    }).catch((err) => {
-      console.log(err);
+    // await prisma.participant.findMany({
+    //   where: {
+    //     leagueId: league?.id
+    //   }
+    // }).then((data) => {
+    //   data.forEach(async (participant) => {
+    //     await findPlayerTotalPoints(participant.id, teamdata);
+    //   })
+    // }).catch((err) => {
+    //   console.log(err);
 
-    })
+    // })
 
 
     try {
