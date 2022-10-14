@@ -22,7 +22,7 @@ instrument(io, {
 });
 
 const sessionStore = new InMemorySessionStore();
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   const sessionID = socket.handshake.auth.sessionID;
   if (sessionID) {
     const session = sessionStore.findSession(sessionID);
@@ -39,8 +39,9 @@ io.use((socket, next) => {
   if (!username) {
     return next(new Error("invalid username"));
   }
-  socket.sessionID = randomId();
-  socket.userID = randomId();
+  const userID = await draftStore.getDraftMember(socket.room, username)
+  socket.sessionID = userID.id.toString() + "_" + username
+  socket.userID =  userID.id
   socket.username = username;
 
   next();

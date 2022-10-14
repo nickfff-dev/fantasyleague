@@ -5,6 +5,7 @@ class draftStore {
   getDraft(draftName) { }
   addDraftMember(draftName, member) { }
   getDraftMembers(draftName) { }
+  getDraftMember(draftName, FantasyName) { }
   updateDraftMemberDraftOrder(draftName, FantasyName, updateValue) { }
   updateDraftPick(FantasyName, updatePosition, updateValue) { }
   deleteDraftMember(draftName, FantasyName) { }
@@ -61,6 +62,13 @@ class DraftManager extends draftStore {
     return draft.members
    
   }
+
+  getDraftMember(draftName, FantasyName) {
+    const draft = this.drafts.filter(draft => draft.name === draftName)
+    const member = draft.members.filter(member => member.fantasyname === FantasyName)
+    return member
+  
+   }
  
 
   
@@ -326,6 +334,22 @@ class PrismaDraftStore extends draftStore {
         }
       })
       return walletbalance.credits
+    }
+    catch (err) { console.log(err) 
+    }
+    finally {
+      await this.prisma.$disconnect()
+    }
+  }
+
+  async getDraftMember(draftName, FantasyName) { 
+    try {
+      const member = await this.prisma.participant.findUnique({
+        where: {
+          fantasyname: FantasyName, draftName: draftName
+        }
+      })
+      return member
     }
     catch (err) { console.log(err) 
     }
