@@ -18,7 +18,7 @@ const socket = io(
   }
 );
 
-function Draft({ focusonleague, focusonparticipant, participants, teams, players, userId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function Draft({ focusonleague, focusonparticipant, participants, teams, players }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
@@ -453,7 +453,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
                           draftName: focusonleague.name,
                           leagueId: focusonleague.id,
                           choiceId: team.id,
-                          userId: userId
+                      
                         })
 
                 
@@ -504,7 +504,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
                             draftName: focusonleague.name,
                             leagueId: focusonleague.id,
                             choiceId: player.id,
-                            userId: userId
+                            
 
 
                           }
@@ -559,6 +559,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const focusonleague = await prisma.league.findUnique({
     where: {
       name: leaguename,
+    },
+    include: {
+      members: true,
+      teams: true,
+      players: true,
     }
   }).then(async (league) => {
     await prisma.$disconnect()
@@ -566,59 +571,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   })
 
-  const focusonparticipant = await prisma.participant.findFirst({
-    where: { leaguename: leaguename, fantasyname: fantasyname },
-  }).then(async (participant) => {
-    await prisma.$disconnect()
-    return participant
 
+  const focusonparticipant = focusonleague?.members.find((member) => { 
+    return member.fantasyname === fantasyname
   })
-  const participants = await prisma.participant.findMany({
-    where: {
-      leaguename: leaguename, leagueId: focusonleague?.id
+  const participants =  focusonleague?.members
+  const teams = focusonleague?.teams
 
-    }
-  }).then(async (participants) => {
-    await prisma.$disconnect()
-    return participants
-
+  const players = focusonleague?.players.filter((player) => { 
+    player.selected === false
   })
 
-  const teams = await prisma.teams.findMany({
-    where: {
-      leagueId: focusonleague?.id
-    }
-  }).then(async (teams) => {
-    await prisma.$disconnect()
-    return teams
 
-  })
-
-  const players = await prisma.players.findMany({
-    where: {
-      leagueId: focusonleague?.id
-    }
-  }).then(async (data) => {
-    await prisma.$disconnect()
-    const unselectplayers = data.filter((player) => {
-  
-        return player
-      
-    })
-    return unselectplayers
-
-  })
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session?.user?.email as string
-    }
-  })
-
-  const userId = user?.id as string
 
   return {
-    props: { focusonleague, focusonparticipant, participants, teams, players, userId },
+    props: { focusonleague, focusonparticipant, participants, teams, players },
   }
 }
 
