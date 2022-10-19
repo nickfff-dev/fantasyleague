@@ -18,11 +18,11 @@ const socket = io(
   }
 );
 
-function Draft({ focusonleague, focusonparticipant, participants, teams, players }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function Draft({ focusonleague, focusonparticipant, userId, teams, players }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 
   const [usernamealreadyselected, setUsernamealreadyselected] = useState(false)
-  const [watu, setWatu] = useState([{ connected: false, self: true, userID: "", username: "", }])
+  const [watu, setWatu] = useState([{ connected: false, self: true, userID: "", username: "", isReady: false}])
   const [draftPeople, setDraftPeople] = useState([{ adc: "", jungle: "", mid: "", support: "", top: "", team: "", username: "", leaguename: "", leagueId: 0, id: 0 }])
   const [message, setMessage] = useState("")
   const [message2, setMessage2] = useState("")
@@ -33,7 +33,14 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
 
 
+  const emitPlayerReady = () => {
+    socket.emit("imready", {
+      draftName: focusonleague.name,
+      fantasyname: focusonparticipant.fantasyname,
+  
 
+    } )
+  }
 
   const letmein = async () => {
     const username = focusonparticipant.fantasyname
@@ -257,7 +264,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
     })
 
-    socket.on("user connected", (user: { userID: any; username: string }) => {
+    socket.on("user connected", (user: { userID: any; username: string, isReady: boolean }) => {
 
       for (let i = 0; i < watu.length; i++) {
         const existingUser = watu[i];
@@ -271,7 +278,9 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
         connected: true,
         self: user.userID === (socket as any).userID,
         userID: user.userID,
-        username: user.username
+        username: user.username,
+        isReady: user.isReady
+
       })
 
       setWatu([...watu])
@@ -315,59 +324,59 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
     <>
 
       <div style={{ display: "flex", flexDirection: "row" }}>
-        
-      <Grid>
-        <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width :"500px"  }}   >
-          
+
+        <Grid>
+          <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width: "500px" }}   >
+
             <h1> Draft</h1>
             <h2>leaguename: {focusonleague.name}</h2>
             <h3>fantasyname: {focusonparticipant.fantasyname}</h3>
             <h4> draftposition: {focusonparticipant.draftOrder}</h4>
-         
-        </div>
-      </Grid>
-      <Grid>
-        <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width :"500px" }} >
-        <h1 style={{ color: "#ffd204" }}>{balance == 0 ? null : (<>balance : {balance}</>)}</h1>
-        <h1 style={{ color: "#ffd204" }}>{counter == 0 ? "wait your turn" : "timer: " + counter}</h1>
 
-        {
-          message ? (<div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }} ><h1>draft events</h1><p style={{ color: "#ffd204" }}>{message}</p></div>) : (<p style={{ color: "#ffd204" }}>draftlog</p>)
-        }
+          </div>
+        </Grid>
+        <Grid>
+          <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width: "500px" }} >
+            <h1 style={{ color: "#ffd204" }}>{balance == 0 ? null : (<>balance : {balance}</>)}</h1>
+            <h1 style={{ color: "#ffd204" }}>{counter == 0 ? "wait your turn" : "timer: " + counter}</h1>
 
-
-        <div >
+            {
+              message ? (<div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }} ><h1>draft events</h1><p style={{ color: "#ffd204" }}>{message}</p></div>) : (<p style={{ color: "#ffd204" }}>draftlog</p>)
+            }
 
 
-          {
-            message2 ? (<h1 style={{ color: "#ffd204" }}>{message2}</h1>) : (<h1 style={{ color: "#ffd204" }}></h1>)
-          }</div>
-     </div>
-     </Grid>
-    
+            <div >
+
+
+              {
+                message2 ? (<h1 style={{ color: "#ffd204" }}>{message2}</h1>) : (<h1 style={{ color: "#ffd204" }}></h1>)
+              }</div>
+          </div>
+        </Grid>
+
 
         <Grid>
-            <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width :"500px" }}>
-          <h1>users in room</h1>
-          {watu?.map((user) => {
-            return (
+          <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width: "500px" }}>
+            <h1>users in room</h1>
+            {watu?.map((user) => {
+              return (
 
-              <span key={user.userID}>{user.username} {focusonleague.room}</span>
-
-
-
-            );
+                <span key={user.userID}>{user.username} {focusonleague.room}</span>
 
 
 
-          })}
-        </div>
-      </Grid>
-   
+              );
+
+
+
+            })}
+          </div>
+        </Grid>
+
       </div>
-     
+
       <Grid>
-        <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "row", justifyContent: "space-between", width :"500px" }}>
+        <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "row", justifyContent: "space-between", width: "500px" }}>
           <button style={{ color: "#ffd204", float: "left" }} onClick={letmein}>enter room</button> <br />
 
 
@@ -379,13 +388,13 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
             }
           >startDraft</button><br />
 
-          <button style={{ color: "#ffd204" }} onClick={prepareDraft}>preparedraft</button><br />
+          <button style={{ color: "#ffd204" }} onClick={emitPlayerReady}>are you ready?</button><br />
         </div>
 
-        </Grid>
+      </Grid>
       <Grid>
-        <div className={s.container} style={{width: "1000px"}}> 
-        <table style={{ color: "#ffd204", width: "1000px" }} hidden={false}>
+        <div className={s.container} style={{ width: "1000px" }}>
+          <table style={{ color: "#ffd204", width: "1000px" }} hidden={false}>
             <thead>
               <tr>
                 <th scope="col">FANTASYNAME</th>
@@ -420,30 +429,25 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
         </div>
       </Grid>
       <Grid>
-  
-      <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "row", justifyContent: "space-between", width: "1000px" }} >
 
-       
+        <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "row", justifyContent: "space-between", width: "1000px" }} >
 
-      
-          <div style={{ display: "flex", flexDirection: "row",justifyContent: "space-between", width: "1000px"  }}>
+
+
+
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "1000px" }}>
             <table style={{ color: "#ffd204" }} hidden={false}>
-          
+
               <thead>
                 <tr>
                   <th scope="col">TEAM NAME</th>
-                 
+
 
                 </tr>
               </thead>
               <tbody>
                 {
-                  teams.filter((team: Teams) => {
-                    if (team.selected === false) {
-                      return team
-                    }
-
-                  }).map((team: Teams) => (
+                  teams.map((team: Teams) => (
                     <tr key={team.id} onClick={
                       () => {
                         socket.emit("draftPick", {
@@ -453,16 +457,17 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
                           draftName: focusonleague.name,
                           leagueId: focusonleague.id,
                           choiceId: team.id,
-                      
+                          userId: userId
+
                         })
 
-                
+
 
                       }
                     }>
                       <td>{team.name}</td>
-                      
-                      
+
+
                     </tr>
                   ))
                 }
@@ -477,7 +482,7 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
                   <th scope="col">playername</th>
                   <th scope="col">player team</th>
                   <th scope="col">role</th>
-                 
+
 
 
                 </tr>
@@ -504,13 +509,14 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
                             draftName: focusonleague.name,
                             leagueId: focusonleague.id,
                             choiceId: player.id,
-                            
+                            userId: userId
+
 
 
                           }
 
                         )
-                     
+
                       }
                     }>
 
@@ -531,8 +537,8 @@ function Draft({ focusonleague, focusonparticipant, participants, teams, players
 
         </div>
 
-      
-</Grid>
+
+      </Grid>
 
 
       {
@@ -570,22 +576,26 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return league
 
   })
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email as string,
+    }
+  })
 
-
-  const focusonparticipant = focusonleague?.members.find((member) => { 
+  const focusonparticipant = focusonleague?.members.find((member) => {
     return member.fantasyname === fantasyname
   })
-  const participants =  focusonleague?.members
+  const participants = focusonleague?.members
   const teams = focusonleague?.teams
 
-  const players = focusonleague?.players.filter((player) => { 
+  const players = focusonleague?.players.filter((player) => {
     player.selected === false
   })
 
-
+  const userId = user?.id
 
   return {
-    props: { focusonleague, focusonparticipant, participants, teams, players },
+    props: { focusonleague, focusonparticipant, participants, teams, players, userId },
   }
 }
 

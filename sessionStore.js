@@ -23,6 +23,21 @@ class InMemorySessionStore extends SessionStore {
   findAllSessions() {
     return [...this.sessions.values()];
   }
+
+  updateSession(id) {
+
+    const session = this.sessions.get(id);
+    if (session) { 
+      session.isReady = true;
+    }
+
+   }
+
+
+
+  
+
+
 }
 
 
