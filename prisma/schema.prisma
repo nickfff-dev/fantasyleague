@@ -134,6 +134,7 @@ model Participant {
   points      Float?   
   draftOrder  Int?    @db.Int
   leaguename  String? @db.VarChar(255)
+  isReady     Boolean? @default(false)
   leagueId    Int?
   userId      String?
   fantasyname String? @unique @db.VarChar(255)
