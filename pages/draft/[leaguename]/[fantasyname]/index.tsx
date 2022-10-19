@@ -380,13 +380,6 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
           <button style={{ color: "#ffd204", float: "left" }} onClick={letmein}>enter room</button> <br />
 
 
-          <button style={{ color: "#ffd204" }}
-            onClick={
-              () => {
-                socket.emit("startDraft", focusonleague.name)
-              }
-            }
-          >startDraft</button><br />
 
           <button style={{ color: "#ffd204" }} onClick={emitPlayerReady}>are you ready?</button><br />
         </div>
