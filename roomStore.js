@@ -4,78 +4,25 @@ const { addEmitHelpers } = require("typescript");
 const draftStore = new PrismaDraftStore();
 const sessionStore = new InMemorySessionStore();
 
-
-
 class RoomStore {
   constructor(io, socket) {
     this.io = io;
     this.socket = socket;
     this.teamPickArray = [];
     this.draftMembersWithSocketId = [];
-  
-    this.counter =  30 * 1000;
-    this.draftTimeOut = null
-    this.maxTimer =  30 * 1000;
-    this.draftOrder = 0
-
-
-    
-    
+    this.counter = 20 * 1000;
+    this.draftTimeOut = null;
+    this.maxTimer = 20 * 1000;
+    this.draftOrder = 0;
   }
 
-
-
-  async saveSession() {
-    sessionStore.saveSession(this.socket.sessionID, {
-      userID: this.socket.userID,
-      username: this.socket.username,
-      connected: true,
-      isReady:  this.socket.isReady ? this.socket.isReady : false
-    })
-
-    
-  }
-
-
-  
-  async emitSession() {
-    this.socket.emit("session", {
-      sessionID: this.socket.sessionID,
-      userID: this.socket.userID,
-      isReady:   this.socket.isReady,
-    })
-  }
-  async joinRoom(room) {
-    const people = this.io.sockets.adapter.rooms.get(room);
-    if (people) {
-   
-      for (const person of people) {
-        let personsocket = this.io.sockets.sockets.get(person);
-        if (personsocket.username === this.socket.username) {
-          this.socket.emit(
-            "message",
-            personsocket.username + " is already in the room"
-          );
-        } else {
-          this.socket.join(room);
-          this.socket.room = room;
-          this.socket.emit("message", this.socket.username + " joined the room " + room);
-          this.emitBalance(room);
-          
-         
-        }
-      }
+  _updateDraftOrder() {
+    if (this.draftOrder < this.teamPickArray.length) {
+      this.draftOrder += 1;
     } else {
-      this.socket.join(room);
-      this.socket.room = room;
-      this.socket.emit("message", this.socket.username + " You joined the room " + room);
-      this.emitBalance(room);
-   
-
+      this.draftOrder = 0;
     }
-
   }
-
 
   async emitUsers() {
     const users = [];
@@ -89,53 +36,28 @@ class RoomStore {
     });
     console.log(users);
     this.socket.emit("users", users);
-
-  }
-  
-  async onDisconnect() { 
-
-      const matchingSockets = await this.io.in(this.socket.userID).allSockets();
-      const isDisconnected = matchingSockets.size === 0;
-  
-      if (isDisconnected) {
-        // notify other users
-        this.socket.broadcast.emit("user disconnected", this.socket.userID);
-        // update the connection status of the session
-        sessionStore.saveSession(
-          this.socket.sessionID,
-          {
-            userID: this.socket.userID,
-            username: this.socket.username,
-            connected: false,
-          }
-        );
-        
-      }
-    
   }
 
   async emitBalance(room) {
     try {
       const draftMembers = await draftStore.getDraftMembers(room);
-      const userbalance = draftMembers.filter((member) => member.fantasyname === this.socket.username);
-      draftStore.getDraftMemberWallet(userbalance[0].userId).then((wallet) => { 
+      const userbalance = draftMembers.filter(
+        (member) => member.fantasyname === this.socket.username
+      );
+      draftStore.getDraftMemberWallet(userbalance[0].userId).then((wallet) => {
         this.socket.emit("balance", wallet);
-      })
-    }catch (err) { console.log(err) }
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  async emitUserConnected() { 
-      
-    this.socket.broadcast.emit("user connected", {
-      userID: this.socket.userID,
-      username: this.socket.username,
-      connected: true,
-      isReady:   this.socket.isReady ? this.socket.isReady : false,
-    })
+  async ondraftPick() {
+    await this._resetTimeOut();
+    await this._nextTurn();
   }
 
-
-  async emitDraftMembers(room) { 
+  async emitDraftMembers(room) {
     const draftMembers = await draftStore.getDraftMembers(room);
     this.io.to(room).emit("people", draftMembers);
   }
@@ -181,231 +103,175 @@ class RoomStore {
 
           this.io.to(room).emit("people", draftMemmbers);
         });
-      }).then(async () => { 
-        
-        await this.generateSnakeDraftOrder(room);
-
-        
-
       })
+      .then(async () => {
+        await this.generateSnakeDraftOrder(room);
+      });
   }
 
-
-  async generateDraftMemberWithSocketID(room) { 
+  async generateDraftMemberWithSocketID(room) {
     const roommembers = this.io.sockets.adapter.rooms.get(room);
     const draftMembers = await draftStore.getDraftMembers(room);
-   
-this.draftMembersWithSocketId = draftMembers.map((draftMember) => {
-  const memberSocket = Array.from(roommembers).find((member) => {
-    const memberSocket = this.io.sockets.sockets.get(member);
-    return memberSocket.username === draftMember.fantasyname;
-  });
-  return {
-    ...draftMember,
-    socketId: memberSocket,
-  };
-})
-    
-    
+
+    this.draftMembersWithSocketId = draftMembers.map((draftMember) => {
+      const memberSocket = Array.from(roommembers).find((member) => {
+        const memberSocket = this.io.sockets.sockets.get(member);
+        return memberSocket.username === draftMember.fantasyname;
+      });
+      return {
+        ...draftMember,
+        socketId: memberSocket,
+      };
+    });
   }
 
-  async getDraftMemberWithSocketID(room) { 
-    if (this.draftMembersWithSocketId.length > 0) { 
-      return this.draftMembersWithSocketId
-     
+  async getDraftMemberWithSocketID(room) {
+    if (this.draftMembersWithSocketId.length > 0) {
+      return this.draftMembersWithSocketId;
     } else {
       await this.generateDraftMemberWithSocketID(room);
-      return this.draftMembersWithSocketId
+      return this.draftMembersWithSocketId;
     }
-    
   }
 
   async generateSnakeDraftOrder(room) {
-
-      if (this.draftMembersWithSocketId.length === 0) {
-        await this.getDraftMemberWithSocketID(room);
-    } 
-    var numberofteams = this.draftMembersWithSocketId.length
+    if (this.draftMembersWithSocketId.length === 0) {
+      await this.getDraftMemberWithSocketID(room);
+    }
+    var numberofteams = this.draftMembersWithSocketId.length;
     var numberofrounds = 6;
 
-
-
-
-for (var i = 0; i < numberofrounds; i++) {
-  if (i % 2 == 0) {
-    for (var j = 0; j < numberofteams; j++) {
-      this.teamPickArray.push(j);
-    }
-  } else {
-    for (var x = numberofteams - 1; x >= 0; x--) {
-      this.teamPickArray.push(x);
-    }
-  }
-    }
-    
-    this.io.to(room).emit("message", `draft order looks like this ${JSON.stringify(this.teamPickArray)}`);
-
-
-  
-
-  }
-    
-  async ondraftPick(data) {
-    
-    const userId = data.userId;
-    await draftStore.getDraftMemberWallet(userId).then(async (balance) => {
-      if (balance > 500) {
-     
-        try {
-          const FantasyName = data.fantasyname;
-          const updatePosition = data.role;
-          const updateValue = data.name;
-          const draftName = data.draftName;
-          const leagueId = data.leagueId;
-          const choiceId = data.choiceId;
-    
-          draftStore
-            .updateDraftPick(
-              FantasyName,
-              updatePosition,
-              updateValue,
-              leagueId,
-              choiceId,
-              userId
-            )
-            .then(() => {
-                    this.emitDraftMembers(draftName);
-         
-            }).then( () => {
-              this.emitBalance(draftName);
-
-            })
-          
-          
-        } catch (e) {
-          console.log(e);
+    for (var i = 0; i < numberofrounds; i++) {
+      if (i % 2 == 0) {
+        for (var j = 0; j < numberofteams; j++) {
+          this.teamPickArray.push(j);
+        }
+      } else {
+        for (var x = numberofteams - 1; x >= 0; x--) {
+          this.teamPickArray.push(x);
         }
       }
-      else {
-        this.socket.emit("message", `You don't have enough money to make this pick balance is ${balance}`);
+    }
 
-      }
-
-
-    })
-   
-
+    this.io
+      .to(room)
+      .emit(
+        "message",
+        `draft order looks like this ${JSON.stringify(this.teamPickArray)}`
+      );
   }
 
   async getSnakeDraftOrder(room) {
     if (this.teamPickArray.length > 0) {
       return this.teamPickArray;
-    }
-    else { 
-
+    } else {
       await this.generateSnakeDraftOrder(room);
       return this.teamPickArray;
-      
-   
-    
     }
   }
 
+  async onPlayerReady() {
+    this.socket.on("imready", async () => {
+      this.socket.isReady = true;
 
-  async onPlayerReady(data) {
-    this.socket.isReady = true;
+      sessionStore.updateSession(this.socket.sessionID);
+      await draftStore.updateMemberReady(
+        this.socket.room,
+        this.socket.username
+      );
 
-    sessionStore.updateSession(this.socket.sessionID)
-    await draftStore.updateMemberReady(data.draftName, data.fantasyname)
-    
-  
-    this.emitDraftMembers(data.draftName)
-    this.emitUsers()
+      await this.beginDraft();
+    });
+  }
 
-    await draftStore.getDraftMembers(data.draftName).then(async (members) => { 
+  async beginDraft() {
+    draftStore.getDraftMembers(this.socket.room).then(async (members) => {
       if (members.every((member) => member.isReady)) {
-        await this.assignDraftOrder(data.draftName)
-        await this.beginDraft()
-        
+        await this.assignDraftOrder(this.socket.room);
+        await this.emitDraftMembers(this.socket.room);
+        await this._emitTurn(this.draftOrder);
       }
-    })
-    
+    });
   }
 
- async beginDraft() { 
-    await this._emitTurn(this.draftOrder)
-  }
+  async _emitTurn(draftOrder) {
+    try {
+      const turnplayer = this.draftMembersWithSocketId.filter(
+        (member) => member.draftOrder === this.teamPickArray[draftOrder]
+      )[0];
 
-async _emitTurn(draftOrder) {
-
-      
-  
-    
-  const currentPick =  this.draftMembersWithSocketId.find((draftperson) => draftperson.draftOrder === this.teamPickArray[draftOrder])
-   
-      const draftroom = currentPick.draftName;
-      const socker = this.io.sockets.sockets.get(currentPick.socketId)
-     socker.emit("message", `It's ${currentPick.fantasyname}'s turn to pick`)
-    socker.to(draftroom).emit("message", `It's ${currentPick.fantasyname}'s turn to pick`)
-   await this._triggerTimeOut();
-    
-      
+      if (turnplayer) {
+        const turnplayersocket = turnplayer.socketId;
+        console.log(turnplayersocket);
+        this.io
+          .to(turnplayersocket)
+          .emit("message2", ` ${turnplayer.fantasyname} It's your turn to pick`);
+        const turnplayersocketw = this.io.sockets.sockets.get(turnplayersocket);
+  turnplayersocketw.broadcast.emit(  "message", `It's ${turnplayer.fantasyname}'s turn to pick`);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    await this._triggerTimeOut();
   }
 
   async _nextTurn() {
-   console.log(this.draftOrder)
-   const draftPeople = this.draftMembersWithSocketId.find((member) => member.draftOrder === this.teamPickArray[this.draftOrder])
-    console.log("after", draftPeople)
-    const socker = this.io.sockets.sockets.get(draftPeople.socketId)
-    socker.emit("message", ` ${draftPeople.fantasyname}'s turn to pick is over`)
-    socker.to(this.socket.room).emit("message", `turn is over for ${draftPeople.fantasyname}`)
+    try {
+      this._updateDraftOrder();
 
-    const totalpicks = this.teamPickArray.length
-    if (this.draftOrder < totalpicks) {
-      const nextPick = this.draftOrder + 1;
-      this.draftOrder = nextPick;
-     await this._emitTurn(nextPick)
-       
+      const turnplayer = this.draftMembersWithSocketId.filter(
+        (member) =>
+          member.draftOrder === this.teamPickArray[this.draftOrder - 1]
+      )[0];
+
+      if (turnplayer) {
+        const turnplayersocket = turnplayer.socketId;
+        console.log(turnplayersocket);
+        this.io
+          .to(turnplayersocket)
+          .emit(
+            "message2",
+            ` ${turnplayer.fantasyname} your turn to pick is over`
+        );
+        const turnplayersocketw = this.io.sockets.sockets.get(turnplayersocket);
+  turnplayersocketw.broadcast.emit(  "message", `${turnplayer.fantasyname}'s turn to pick is over`);
+
+        await this._emitTurn(this.draftOrder);
+      }
+      else {
+        this._resetTimeOut();
+        await this._emitTurn(this.draftOrder);
+      }
+    } catch (e) {
+      console.log(e);
     }
-    
+
+   
   }
 
-  async _triggerTimeOut() { 
-    this.draftTimeOut  = setTimeout(async () => { 
-     await this._nextTurn()
-    }, this.maxTimer)
+  async _triggerTimeOut() {
+    this.draftTimeOut = setTimeout(async () => {
+      await this._nextTurn();
+    }, this.maxTimer);
   }
 
-  async _resetTimeOut() { 
-    if (typeof this.draftTimeOut === 'object') {
-      clearTimeout(this.draftTimeOut)
+  async _resetTimeOut() {
+    console.log(typeof this.draftTimeOut);
+    if (typeof this.draftTimeOut === "object") {
+      clearTimeout(this.draftTimeOut);
     }
   }
 
+  async _shiftTurn() {
+    this._resetTimeOut();
 
-
-  async shiftTurn() { 
-    await this._resetTimeOut();
-
-    this.socket.emit("message", ` ${this.socket.username}'s turn to pick is over`)
-    this.socket.to(this.socket.room).emit("message", `turn is over for ${this.socket.username}`)
-
-    const totalpicks = this.teamPickArray.length
-    if (this.draftOrder < totalpicks) {
-      const nextPick = this.draftOrder + 1;
-      this.draftOrder = nextPick;
-       await this._emitTurn(nextPick)
-       
-    }
+    this._nextTurn();
   }
 
-
-
-
-  
-
-
+  async _resetCurrentDraft() {
+    this.draftOrder = 0;
+    this.draftTimeOut = null;
+  }
 }
-
 
 module.exports = { RoomStore };

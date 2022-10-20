@@ -28,18 +28,14 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
   const [message2, setMessage2] = useState("")
   const [counter, setCounter] = useState(0)
   const [balance, setBalance] = useState(0)
+  const [picked, setPicked] = useState(false)
 
 
 
 
 
   const emitPlayerReady = () => {
-    socket.emit("imready", {
-      draftName: focusonleague.name,
-      fantasyname: focusonparticipant.fantasyname,
-  
-
-    } )
+    socket.emit("imready")
   }
 
   const letmein = async () => {
@@ -48,7 +44,14 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
     socket.connect();
 
   }
+  useEffect(() => {
 
+    if (picked) {
+      socket.emit("playerpicked")
+      setPicked(false)
+    
+    }
+   }, [picked])
   useEffect(() => {
 
     if (focusonparticipant.confirmedAttendance === false) {
@@ -109,9 +112,6 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
   }, [])
 
 
-  const prepareDraft = () => {
-    socket.emit("preparedraft", focusonleague.name)
-  }
 
 
 
@@ -380,6 +380,13 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
           <button style={{ color: "#ffd204", float: "left" }} onClick={letmein}>enter room</button> <br />
 
 
+          <button style={{ color: "#ffd204" }}
+            onClick={
+              () => {
+                socket.emit("startDraft", focusonleague.name)
+              }
+            }
+          >startDraft</button><br />
 
           <button style={{ color: "#ffd204" }} onClick={emitPlayerReady}>are you ready?</button><br />
         </div>
@@ -454,6 +461,8 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
 
                         })
 
+                        setPicked(true)
+
 
 
                       }
@@ -509,6 +518,7 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
                           }
 
                         )
+                        setPicked(true)
 
                       }
                     }>
