@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import io, { Socket } from 'Socket.IO-client'
 import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import { InferGetServerSidePropsType } from 'next'
+import dayjs from "dayjs";
 
 
 import { DefaultEventsMap } from "@socket.io/component-emitter";
@@ -69,6 +70,7 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
     })
     return () => {
       socket.off("people")
+
     }
 
   }, [draftPeople])
@@ -338,7 +340,9 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
         <Grid>
           <div className={s.container} style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center", width: "500px" }} >
             <h1 style={{ color: "#ffd204" }}>{balance == 0 ? null : (<>balance : {balance}</>)}</h1>
-            <h1 style={{ color: "#ffd204" }}>{counter == 0 ? "wait your turn" : "timer: " + counter}</h1>
+            <h1 style={{ color: "#ffd204" }}>{counter == 0 ? "wait your turn" : "timer: " + dayjs().set("minute", counter/60000).minute(counter/60000).format("mm:ss")
+            
+            }</h1>
 
             {
               message ? (<div style={{ color: "#ffd204", display: "flex", flexDirection: "column", justifyContent: "center" }} ><h1>draft events</h1><p style={{ color: "#ffd204" }}>{message}</p></div>) : (<p style={{ color: "#ffd204" }}>draftlog</p>)
@@ -380,13 +384,6 @@ function Draft({ focusonleague, focusonparticipant, userId, teams, players }: In
           <button style={{ color: "#ffd204", float: "left" }} onClick={letmein}>enter room</button> <br />
 
 
-          <button style={{ color: "#ffd204" }}
-            onClick={
-              () => {
-                socket.emit("startDraft", focusonleague.name)
-              }
-            }
-          >startDraft</button><br />
 
           <button style={{ color: "#ffd204" }} onClick={emitPlayerReady}>are you ready?</button><br />
         </div>

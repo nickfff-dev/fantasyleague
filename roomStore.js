@@ -10,9 +10,9 @@ class RoomStore {
     this.socket = socket;
     this.teamPickArray = [];
     this.draftMembersWithSocketId = [];
-    this.counter = 20 * 1000;
+    this.counter = 300 * 1000;
     this.draftTimeOut = null;
-    this.maxTimer = 20 * 1000;
+    this.maxTimer = 300 * 1000;
     this.draftOrder = 0;
   }
 
@@ -23,6 +23,27 @@ class RoomStore {
       this.draftOrder = 0;
     }
   }
+//  add function for timer to start count down
+  async startTimer() { 
+    var turnplayerz = this.draftMembersWithSocketId.filter(
+      (member) => member.draftOrder === this.teamPickArray[this.draftOrder]
+    )[0];
+if (turnplayerz) {
+  this.io.to(turnplayerz.socketId).emit("counter", this.counter);
+
+  this.counter -= 1000;
+  if (this.counter < 0) {
+    this.counter = 300 * 1000;
+    return;
+  }
+  setTimeout(() => {
+    this.startTimer();
+  }, 1000);
+    }
+  }
+
+  // function to reset counter
+
 
   async emitUsers() {
     const users = [];
@@ -208,12 +229,14 @@ class RoomStore {
           .emit("message2", ` ${turnplayer.fantasyname} It's your turn to pick`);
         const turnplayersocketw = this.io.sockets.sockets.get(turnplayersocket);
   turnplayersocketw.broadcast.emit(  "message", `It's ${turnplayer.fantasyname}'s turn to pick`);
-      }
+      } 
     } catch (e) {
       console.log(e);
     }
+
+    await this.startTimer();
     await this._triggerTimeOut();
-  }
+     }
 
   async _nextTurn() {
     try {
@@ -238,10 +261,7 @@ class RoomStore {
 
         await this._emitTurn(this.draftOrder);
       }
-      else {
-        this._resetTimeOut();
-        await this._emitTurn(this.draftOrder);
-      }
+    
     } catch (e) {
       console.log(e);
     }
@@ -252,6 +272,7 @@ class RoomStore {
   async _triggerTimeOut() {
     this.draftTimeOut = setTimeout(async () => {
       await this._nextTurn();
+
     }, this.maxTimer);
   }
 
