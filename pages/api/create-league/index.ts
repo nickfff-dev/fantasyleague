@@ -7,7 +7,7 @@ import cargo from '@lib/cargo';
 import{calculateLeagueDuration} from "@lib/calculate"
 import dayjs from 'dayjs';
 
-import { getCurrentGames, getCurrentTeams, getPrivateLeagueTeams, getPrivateLeagueMatches, getPrivateLeaguePlayers,getPrivateLeagueResults,getLeagueFixture } from '@lib/cargoQueries';
+import { getCurrentGames, getPrivateLeagueTeamsMerged, getPrivateLeagueTeams, getPrivateLeaguePlayersMerged, getPrivateLeaguePlayers,getPrivateLeagueResults,getLeagueFixture, getLeagueFixtureMerged } from '@lib/cargoQueries';
 
 
 
@@ -47,77 +47,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
        }).then(() => {
         
          
-         getPrivateLeaguePlayers(league.startDate, league.endDate, league.region).then((players) => {
-
-           if (players) {
-             players.forEach(async (player) => {
-               await prisma.league.update({
-                 where: { name: league.name },
-                 data: {
-                   players: {
-                     create: {
-                       name: player.Player,
-                       team: player.Team,
-                       position: player.Role,
-                       selected: false,
-                     }
-                   }
-                 }
-               })
-             })
-           }
-      
-         }).then(() => {
-           getPrivateLeagueTeams(league.startDate, league.endDate, league.region).then((teams) => {
-             if (teams) {
-               teams.forEach(async (team) => {
-                 await prisma.league.update({
-                   where: { name: league.name },
-                   data: {
-                     teams: {
-                       create: {
-                         name: team.Team,
-                         top: team.RosterLinks.split(";;")[0],
-                         jungle: team.RosterLinks.split(";;")[1],
-                         mid: team.RosterLinks.split(";;")[2],
-                         adc: team.RosterLinks.split(";;")[3],
-                         support: team.RosterLinks.split(";;")[4],
-                         points: 0,
-                         selected: false
-                       }
-                     }
-                   }
-                 })
-               })
-             }
-            
-           })
+         if (league.region === "LEC/LCS") {
            
-         }).then(() => { 
-          getLeagueFixture(league.startDate, league.endDate, league.region).then((fixtures) => {
-            if (fixtures) {
-              fixtures.forEach(async (fixture) => {
-                await prisma.league.update({
-                  where: { name: league.name },
-                  data: {
-                    fixtures: {
-                      create: {
-                        MatchId: fixture.MatchId,
-                        DateTime_UTC: dayjs(fixture.DateTime_UTC).format("YYYY-MM-DD"),
-                        Tab: fixture.Tab,
-                        Team1: fixture.Team1,
-                        Team2: fixture.Team2,
-                       
-                      }
-                    }
-                  }
-                })
-              })
-            }
-            
-          })    
-           
-         })
+           getPrivateLeagueTeamsMerged(league.name, league.startDate, league.endDate, league.region.split("/")[0], league.region.split("/")[1])
+           getPrivateLeaguePlayersMerged(league.name, league.startDate, league.endDate, league.region.split("/")[0], league.region.split("/")[1])
+           getLeagueFixtureMerged(league.name, league.startDate, league.endDate, league.region.split("/")[0], league.region.split("/")[1])
+         } else {
+          getPrivateLeaguePlayers(league.name, league.startDate, league.endDate, league.region)
+          getPrivateLeagueTeams(league.name, league.startDate, league.endDate, league.region)
+         getLeagueFixture(league.name, league.startDate, league.endDate, league.region)
+      }  
+ 
       })
       res.status(200).send(`${league.name}`)
     }

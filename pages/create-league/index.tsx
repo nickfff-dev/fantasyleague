@@ -106,7 +106,8 @@ const body = newLeaguedata
   <option value="LEC">LEC EUROPE</option>
   <option value="LCK">LCK KOREA</option>
   <option value="LPL">LPL CHINA</option>
-  <option value="LCS">LCS AMERICA</option>
+<option value="LCS">LCS AMERICA</option>
+<option value="LEC/LCS">LCS & EUROPE</option>
 </select>
             
             </label><br/>
