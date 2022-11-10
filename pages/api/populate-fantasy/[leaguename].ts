@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (league) {
     const playerdata = league.region === "LEC/LCS" ? await getPrivateLeagueResultsMerged(league?.startDate as string, league?.endDate as string, league.region.split("/")[0], league.region.split("/")[1]) : await getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string)
     const teamdata = league.region === "LEC/LCS" ? await getPrivateLeagueMatchesMerged(league?.startDate as string, league?.endDate as string, league.region.split("/")[0], league.region.split("/")[1]) : await getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string)
-    var participantplayer: { name: any; game: any; role: any; team: any; date: string; kills: any; deaths: any; team1: any; team2: any; assists: any; creepScore: any; visionScore: any; teamTotalKills: any; participantId: number; points: number; }[] = []
+    var participantplayer: { name: any; game: any; matchId: any; role: any; team: any; date: string; kills: any; deaths: any; team1: any; team2: any; assists: any; creepScore: any; visionScore: any; teamTotalKills: any; participantId: number; points: number; }[] = []
     var participantteam: { name: string; game: string; date: string; teamKills: number, dragonKills: number, riftHeraldKills: number, turretKills: number; baronKills: number; team1: string; team2: string; inhibitorKills: number; didWin: boolean; participantId: number; points: number}[] = []
 playerdata?.map(async (team: any) => {
       if (((team.Link === participant?.top && team.Role === "Top") || (team.Role === "Top" && team.Team === getPlayerTeam(league?.players, participant?.top as string)))
@@ -52,9 +52,10 @@ playerdata?.map(async (team: any) => {
 
 
       ) {
-       
+       console.log(team)
       participantplayer.push( { name: team.Link,
         game: team.GameId,
+        matchId: team.MatchId,
         role: team.Role,
         team: team.Team,
         date: dayjs(team.DateTime_UTC).toDate().toISOString(),
@@ -275,6 +276,7 @@ playerdata?.map(async (team: any) => {
 
     
     if (participantplayer && participantteam) {
+      res.status(200).json(JSON.stringify({ participantplayer, participantteam }))
       if (league.region !== "LCK") {
         const totalpoints = participantplayer?.reduce((a, b: any) => a + b.points, 0) + participantteam?.reduce((a, b: any) => a + b.points, 0)
       
@@ -288,9 +290,33 @@ playerdata?.map(async (team: any) => {
       }).then(async () => {
         await prisma.$disconnect();
       })
-  } 
+      } else {
+        var totallckpoints: number[] = []
+        var roles = ["Top", "Jungle", "Mid", "Bot", "Support"]
+      //  group playerdata with matchid then find the two highest points for each matchid and add themtogether
+        league.fixtures.map(async (fixture: any) => {
+          for (let i = 0; i < roles.length; i++) {
+   
+
+            totallckpoints.push(participantplayer.filter((player: any) => player.role === roles[i] && player.matchId === fixture.MatchId).sort((a: any, b: any) => b.points - a.points).slice(0,2).reduce ((a: any, b: any) => a + b.points, 0))
+          }
+          
+        })
+
+        const totalpoints = totallckpoints.reduce((a, b) => a + b, 0) + participantteam?.reduce((a, b: any) => a + b.points, 0)
+        await prisma.participant.update({
+          where: {
+            id: participant?.id as number
+          },
+          data: {
+            points: totalpoints
+          }
+        }) .then(async () => {
+          await prisma.$disconnect();
+        })
+  }
   
-      res.status(200).json(JSON.stringify({ participantplayer, participantteam }))
+      
   
  }
   }
