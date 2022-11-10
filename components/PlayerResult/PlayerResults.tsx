@@ -71,7 +71,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
      
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
-            {smdata.playerres?.map((result: any, index: number) => {
+            {smdata.participantplayer?.map((result: any, index: number) => {
               if ( result.role === "Top") {
                 return (
                   <div className={s.item} key={index}>
@@ -95,14 +95,14 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-            getPlayerScore( smdata.playerres,  "Top")
+            getPlayerScore( smdata.participantplayer,  "Top")
         }
      
        
              
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
-            {smdata.playerres?.map((result: any, index: number) => {
+            {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Jungle") {
                 return (
                   <div className={s.item} key={index}>
@@ -126,13 +126,13 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-          getPlayerScore( smdata.playerres,  "Jungle")
+          getPlayerScore( smdata.participantplayer,  "Jungle")
         }
  
      
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
-            {smdata.playerres?.map((result: any, index: number) => {
+            {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Mid") {
                 return (
                   <div className={s.item} key={index}>
@@ -156,14 +156,14 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-           getPlayerScore( smdata.playerres,  "Mid")
+           getPlayerScore( smdata.participantplayer,  "Mid")
         }
  
      
 
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
-            {smdata.playerres?.map((result: any, index: number) => {
+            {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Bot" ) {
                 return (
                   <div className={s.item} key={index}>
@@ -187,13 +187,13 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-             getPlayerScore( smdata.playerres,  "Bot")
+             getPlayerScore( smdata.participantplayer,  "Bot")
         }
     
        
         <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1500px"}}>
-            {smdata.playerres?.map((result: any, index: number) => {
+            {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Support") {
                 return (
                   <div className={s.item} key={index}>
@@ -221,7 +221,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
      <h1>total points</h1>
         {
-           getPlayerScore( smdata.playerres,  "Support")
+           getPlayerScore( smdata.participantplayer,  "Support")
         }
      
         
@@ -236,11 +236,11 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
      
 <Grid>
     <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1500px"}}>
-            {smdata.teamres?.map((result: any) => {
+            {smdata.participantteam?.map((result: any) => {
              
               if (result.name === participant.team) {   
                 return (
-                  <div className={s.item} key={smdata.teamres.indexOf(result)}>
+                  <div className={s.item} key={smdata.participantteam.indexOf(result)}>
                   <p>team: {result.name }</p>
                 
                   <p> game:  {result.team1} vs {result.team2 }</p>
@@ -272,11 +272,11 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
 
         <h1>totalpoints </h1>
           {
-            teamPPoints(smdata.teamres)
+            teamPPoints(smdata.participantteam)
         }
         
         <h1>number of games</h1>{
-          smdata.teamres?.filter((result: any) => result.name === participant.team ).reduce((acc: number, result: any) => {
+          smdata.participantteam?.filter((result: any) => result.name === participant.team ).reduce((acc: number, result: any) => {
             return acc + 1
           }, 0)
         }
