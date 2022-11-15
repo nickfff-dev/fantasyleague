@@ -52,7 +52,7 @@ playerdata?.map(async (team: any) => {
 
 
       ) {
-       console.log(team)
+      
       participantplayer.push( { name: team.Link,
         game: team.GameId,
         matchId: team.MatchId,
@@ -276,8 +276,9 @@ playerdata?.map(async (team: any) => {
 
     
     if (participantplayer && participantteam) {
-      res.status(200).json(JSON.stringify({ participantplayer, participantteam }))
+     
       if (league.region !== "LCK") {
+        res.status(200).json(JSON.stringify({ participantplayer, participantteam }))
         const totalpoints = participantplayer?.reduce((a, b: any) => a + b.points, 0) + participantteam?.reduce((a, b: any) => a + b.points, 0)
       
       await prisma.participant.update({
@@ -293,16 +294,20 @@ playerdata?.map(async (team: any) => {
       } else {
         var totallckpoints: number[] = []
         var roles = ["Top", "Jungle", "Mid", "Bot", "Support"]
+        var newplayerdata:{ name: any; game: any; matchId: any; role: any; team: any; date: string; kills: any; deaths: any; team1: any; team2: any; assists: any; creepScore: any; visionScore: any; teamTotalKills: any; participantId: number; points: number; }[] = []
       //  group playerdata with matchid then find the two highest points for each matchid and add themtogether
         league.fixtures.map(async (fixture: any) => {
           for (let i = 0; i < roles.length; i++) {
    
-
+            participantplayer.filter((player: any) => player.role === roles[i] && player.matchId === fixture.MatchId).sort((a: any, b: any) => b.points - a.points).slice(0, 2).map((player: any) => { 
+              newplayerdata.push(player)
+            })
             totallckpoints.push(participantplayer.filter((player: any) => player.role === roles[i] && player.matchId === fixture.MatchId).sort((a: any, b: any) => b.points - a.points).slice(0,2).reduce ((a: any, b: any) => a + b.points, 0))
           }
           
         })
-
+        console.log(newplayerdata)
+        res.status(200).json(JSON.stringify({ participantplayer: newplayerdata, participantteam }))
         const totalpoints = totallckpoints.reduce((a, b) => a + b, 0) + participantteam?.reduce((a, b: any) => a + b.points, 0)
         await prisma.participant.update({
           where: {
