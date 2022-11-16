@@ -23,7 +23,7 @@
 }
 
 .btns {
-  @apply flex gap-5;
+  @apply flex items-center gap-5;
 }
 
 @screen laptop-L {

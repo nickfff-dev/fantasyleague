@@ -71,7 +71,7 @@ const Header = ({
       </nav>
 
       <div className={s.btns}>
-        {session ? (session?.user?.name) : null}
+        {session ? (<button className="outline outline-[#ff921b] px-6 h-6 text-[#ff921b] rounded-xl "><span className="bg-gradient-to-r from-primary via-[#f43d00] to-[#ff921b] bg-clip-text  font-bold text-transparent">{session?.user?.name} </span></button>) : null}
         {
           session ? (
             <Button variant='secondary' >Sign out</Button>

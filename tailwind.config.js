@@ -9,6 +9,7 @@ module.exports = {
         'gray-dark': '#121820',
         'gray-medium': '#181F26',
         'gray-light': '#222930',
+
       },
       fontFamily: {
         dubai: ['dubai', 'sans-serif'],
