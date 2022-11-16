@@ -60,7 +60,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
 
 
   
-  return (<>
+  return (<div className="">
     <Grid>
       
       <div className={s.root}>
@@ -70,7 +70,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
       
      
 <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
+    <div className={` flex flex-row sm:flex-wrap space-x-12`}>
             {smdata.participantplayer?.map((result: any, index: number) => {
               if ( result.role === "Top") {
                 return (
@@ -101,7 +101,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
        
              
 <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
+    <div className={` flex flex-row sm:flex-wrap space-x-12`}>
             {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Jungle") {
                 return (
@@ -131,7 +131,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
  
      
         <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
+    <div  className={` flex flex-row sm:flex-wrap space-x-12`}>
             {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Mid") {
                 return (
@@ -162,7 +162,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
      
 
         <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1800px"}}>
+    <div  className={` flex flex-row sm:flex-wrap space-x-12`}>
             {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Bot" ) {
                 return (
@@ -192,7 +192,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
     
        
         <Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1500px"}}>
+    <div  className={` flex flex-row sm:flex-wrap space-x-12`}>
             {smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Support") {
                 return (
@@ -234,8 +234,8 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
  
       
      
-<Grid>
-    <div className={s.root} style={{display:"flex", flexDirection: "row", width: "1500px"}}>
+
+    <div className={` flex flex-row sm:flex-wrap space-x-1`}>
             {smdata.participantteam?.map((result: any) => {
              
               if (result.name === participant.team) {   
@@ -267,7 +267,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
           }           
           )}
           </div>
-          </Grid>
+       
 
 
         <h1>totalpoints </h1>
@@ -288,7 +288,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
       <h1>total player points</h1>
    
     </Grid>
-  </>)
+  </div>)
 
 }
 

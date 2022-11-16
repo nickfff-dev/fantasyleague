@@ -24,8 +24,8 @@ function ParticipantTeamPage({ participant, results}: InferGetServerSidePropsTyp
 
 
   return (
-    <div>
-      <Grid>
+    <div className="m-5 overflow-hidden  ">
+      <div className="p-20">
     <div className={s.root} style={{ color: "#ffd204" }}>
       <h1>Participant: {participant.name}</h1>
       
@@ -49,7 +49,7 @@ function ParticipantTeamPage({ participant, results}: InferGetServerSidePropsTyp
         </div>
         
  
-      </Grid>
+      </div>
      </div>
   )
  }

@@ -70,49 +70,51 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
 
   return (
-    <Grid>
+ <div className="grid grid-flow-col gap-5  auto-cols-max text-white m-3 overflow-hidden">
       
-          <div className={s.container}>
-        <h1 className={s.title}>Account</h1>
+      <div className={`${s.container} mt-5  `}>
+     
+        <div className="flex flex-col">
+        
         <h2 className={s.subtitle}>Welcome {owner.name}</h2>
-        <h2 className={s.subtitle}>Your email is {owner.email}</h2>
-        <h2 className={s.subtitle}>{
-          owner.userName ? `username:  ${owner.userName}` : `username: You need to add your username below`
+        <h2>Email: {owner.email}</h2>
+        <h2 >{
+          owner.userName ? `Username:  ${owner.userName}` : `username: You need to add your username below`
 
         
         }</h2>
              <h2 className={s.subtitle}>{
-          owner.birthDate ? `birthdate:  ${owner.birthDate}` : `birthdate: You need to add your birthdate below`
+          owner.birthDate ? `Birthdate:  ${owner.birthDate}` : `birthdate: You need to add your birthdate below`
 
         
         }</h2>
         
-        <img src={owner.image} alt={owner.name} />
-        <p>locale: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+        
+        <p>Locale: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+    </div>
 
 
 
       </div>
 
-      <div className={s.container}>
+      
       
 
             {
-              owner.userName && owner.birthDate ? null:(<form method="POST" onSubmit={onUserNameSubmit}>
+              owner.userName && owner.birthDate ? null:(<div className={s.container}><form method="POST" onSubmit={onUserNameSubmit}>
               { !owner.userName ? (<label htmlFor="userName">enteruseRname<input type="text" name="userName" onChange={onUserNameChange} /></label>):null}
                { owner.birthdate ?( <label htmlFor="birthDate">enterbirthdate<input type="date" name="birthDate" onChange={onBirthDateChange} /></label>):null}
                <input type="submit" value="Submit" />
-           </form>
+           </form></div>
   )
             }
         
         
-      </div>
+      
 
       
- <div  ><h1 className={s.title} style={{textAlign:"center"}}>Leagues</h1></div>
-     
-      <Grid>
+ <div className="container bg-gray-600 p-10 rounded-lg" ><h1 className={s.title} style={{textAlign:"center"}}>Leagues</h1>
+    
       {
         
         leagues?.map((league: League) => { 
@@ -120,12 +122,13 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
                   <Leagueview league={league} key={league.name} />)
         })
       }
-  </Grid>
+</div>
+     
 
        
       
       
-    </Grid>
+    </div>
   )
 }
 
