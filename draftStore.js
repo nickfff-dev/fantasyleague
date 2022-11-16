@@ -237,7 +237,8 @@ class PrismaDraftStore extends draftStore {
                   id: choiceId
                 },
                 data: {
-                  selected: true
+                  selected: true,
+                  selectedBy: FantasyName
                 }
               }
             }

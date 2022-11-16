@@ -306,7 +306,6 @@ playerdata?.map(async (team: any) => {
           }
           
         })
-        console.log(newplayerdata)
         res.status(200).json(JSON.stringify({ participantplayer: newplayerdata, participantteam }))
         const totalpoints = totallckpoints.reduce((a, b) => a + b, 0) + participantteam?.reduce((a, b: any) => a + b.points, 0)
         await prisma.participant.update({

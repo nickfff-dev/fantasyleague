@@ -66,30 +66,30 @@ model VerificationToken {
 // FANTASY MODELS
 
 model League {
-  id           Int            @id @default(autoincrement())
-  name         String         @unique
-  draftTime    String
-  startDate    String
-  endDate      String
-  duration     Int?           @db.Int
-  buyIn        String?        @db.VarChar(255)
-  buyInFee     Int?           @db.Int
-  inviteOnly   String
-  inviteCode   String?        @db.VarChar(255)
-  owner        String
-  maxPlayers   Int
-  minPlayers   Int
-  points      Float?
-  draftReady   Boolean        @default(false)
-  populateRosters Boolean     @default(false)
-  region       String
-  teams        Teams[]
-  players      Players[]
-  fixtures     Fixture[]
-  members      Participant[]
-  Draft        Draft[]
-  PlayerResult PlayerResult[]
-  TeamResult   TeamResult[]
+  id              Int            @id @default(autoincrement())
+  name            String         @unique
+  draftTime       String
+  startDate       String
+  endDate         String
+  duration        Int?           @db.Int
+  buyIn           String?        @db.VarChar(255)
+  buyInFee        Int?           @db.Int
+  inviteOnly      String
+  inviteCode      String?        @db.VarChar(255)
+  owner           String
+  maxPlayers      Int
+  minPlayers      Int
+  points          Float?
+  draftReady      Boolean        @default(false)
+  populateRosters Boolean        @default(false)
+  region          String
+  teams           Teams[]
+  players         Players[]
+  fixtures        Fixture[]
+  members         Participant[]
+  Draft           Draft[]
+  PlayerResult    PlayerResult[]
+  TeamResult      TeamResult[]
 }
 
 model Teams {
@@ -108,39 +108,43 @@ model Teams {
 }
 
 model Players {
-  id       Int      @id @default(autoincrement())
-  name     String   @db.VarChar(255)
-  slug     String?  @db.VarChar(255)
-  team     String?  @db.VarChar(100)
-  position String   @db.VarChar(100)
-  points  Float?     
-  leagueId Int?
-  League   League?  @relation(fields: [leagueId], references: [id])
-  selected Boolean? @default(false)
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  slug       String?  @db.VarChar(255)
+  team       String?  @db.VarChar(100)
+  position   String   @db.VarChar(100)
+  points     Float?
+  leagueId   Int?
+  League     League?  @relation(fields: [leagueId], references: [id])
+  selected   Boolean? @default(false)
+  selectedBy String?
+
+  @@unique([name, leagueId])
 }
 
 model Participant {
-  id          Int     @id @default(autoincrement())
-  username    String  @db.VarChar(255)
-  top         String? @db.VarChar(100)
-  jungle      String? @db.VarChar(100)
-  mid         String? @db.VarChar(100)
-  adc         String? @db.VarChar(100)
-  inviteCode  String? @db.VarChar(255)
-  inviteComplete Boolean? @default(false)
+  id                  Int      @id @default(autoincrement())
+  username            String   @db.VarChar(255)
+  top                 String?  @db.VarChar(100)
+  jungle              String?  @db.VarChar(100)
+  mid                 String?  @db.VarChar(100)
+  adc                 String?  @db.VarChar(100)
+  inviteCode          String?  @db.VarChar(255)
+  inviteComplete      Boolean? @default(false)
   confirmedAttendance Boolean? @default(false)
-  support     String? @db.VarChar(100)
-  team        String? @db.VarChar(100)
-  points      Float?   
-  draftOrder  Int?    @db.Int
-  leaguename  String? @db.VarChar(255)
-  isReady     Boolean? @default(false)
-  leagueId    Int?
-  userId      String?
-  fantasyname String? @unique @db.VarChar(255)
-  League      League? @relation(fields: [leagueId], references: [id])
-  Draft       Draft?  @relation(fields: [draftName], references: [name])
-  draftName   String?
+  support             String?  @db.VarChar(100)
+  team                String?  @db.VarChar(100)
+  points              Float?
+  draftOrder          Int?     @db.Int
+  leaguename          String?  @db.VarChar(255)
+  isReady             Boolean? @default(false)
+  leagueId            Int?
+  userId              String?
+  fantasyname         String?  @unique @db.VarChar(255)
+  League              League?  @relation(fields: [leagueId], references: [id])
+  Draft               Draft?   @relation(fields: [draftName], references: [name])
+  draftName           String?
+  Trade               Trade[]
 }
 
 model Fixture {
@@ -170,8 +174,8 @@ model PlayerResult {
   role           String
   creepScore     Int?
   visionScore    Int?
-  team1           String?
-  team2           String?
+  team1          String?
+  team2          String?
   kills          Int?
   deaths         Int?
   assists        Int?
@@ -183,7 +187,8 @@ model PlayerResult {
   date           String?
   participantId  Int
   playerId       Int?
-  @@unique([name, game, participantId]) 
+
+  @@unique([name, game, participantId])
 }
 
 model TeamResult {
@@ -195,8 +200,8 @@ model TeamResult {
   riftHeraldKills Int?
   turretKills     Int?
   inhibitorKills  Int?
-  team1          String?
-  team2          String?
+  team1           String?
+  team2           String?
   baronKills      Int?
   didWin          Boolean?
   points          Float?
@@ -210,11 +215,11 @@ model TeamResult {
 }
 
 model Wallet {
-  id      Int    @id @default(autoincrement())
-  balance Float  
-  userId  String @unique
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  credits Int?
+  id         Int          @id @default(autoincrement())
+  balance    Float
+  userId     String       @unique
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credits    Int?
   Deposit    Deposit[]
   Withdrawal Withdrawal[]
 }
@@ -245,13 +250,19 @@ model Withdrawal {
   fees     Float?
 }
 
-
-
 model MainWallet {
-   id      Int    @id @default(autoincrement())
-  balance Float
-  credits Int
+  id       Int   @id @default(autoincrement())
+  balance  Float
+  credits  Int
   houseFee Int
- 
+}
 
+model Trade {
+  id            Int         @id @default(autoincrement())
+  playerIn      String
+  playerOut     String
+  date          String
+  participantId Int
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  leagueId      Int
 }
