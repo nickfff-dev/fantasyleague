@@ -1,0 +1,66 @@
+
+.root {
+  @apply my-5 flex flex-col 
+}
+.resultsContainer{
+  @apply p-4 flex flex-col;
+}
+.resultsRow{
+  @apply grid grid-cols-5 w-full text-white  gap-3 py-4 justify-items-center;
+}
+
+
+.resultsRow1{
+  @apply grid grid-cols-5  text-white px-4 gap-3 justify-items-center;
+}
+@screen mobile {
+  .resultsRow {
+    @apply grid grid-cols-1;
+  }
+  .resultsRow1 {
+    @apply grid grid-cols-1;;
+  }
+  .resultsContainer{
+    @apply flex-row gap-2
+  }
+}
+@screen tablet {
+  .resultsRow {
+    @apply grid grid-cols-1 justify-items-end
+  }
+  .resultsRow1 {
+    @apply grid grid-cols-1  justify-items-start
+  }
+  .resultsContainer{
+    @apply flex-row gap-5 items-center;
+  }
+}
+
+.container {
+  @apply grid-flow-col auto-cols-max gap-y-2 px-4 rounded-3xl bg-gray-light;
+}
+
+
+
+.container > h1 > span {
+  @apply bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-transparent;
+}
+
+@screen laptop-L {
+  .container {
+    @apply text-lg;
+  }
+}
+
+@screen laptop {
+  .root > h1 {
+    @apply text-base;
+  }
+
+  .container {
+    @apply text-base;
+  }
+}
+.root > h1 {
+  @apply text-3xl font-bold uppercase;
+}

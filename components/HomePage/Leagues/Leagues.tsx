@@ -1,4 +1,4 @@
-import s from '../Insights/Seasons/Seasons.module.css';
+import k from './Leagues.module.css';
 import { useEffect, useState } from 'react';
 import { Date } from '@customTypes/Date';
 import { Fixture } from '@customTypes/Fixture';
@@ -12,13 +12,14 @@ const Leagues = () => {
 
 
   return (
-    <div >  
-      <h1 className=" text-white font-semibold text-4xl uppercase">My Leagues</h1>
-      <div className={`${s.root} grid-flow-col auto-cols-max`}>
-        <div className="flex flex-row justify-evenly text-white  "> <h1>GROUP</h1> <h1>STANDINGS</h1><h1>REGION</h1><h1>SCORE</h1><h1></h1></div>
-        <div className={`${s.container}`}>
-          <div className="flex flex-row justify-between w-full text-white text-center">
-           <span>FANTASYNAME</span>  <span>REGION</span> <span>POSITION</span> <span>SCORE</span> <button className="outline outline-[#ff921b] px-6 rounded-xl " ><h1 className="rounded-lg uppercase ">View</h1></button></div>
+    <div className={`${k.root}`}>  
+      <h1 className=" text-white font-bold text-3xl uppercase">My Leagues</h1>
+      <div className={`${k.root, k.resultsContainer}`}>
+        
+        <div className={`${k.resultsRow1}  font-semibold   mb-1`}>  <span className="text-base">FANTASYNAME</span>  <span className="text-base">REGION</span> <span className="text-base">POSITION</span> <span className="text-base">SCORE</span> <button className="invisible outline outline-[#ff921b]  rounded-xl " >View</button></div>
+        <div className={`${k.container} mb-1`}>
+          <div className={`${k.resultsRow} `}>
+           <span className="text-base">THEBESTLEAGUE</span>  <span className="text-base">LCK</span> <span className="text-base">1</span> <span className="text-base">456</span> <button className="outline outline-[#ff921b] w-12  rounded-xl  " >View</button></div>
         </div>
         </div>
 
