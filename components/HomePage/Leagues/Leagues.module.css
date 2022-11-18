@@ -42,8 +42,8 @@
 
 
 
-.container > h1 > span {
-  @apply bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-transparent;
+.container  span {
+  @apply bg-gradient-to-r from-primary text-lg to-secondary bg-clip-text font-bold text-transparent;
 }
 
 @screen laptop-L {
