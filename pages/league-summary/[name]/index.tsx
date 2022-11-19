@@ -50,15 +50,7 @@ const LeaguePage = ({ league}: InferGetServerSidePropsType<typeof getServerSideP
 export const getServerSideProps: GetServerSideProps = async (context) => { 
   
   const name = context.params?.name
-  const session = await getSession(context)
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/api/auth/signin',
-        permanent: false,
-      },
-    }
-  }
+
   const league = await prisma.league.findUnique({
     where: {
       name: name?.toString()
