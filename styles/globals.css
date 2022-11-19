@@ -33,3 +33,21 @@
     src: url('../public/fonts/xix.woff2') format('woff2'), url('../public/fonts/xix.woff') format('woff');
   }
 }
+
+
+.mainouterGrid{
+  @apply grid grid-cols-2 gap-4 p-4
+}
+
+@screen mobile{
+  .mainouterGrid{
+    @apply grid grid-cols-1
+  }
+}
+
+
+@screen tablet{
+  .mainouterGrid{
+    @apply grid grid-cols-1
+  }
+}

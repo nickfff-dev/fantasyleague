@@ -14,44 +14,36 @@
 
 
 .resultsRow1{
-  @apply grid grid-cols-5  text-white px-4 gap-3 justify-items-center;
+  @apply grid grid-cols-5  text-white gap-3 justify-items-center;
 }
-@screen mobile {
-  .resultsRow {
-    @apply grid grid-cols-1 sticky top-0 ;
-  }
-  .resultsRow1 {
-    @apply grid grid-cols-1 sticky top-0 z-10
-  }
-  .resultsContainer{
-    @apply flex-row gap-2
-  }
-}
-@screen tablet {
-  .resultsRow {
-    @apply grid grid-cols-1 justify-items-end  }
-  .resultsRow1 {
-    @apply grid grid-cols-1   justify-items-start 
-  }
-  .resultsContainer{
-    @apply flex-row  items-center
-  }
 
-}
 
 .container {
-  @apply grid-flow-col auto-cols-max gap-y-2 px-6 rounded-3xl bg-gray-light;
+  @apply grid-flow-col auto-cols-max gap-y-2  rounded-3xl bg-gray-light;
 }
 
 
 
 .container  span {
-  @apply text-white;
+  @apply text-white text-sm 
+}
+
+.container a{
+  @apply text-white text-sm 
 }
 
 @screen laptop-L {
-  .container {
-    @apply text-lg;
+  .container span {
+    @apply text-base 
+  }
+  .container a{
+    @apply text-white text-sm 
+  }
+  .resultsRow span{
+    @apply text-lg 
+  }
+  .resultsRow1 span{
+    @apply text-lg px-2 
   }
 }
 
@@ -60,12 +52,26 @@
     @apply text-base;
   }
 
-  .container {
-    @apply text-base;
+  .container span {
+    @apply text-sm
   }
+  .container a {
+    @apply text-sm px-2
+  }
+ 
+
 }
+
+
+
 .root  h1 {
   @apply text-3xl font-bold uppercase bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent;
 }
 
 
+@media (max-width: 540px){
+  .resultsRow1 span{
+    @apply text-sm
+
+  }
+}
