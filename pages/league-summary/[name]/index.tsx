@@ -1,9 +1,9 @@
 import prisma from "@lib/prisma";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
-import L from "./Leaguesummary.module.css";
-import TeamTab from "./TeamTab";
-import TradeTab from "./TradeTab"
+import L from "@components/League/Leaguesummary.module.css";
+import TeamTab from "@components/League/TeamTab";
+import TradeTab from "@components/League/TradeTab"
 
 
 
