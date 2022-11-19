@@ -5,6 +5,9 @@
 .resultsContainer{
   @apply p-4 
 }
+.resultsContainer::-webkit-scrollbar{
+  @apply w-1 h-1   bg-gray-light rounded-lg 
+}
 .resultsRow{
   @apply grid grid-cols-5 w-full text-white  gap-3 py-4 justify-items-center;
 }

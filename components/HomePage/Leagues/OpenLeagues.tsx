@@ -13,7 +13,7 @@ const OpenLeagues = ({ league }: { league: any }) => {
       // convert int to weeks with dayjs
      Math.ceil(league.duration / 7) + ' weeks'
          
-        }</span> <a href={` /league-summary/${league.name}/`} className="outline outline-[#ff921b] px-5 py-0.5 rounded-xl uppercase" >View</a></div></div>)
+        }</span> <a href={`/league-summary/${league.name}/`} className="outline outline-[#ff921b] px-5 py-0.5 rounded-xl uppercase" >View</a></div></div>)
 
 }
 
