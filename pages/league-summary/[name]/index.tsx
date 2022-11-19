@@ -1,49 +1,50 @@
 import prisma from "@lib/prisma";
-import { useEffect, useState } from 'react';
-import { Grid } from '@components/ui';
-import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
-import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
-import { useSession, signIn, signOut, getSession } from 'next-auth/react';
+import L from "./Leaguesummary.module.css";
+import TeamTab from "./TeamTab";
+import TradeTab from "./TradeTab"
 
 
 
-const LeaguePage = ({ league}: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
+const LeaguePage = ({ league, wallets}: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
     
-
-
-
-
-
-
-
   return (
-    <Grid>
-      <div  style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}} >
-      <div className={s.root} style={{color: "#ffd204"}}>
-        <h1>name: {league.name}</h1>
-        <p>region: {league.region}</p>
-        <p>owner: {league.owner}</p>
-        <p>isinviteonly: {league.inviteOnly}</p>
-        <p>invitecode: {league.inviteCode}</p>
-        <p>drafttime: {league.draftTime}</p>
-        <p>startdate: {league.startDate}</p>
-        <p>enddate: {league.endDate}</p>
-          <p>isBuyin: {`${league.buyIn}`}</p>
-          <p>duration: { league.duration} days</p>
-          <p>id: {league.id}</p>
-          <a href={`/optin-league/${league.name}`}>join the league via this link</a>
-        </div>
-       
-
-
- 
-
-      </div><br/>
+    <div className={`${L.outerGrid}`}>
+ <div className={`${L.root}`}>  
+        <h1 className=" font-bold text-3xl uppercase">Player standings</h1>
+        <div className={`${L.root, L.resultsContainer} h-[300px]`}>
+          
+          <div className={`${L.resultsRow1}  font-semibold`}>  <span className="text-sm">STANDING</span>  <span className="text-sm">OWNER</span> <span className="text-sm">SCORE</span> <span className="text-sm">BANK</span> <button className="invisible outline outline-[#ff921b] text-sm rounded-xl" >View</button> </div>
+          {league.members.sort((a: any, b: any) => b.points - a.points).map((member: any, index: number) => { 
+          
+              return (<TeamTab key={member.id} league={league} participant={member} wallets={wallets} position={index +1} />)
+            
+          }
+            )
+         }
+          </div>
+  
+      </div>
+      <div className={`${L.root}`}>  
+        <h1 className=" font-bold text-3xl uppercase">Recent Trades</h1>
+        <div className={`${L.root, L.resultsContainer} h-[300px]`}>
+          
+          <div className={`${L.resultsRow1}  font-semibold`}>  <span className="text-sm">PLAYER RELEASED</span>  <span className="text-sm">PLAYER ACQUIRED</span> <span className="text-sm">CASH RELEASED</span> <span className="text-sm">CASH ACQUIRED</span> <span className="text-sm">OWNER</span> </div>
+          {league.members.map((member: any) => { 
+          
+            return member.Trade.map((trade: any) => { 
+              return (<TradeTab key={trade.id} trade={trade} owner={member.username} />)
+            })            
+          }
+            )
+         }
+          </div>
+  
+      </div>  
 
       
-    </Grid>
+    </div>
   )
 }
 
@@ -51,9 +52,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   
   const name = context.params?.name
 
+
   const league = await prisma.league.findUnique({
     where: {
       name: name?.toString()
+    },
+    include: {
+      members: {
+        include: {
+          Trade: true,
+        }
+      }
     }
   }).then(async (data) => {
  
@@ -61,11 +70,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return data
    
   })
-  
+
+  const wallets = await prisma.wallet.findMany({})
+
   return {
     props: {
 
-      league,
+      league, wallets
 
     
 

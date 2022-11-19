@@ -1,0 +1,65 @@
+.root {
+  @apply my-5 flex flex-col 
+}
+.resultsContainer{
+  @apply p-4
+}
+.resultsContainer::-webkit-scrollbar{
+  @apply w-1 h-1   bg-gray-light rounded-lg 
+}
+.resultsRow{
+  @apply grid grid-cols-5 w-full text-white h-10 gap-3 justify-items-center items-center;
+}
+
+
+.resultsRow1{
+  @apply grid grid-cols-5  text-white  gap-3 justify-items-center items-center;
+}
+
+
+.container {
+  @apply grid-flow-col auto-cols-max gap-y-2 px-6 rounded-3xl bg-gray-light;
+}
+
+
+
+.container  span {
+  @apply text-white;
+}
+
+@screen laptop-L {
+  .container {
+    @apply text-lg;
+  }
+}
+
+@screen laptop {
+  .root > h1 {
+    @apply text-base;
+  }
+
+  .container {
+    @apply text-base;
+  }
+}
+.root  h1 {
+  @apply text-3xl font-bold uppercase bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent;
+}
+
+
+.outerGrid{
+  @apply grid grid-cols-2 gap-4 p-4
+}
+
+@screen mobile{
+  .outerGrid{
+    @apply grid grid-cols-1
+  }
+}
+
+
+@screen tablet{
+  .outerGrid{
+    @apply grid grid-cols-1
+  }
+}
