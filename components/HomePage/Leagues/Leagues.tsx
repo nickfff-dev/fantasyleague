@@ -52,7 +52,7 @@ getUserLeagues()
         <h1 className=" font-bold text-3xl uppercase">My Leagues</h1>
         <div className={`${k.root, k.resultsContainer} h-[300px] overflow-y-scroll`}>
           
-          <div className={`${k.resultsRow1}  font-semibold`}>  <span className="text-base">FANTASYNAME</span>  <span className="text-base">REGION</span> <span className="text-base">POSITION</span> <span className="text-base">SCORE</span> <button className="invisible outline outline-[#ff921b]  rounded-xl " >View</button></div>
+          <div className={`${k.resultsRow1}  font-semibold`}>  <span className="text-base">GROUP</span>  <span className="text-base">REGION</span> <span className="text-base">STANDING</span> <span className="text-base">SCORE</span> <button className="invisible outline outline-[#ff921b]  rounded-xl " >View</button></div>
           {userLeagues.length > 0 ? userLeagues.map((league: any) => { 
             return league.members.map((participant: any) => { 
               return <FantasyTab league={league} participant={participant} />
@@ -61,15 +61,29 @@ getUserLeagues()
             )
           : <div className="w-24 h-24 mx-auto mt-5"><Spinner /></div>}
           </div>
+          <div className={`${k.root}`}>  
+        <h1 className=" font-bold text-3xl uppercase">Open Leagues</h1>
+        <div className={`${k.root, k.resultsContainer} h-[300px] overflow-y-scroll`}>
+          
+          <div className={`${k.resultsRow1}  font-semibold`}>  <span className="text-base">PRIZE</span>  <span className="text-base">REGION</span> <span className="text-base">FEE</span> <span className="text-base">DURATION</span> <button className="invisible outline outline-[#ff921b]  rounded-xl " >View</button></div>
+          {leagues.length > 0 ? leagues.map((league: any) => { 
+             const prize =  league.members.length * league.buyInFee
+              return <OpenLeagues league={league} prize={prize? prize :league.buyInFee} />
+            
+          }
+            )
+          : <div className="w-24 h-24 mx-auto mt-5"><Spinner /></div>}
+          </div>
   
+      </div>
       </div>) : (<div className={`${k.root}`}>  
         <h1 className=" font-bold text-3xl uppercase">Open Leagues</h1>
         <div className={`${k.root, k.resultsContainer} h-[300px] overflow-y-scroll`}>
           
           <div className={`${k.resultsRow1}  font-semibold`}>  <span className="text-base">PRIZE</span>  <span className="text-base">REGION</span> <span className="text-base">FEE</span> <span className="text-base">DURATION</span> <button className="invisible outline outline-[#ff921b]  rounded-xl " >View</button></div>
           {leagues.length > 0 ? leagues.map((league: any) => { 
-  
-              return <OpenLeagues league={league}  />
+             const prize = 100
+              return <OpenLeagues league={league} prize={prize} />
             
           }
             )

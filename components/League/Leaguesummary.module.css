@@ -1,35 +1,49 @@
+
 .root {
   @apply my-5 flex flex-col 
 }
 .resultsContainer{
-  @apply p-4
+  @apply p-4 
 }
 .resultsContainer::-webkit-scrollbar{
   @apply w-1 h-1   bg-gray-light rounded-lg 
 }
 .resultsRow{
-  @apply grid grid-cols-5 w-full text-white h-10 gap-3 justify-items-center items-center;
+  @apply grid grid-cols-5 w-full text-white  gap-3 h-12 items-center justify-items-center;
 }
 
 
 .resultsRow1{
-  @apply grid grid-cols-5  text-white  gap-3 justify-items-center items-center;
+  @apply grid grid-cols-5  text-white gap-3 justify-items-center;
 }
 
 
 .container {
-  @apply grid-flow-col auto-cols-max gap-y-2 px-6 rounded-3xl bg-gray-light;
+  @apply grid-flow-col auto-cols-max gap-y-2  rounded-3xl bg-gray-light;
 }
 
 
 
 .container  span {
-  @apply text-white;
+  @apply text-white text-sm 
+}
+
+.container a{
+  @apply text-white text-sm
 }
 
 @screen laptop-L {
-  .container {
-    @apply text-lg;
+  .container span {
+    @apply text-sm 
+  }
+  .container a{
+    @apply text-white text-sm 
+  }
+  .resultsRow span{
+    @apply text-sm 
+  }
+  .resultsRow1 span{
+    @apply text-sm px-2 
   }
 }
 
@@ -38,12 +52,47 @@
     @apply text-base;
   }
 
-  .container {
+  .resultsRow span {
+    @apply text-sm
+  }
+  .container a {
+    @apply text-sm px-2
+  }
+ 
+
+}
+
+@screen tablet {
+  .root > h1 {
     @apply text-base;
   }
+
+  .container span {
+    @apply text-sm 
+  }
+  .container a {
+    @apply text-sm
+  }
+  .resultsRow span {
+    @apply pr-2 text-[12px]
+  }
+  .resultsRow1 span {
+    @apply pr-2 text-[12px]
+  }
 }
+
+
+
 .root  h1 {
   @apply text-3xl font-bold uppercase bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent;
+}
+
+
+@media (max-width: 540px){
+  .resultsRow1 span{
+    @apply text-sm
+
+  }
 }
 
 
@@ -54,6 +103,12 @@
 @screen mobile{
   .outerGrid{
     @apply grid grid-cols-1
+  }
+  .resultsRow span {
+    @apply pr-2 text-[9px]
+  }
+  .resultsRow1 span {
+    @apply pr-2 text-[12px]
   }
 }
 
