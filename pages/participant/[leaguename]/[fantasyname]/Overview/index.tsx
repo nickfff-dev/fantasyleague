@@ -16,13 +16,38 @@ import { PlayerResults } from "@components"
 
 
 
-function ParticipantTeamPage({ participant, results}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function ParticipantTeamPage({ participant, results, league}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const refreshData = () => {
     router.replace(router.asPath);
   }
+  const [rosterChange,  setRosterChange] = useState([]);
+  const getRosterChanges = async () => {
+    await fetch(`http://localhost:3000/api/rosterchanges/${participant.fantasyname}/`, {
 
-
+      method: 'POST',
+      body: JSON.stringify({
+        leagueId: participant?.leagueId,
+        top: participant?.top,
+        mid: participant?.mid,
+        bot: participant?.adc,
+        sup: participant?.support,
+        jungle:participant?.jungle,
+        startDate: league?.startDate,
+        endDate: league?.endDate
+ 
+        
+      }),
+    }).then((res) => {
+       res.json().then((data) => {
+         console.log(JSON.parse(data).acceptedChanges) 
+          setRosterChange(JSON.parse(data).acceptedChanges)
+       })
+    })
+  }
+  useEffect(() => { 
+    getRosterChanges()
+  }, [rosterChange])
   return (
     <div className="m-5 overflow-hidden  ">
       <div className="p-20">
@@ -32,7 +57,19 @@ function ParticipantTeamPage({ participant, results}: InferGetServerSidePropsTyp
       <p>id: {participant.id}</p>
       <p>name: {participant.fantasyname}</p>
       <p>leaguename: {participant.leaguename}</p>
-     
+          <div>
+            <h1>rosterchanges</h1>
+          {rosterChange &&  rosterChange.length > 0 &&  rosterChange.map((change: any) => (
+            <div key={change.id} className="flex flex-row gap-5">
+
+              <p>player: {change.Player}</p>
+              <p>role: {change.Role}</p>
+              <p>move: {change.Direction}</p>
+              <p>team: {change.Team}</p>
+              <p>date: {change.Date_Sort}</p>
+            </div>
+        ))}
+        </div>
           <PlayerResults
            smdata={results}
             participant={participant}
@@ -47,6 +84,7 @@ function ParticipantTeamPage({ participant, results}: InferGetServerSidePropsTyp
        
    
         </div>
+
         
  
       </div>
@@ -89,12 +127,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     res.json().then((data) => { 
       return JSON.parse(data)
     }))
-   
+
 
   return {
     props: {
       participant: participantd,
       results: mavitu,
+      league: league,
+     
       
     }
     }

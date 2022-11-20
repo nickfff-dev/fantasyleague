@@ -564,3 +564,22 @@ return data
   }
 
 }
+
+
+export const getLeagueRosterChanges = async (startDate: string, endDate: string) => { 
+  try {
+    const { data } = await cargo.query({
+      tables: ['RosterChanges'],
+      fields: [
+        'RosterChanges.Player', 'RosterChanges.Role', 'RosterChanges.Direction', 'RosterChanges.Date_Sort','RosterChanges.Team'
+      ],
+
+      where: `RosterChanges.Date_Sort >= "${startDate}" AND RosterChanges.Date_Sort <= "${endDate}"`,
+    })
+
+    return data
+
+  }catch(e: any) {
+    console.log('ERROR IN getCurrentmatches', e.message);
+  }
+}
