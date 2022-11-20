@@ -18,12 +18,14 @@
   @apply hidden;
 }
 
+
+
 .nav_links {
-  @apply flex gap-14 text-2xl uppercase;
+  @apply  text-2xl uppercase  px-2 px-4 py-2.5  w-full z-10 top-0 left-0;
 }
 
 .btns {
-  @apply flex items-center gap-5;
+  @apply flex items-center gap-3;
 }
 
 @screen laptop-L {
@@ -42,6 +44,7 @@
   .nav_links {
     @apply gap-10 text-base;
   }
+ 
 }
 
 @screen laptop {
@@ -56,4 +59,20 @@
   .nav_links {
     @apply gap-6 text-sm;
   }
+}
+
+
+@screen tablet {
+  .burger {
+    @apply block;
+  }
+
+}
+
+
+@screen mobile {
+  .burger {
+    @apply block;
+  }
+
 }

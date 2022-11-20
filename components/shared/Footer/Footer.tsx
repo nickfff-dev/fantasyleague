@@ -1,5 +1,11 @@
+import f from  "./Footer.module.css"
+
+
 const Footer = () => {
-  return <h1>Footer</h1>;
+  return (
+    <div className="bg-gray-light">
+      </div>
+  )
 };
 
 export default Footer;

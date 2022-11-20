@@ -22,22 +22,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
 
       if (data.length <= 0) {
-        res.send('No active tournaments found');
+       return res.send('No active tournaments found');
+        
       }
-
+           console.log("data",data);
       const dates = data?.map((league) => {
         const date = dayjs(league.DateStart).format('MMM. DD') + 'th';
         const name = league.Name.split(' ')[0];
-
+        
         return {
           date,
           name,
         };
       });
-
-      res.status(200).send(dates);
+       
+      return res.status(200).send(dates);
+     
     } catch (e: any) {
-      res.status(404).send(`Error getting dates ${e.message}`);
+     return res.status(404).send(`Error getting dates ${e.message}`);
+      
     }
   }
 }
