@@ -4,7 +4,7 @@ import { Grid } from '@components/ui';
 import { Fixture, Teams, League, Players, Participant } from "@prisma/client"
 import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { useSession, signIn, getSession, signOut } from 'next-auth/react';
-import { Leagueview } from "@components";
+
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 
@@ -22,11 +22,7 @@ const MyLeagues = ({ leagues , username} :  InferGetServerSidePropsType<typeof g
       <div className={s.container} style={{ color: "#ffd204" }}>
         <h1>{ username}</h1>
       <h1>My Leagues</h1>
-        {leagues.map((league: League) => {
-          return (
-       <Leagueview league={league} key={league.id} />
-       )
-        })}
+       
         
 
     </div>

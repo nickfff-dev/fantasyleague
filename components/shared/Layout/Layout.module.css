@@ -1,5 +1,5 @@
 .root {
-  @apply flex min-h-screen flex-col bg-gray-dark font-dubai;
+  @apply flex min-h-screen flex-col bg-gray-dark font-dubai gap-5;
 }
 
 .content {

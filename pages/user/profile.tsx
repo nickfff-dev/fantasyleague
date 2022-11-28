@@ -8,7 +8,6 @@ import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
 import Link from "next/link";
 import dayjs from "dayjs";
-import { Leagueview } from "@components";
 
 
 
@@ -115,13 +114,7 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
       
  <div className="container bg-gray-600 p-10 rounded-lg" ><h1 className={s.title} style={{textAlign:"center"}}>Leagues</h1>
     
-      {
-        
-        leagues?.map((league: League) => { 
-          return (
-                  <Leagueview league={league} key={league.name} />)
-        })
-      }
+      
 </div>
      
 
