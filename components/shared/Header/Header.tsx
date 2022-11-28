@@ -36,20 +36,20 @@ const Header = ({
   return (
     <div className={s.root}>
      
-      <nav className="text-2xl mobile:text-base tablet:text-base uppercase  px-2 px-4 py-2.5  w-full z-10 top-0 left-0">
+      <nav className="text-xl mobile:text-base tablet:text-base uppercase  px-2 px-4 py-2.5  w-full z-10 top-0 left-0">
         <div className="container flex  items-center justify-between mx-auto">
       <a href="/" className={`${s.logo} flex items-center`}>
         
             <Image src={Logo} alt='Website logo' height={60} width={60} />
      
-        <h1 className="self-center text-4xl">SPLT SCRN</h1>
+        <h1 className="self-center text-3xl">SPLT SCRN</h1>
           </a>
           <div className="flex flex-row  order-2 gap-x-2 ">
           <div className={s.btns}>
         {session ? (<button className="outline outline-[#ff921b] px-5 h-6 text-[#ff921b] rounded-xl text-sm"><span className="bg-gradient-to-r from-primary via-[#f43d00] to-[#ff921b] bg-clip-text  font-bold text-transparent">{session?.user?.name} </span></button>) : null}
         {
           session ? (
-            <Button variant='secondary'  >Sign out</Button>
+            <Button variant='secondary'>Sign out</Button>
           ) : (
             <Button variant='primary' >Sign in</Button>
           )

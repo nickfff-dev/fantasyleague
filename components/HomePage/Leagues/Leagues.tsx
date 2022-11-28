@@ -59,7 +59,7 @@ getUserLeagues()
             })
           }
             )
-          : <div className="w-24 h-24 mx-auto mt-5"><Spinner /></div>}
+          : <p className="w-24 h-24 mx-auto mt-5 text-white">JOin a league</p>}
           </div>
           <div className={`${k.root}`}>  
         <h1 className=" font-bold text-3xl uppercase">Open Leagues</h1>
