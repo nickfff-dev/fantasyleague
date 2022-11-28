@@ -10,8 +10,7 @@ import { useRouter } from 'next/router';
 import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import { InferGetServerSidePropsType } from 'next'
 import { PlayerResults } from "@components"
-
-
+import ResultDetail from "@components/PlayerResult/ResultDetail";
 
 
 
@@ -49,6 +48,8 @@ function ParticipantTeamPage({ participant, results, league}: InferGetServerSide
     getRosterChanges()
   }, [rosterChange])
   return (
+    <>
+      <ResultDetail results={ results} />
     <div className="m-5 overflow-hidden  ">
       <div className="p-20">
     <div className={s.root} style={{ color: "#ffd204" }}>
@@ -88,7 +89,7 @@ function ParticipantTeamPage({ participant, results, league}: InferGetServerSide
         
  
       </div>
-     </div>
+     </div></>
   )
  }
 

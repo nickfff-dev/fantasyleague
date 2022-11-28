@@ -1,0 +1,36 @@
+.root{
+  @apply border p-12 border-primary rounded-xl bg-gray-medium max-w-[1000px] mx-auto text-primary
+}
+
+.resultsHeader{
+  @apply flex justify-items-start text-primary gap-5
+}
+
+.resultsContainer{
+  @apply grid grid-cols-6 justify-items-center 
+  
+}
+
+.singleRoleRow{
+  @apply flex gap-3 justify-items-center 
+}
+
+.singleRowHead{
+  @apply border border-primary rounded-xl p-2 mx-2 text-sm
+}
+.singleRowHeadIn{
+  @apply grid grid-cols-2 justify-items-center
+
+}
+
+.singleRowHeadb{
+  @apply text-center mt-5
+}
+
+.singleRole{
+  @apply grid grid-cols-1 gap-2 justify-items-center;
+  grid-template-rows: repeat(9, minmax(0));
+}
+
+
+

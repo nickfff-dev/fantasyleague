@@ -51,3 +51,11 @@
     @apply grid grid-cols-1
   }
 }
+
+
+@layer utilities {
+  .grid-rows-9 {
+    grid-template-rows: repeat(9, minmax(0, 1fr));
+  }
+  
+}
