@@ -14,7 +14,7 @@ const LeagueSummary = ({ league, wallets }: { league: any ,wallets:any }) => {
   return (
 <div className={`${L.outerGrid}`}>
  <div className={`${L.root}`}>  
-        <h1 className=" font-bold text-3xl uppercase">Player standings</h1>
+        <h1 className=" h1 font-bold text-3xl uppercase">Player standings</h1>
         <div className={`${L.root, L.resultsContainer} h-[300px]`}>
           
           <div className={`${L.resultsRow1}  font-semibold`}>  <span className="text-sm">STANDING</span>  <span className="text-sm">OWNER</span> <span className="text-sm">SCORE</span> <span className="text-sm">BANK</span> <button className="invisible outline outline-[#ff921b] text-sm rounded-xl" >View</button> </div>
@@ -29,7 +29,7 @@ const LeagueSummary = ({ league, wallets }: { league: any ,wallets:any }) => {
   
       </div>
       <div className={`${L.root}`}>  
-        <h1 className=" font-bold text-3xl uppercase">Recent Trades</h1>
+        <h1 className="h1 font-bold text-3xl uppercase">Recent Trades</h1>
         <div className={`${L.root, L.resultsContainer} h-[300px]`}>
           
           <div className={`${L.resultsRow1}  font-semibold`}>  <span className="text-sm">PLAYER RELEASED</span>  <span className="text-sm">PLAYER ACQUIRED</span> <span className="text-sm">CASH RELEASED</span> <span className="text-sm">CASH ACQUIRED</span> <span className="text-sm">OWNER</span> </div>

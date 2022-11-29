@@ -48,7 +48,7 @@
 }
 
 @screen laptop {
-  .root > h1 {
+  .root > .h1 {
     @apply text-base;
   }
 
@@ -63,7 +63,7 @@
 }
 
 @screen tablet {
-  .root > h1 {
+  .root > .h1 {
     @apply text-base;
   }
 
@@ -83,7 +83,7 @@
 
 
 
-.root  h1 {
+.root  .h1 {
   @apply text-3xl font-bold uppercase bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent;
 }
 

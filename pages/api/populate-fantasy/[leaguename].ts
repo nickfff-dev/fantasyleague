@@ -298,8 +298,9 @@ playerdata?.map(async (team: any) => {
       //  group playerdata with matchid then find the two highest points for each matchid and add themtogether
         league.fixtures.map(async (fixture: any) => {
           for (let i = 0; i < roles.length; i++) {
-   
+             
             participantplayer.filter((player: any) => player.role === roles[i] && player.matchId === fixture.MatchId).sort((a: any, b: any) => b.points - a.points).slice(0, 2).map((player: any) => { 
+
               newplayerdata.push(player)
             })
             totallckpoints.push(participantplayer.filter((player: any) => player.role === roles[i] && player.matchId === fixture.MatchId).sort((a: any, b: any) => b.points - a.points).slice(0,2).reduce ((a: any, b: any) => a + b.points, 0))

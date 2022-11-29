@@ -49,7 +49,7 @@ function ParticipantTeamPage({ participant, results, league}: InferGetServerSide
   }, [rosterChange])
   return (
     <>
-      <ResultDetail results={ results} />
+      {/* <ResultDetail results={results} participant={participant} league={ league} /> */}
     <div className="m-5 overflow-hidden  ">
       <div className="p-20">
     <div className={s.root} style={{ color: "#ffd204" }}>
@@ -113,6 +113,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
     include: {
       members: true,
+      fixtures: true,
       
     }
   })

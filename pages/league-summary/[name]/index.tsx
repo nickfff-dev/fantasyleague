@@ -25,9 +25,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       name: name?.toString()
     },
     include: {
+      fixtures: true,
       members: {
         include: {
           Trade: true,
+          
         }
       }
     }

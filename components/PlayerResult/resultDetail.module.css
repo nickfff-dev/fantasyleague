@@ -1,5 +1,5 @@
 .root{
-  @apply border p-12 border-primary rounded-xl bg-gray-medium max-w-[1000px] mx-auto text-primary
+  @apply border p-12 border-primary rounded-xl bg-gray-medium max-w-[1200px] mt-0 mx-auto text-primary
 }
 
 .resultsHeader{
@@ -7,29 +7,29 @@
 }
 
 .resultsContainer{
-  @apply grid grid-cols-6 justify-items-center 
+  @apply grid grid-cols-6 justify-items-center  content-center
   
 }
 
 .singleRoleRow{
-  @apply flex gap-3 justify-items-center 
+  @apply grid grid-cols-2 justify-items-center bg-gray-light rounded-full  w-[160px] py-1 px-2 text-sm h-12 content-center
 }
 
 .singleRowHead{
-  @apply border border-primary rounded-xl p-2 mx-2 text-sm
+  @apply border border-primary rounded-xl  py-2  text-[12px] w-[160px] mx-2
 }
 .singleRowHeadIn{
-  @apply grid grid-cols-2 justify-items-center
+  @apply grid grid-cols-2 gap-2 justify-items-center 
 
 }
 
 .singleRowHeadb{
-  @apply text-center mt-5
+  @apply text-center 
 }
 
 .singleRole{
-  @apply grid grid-cols-1 gap-2 justify-items-center;
-  grid-template-rows: repeat(9, minmax(0));
+  @apply grid grid-cols-1 gap-2 justify-items-center ;
+  grid-template-rows: repeat(9, minmax(0, ));
 }
 
 
