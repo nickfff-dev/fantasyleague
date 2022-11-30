@@ -18,23 +18,26 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
 
   function getPlayerScore( playerresults: any, role: string) { 
     
+try{
 
-
-    const playerpoints = playerresults.filter((player: any) => {
-      if (
-       
-        (player.role === role)
+  const playerpoints = playerresults.filter((player: any) => {
+    if (
      
-      
-      ) { 
-        return player;
+      (player.role === role)
+   
+    
+    ) { 
+      return player;
 
-      }
-    }).reduce(
-      (acc: number, result: any) => acc + result.points, 0
-    )
-      
-    return playerpoints;
+    }
+  }).reduce(
+    (acc: number, result: any) => acc + result.points, 0
+  )
+    
+  return playerpoints;
+} catch (e: any) {
+  alert(e)
+  }
     
     
   }
@@ -43,15 +46,19 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
 
 
   const teamPPoints = (smarr: any) => {
-    const teampoints = smarr?.filter((result: any) => result.name === participant.team ).reduce((acc: number, result: any) => {
+    try {
+      const teampoints = smarr?.filter((result: any) => result.name === participant.team ).reduce((acc: number, result: any) => {
 
-    return    acc + result.points
-  
-  
-    }, 0)
-   
-    
-    return teampoints
+        return    acc + result.points
+      
+      
+        }, 0)
+       
+        
+        return teampoints
+}catch (e: any) {
+  alert(e)
+  }
   }
 
 
@@ -71,7 +78,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
      
 <Grid>
     <div className={` flex flex-row sm:flex-wrap space-x-12`}>
-            {smdata.participantplayer?.map((result: any, index: number) => {
+            {smdata.participantplayer && smdata.participantplayer?.map((result: any, index: number) => {
               if ( result.role === "Top") {
                 return (
                   <div className={s.item} key={index}>
@@ -95,14 +102,14 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-            getPlayerScore( smdata.participantplayer,  "Top")
+        smdata.participantplayer &&    getPlayerScore( smdata.participantplayer,  "Top")
         }
      
        
              
 <Grid>
     <div className={` flex flex-row sm:flex-wrap space-x-12`}>
-            {smdata.participantplayer?.map((result: any, index: number) => {
+            { smdata.participantplayer && smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Jungle") {
                 return (
                   <div className={s.item} key={index}>
@@ -126,13 +133,13 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-          getPlayerScore( smdata.participantplayer,  "Jungle")
+        smdata.participantplayer &&  getPlayerScore( smdata.participantplayer,  "Jungle")
         }
  
      
         <Grid>
     <div  className={` flex flex-row sm:flex-wrap space-x-12`}>
-            {smdata.participantplayer?.map((result: any, index: number) => {
+            {smdata.participantplayer && smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Mid") {
                 return (
                   <div className={s.item} key={index}>
@@ -156,14 +163,14 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-           getPlayerScore( smdata.participantplayer,  "Mid")
+        smdata.participantplayer &&   getPlayerScore( smdata.participantplayer,  "Mid")
         }
  
      
 
         <Grid>
     <div  className={` flex flex-row sm:flex-wrap space-x-12`}>
-            {smdata.participantplayer?.map((result: any, index: number) => {
+            {smdata.participantplayer && smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Bot" ) {
                 return (
                   <div className={s.item} key={index}>
@@ -187,13 +194,13 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
         <h1>total points</h1>
         {
-             getPlayerScore( smdata.participantplayer,  "Bot")
+          smdata.participantplayer &&   getPlayerScore( smdata.participantplayer,  "Bot")
         }
     
        
         <Grid>
     <div  className={` flex flex-row sm:flex-wrap space-x-12`}>
-            {smdata.participantplayer?.map((result: any, index: number) => {
+            {smdata.participantplayer && smdata.participantplayer?.map((result: any, index: number) => {
               if (result.role === "Support") {
                 return (
                   <div className={s.item} key={index}>
@@ -221,7 +228,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
         </Grid>
      <h1>total points</h1>
         {
-           getPlayerScore( smdata.participantplayer,  "Support")
+          smdata.participantplayer && getPlayerScore( smdata.participantplayer,  "Support")
         }
      
         
@@ -236,7 +243,7 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
      
 
     <div className={` flex flex-row sm:flex-wrap space-x-1`}>
-            {smdata.participantteam?.map((result: any) => {
+            {smdata.participantteam && smdata.participantteam?.map((result: any) => {
              
               if (result.name === participant.team) {   
                 return (
@@ -272,11 +279,11 @@ const PlayerResults = ({  participant,   smdata }: { smdata: any, participant: a
 
         <h1>totalpoints </h1>
           {
-            teamPPoints(smdata.participantteam)
+          smdata.participantteam &&  teamPPoints(smdata.participantteam)
         }
         
         <h1>number of games</h1>{
-          smdata.participantteam?.filter((result: any) => result.name === participant.team ).reduce((acc: number, result: any) => {
+        smdata.participantteam &&   smdata.participantteam?.filter((result: any) => result.name === participant.team ).reduce((acc: number, result: any) => {
             return acc + 1
           }, 0)
         }

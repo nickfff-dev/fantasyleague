@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
 
-  if (league) {
+  if (league?.populateRosters === true) {
     const playerdata = league.region === "LEC/LCS" ? await getPrivateLeagueResultsMerged(league?.startDate as string, league?.endDate as string, league.region.split("/")[0], league.region.split("/")[1]) : await getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string)
     const teamdata = league.region === "LEC/LCS" ? await getPrivateLeagueMatchesMerged(league?.startDate as string, league?.endDate as string, league.region.split("/")[0], league.region.split("/")[1]) : await getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string)
     var participantplayer: { name: any; game: any; matchId: any; role: any; team: any; date: string; kills: any; deaths: any; team1: any; team2: any; assists: any; creepScore: any; visionScore: any; teamTotalKills: any; participantId: number; points: number; }[] = []
@@ -324,6 +324,9 @@ playerdata?.map(async (team: any) => {
       
   
  }
+  }
+  else {
+    res.status(404).json(JSON.stringify({ message: "League not found" }))
   }
 
 }
