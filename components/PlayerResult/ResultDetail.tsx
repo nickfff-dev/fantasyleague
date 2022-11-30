@@ -28,7 +28,7 @@ const ResultDetail = ({ results, participant, league }: { results: any, particip
   // group all the results by week ie. week 9, week 10, week 11
   const teamGroupedResults = () => {
     var reduced = []
-    var teamres = results.participantteam
+   
     for (let i = 0; i < weeks.length; i++) { 
       var name = ""
       var teamKills = 0
@@ -41,7 +41,7 @@ const ResultDetail = ({ results, participant, league }: { results: any, particip
       var points = 0
       var kills = 0
 
-      teamres.map((result: any) => { 
+      results.participantteam?.map((result: any) => { 
         if (result.name === participant.team && result.game.split("_")[1] === weeks[i]) {
           name = result.name
           teamKills += result.teamKills
@@ -69,7 +69,7 @@ const ResultDetail = ({ results, participant, league }: { results: any, particip
     weeks.map((fixture: any) => {
         
       for (let i = 0; i < fantasyRoster.length; i++) {
-        results.participantplayer.filter((result: any) => {
+        results.participantplayer?.filter((result: any) => {
           if (result.role === fantasyRoster[i] && result.matchId.split("_")[1] === fixture) {
          
             grouped.push(result)

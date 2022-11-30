@@ -33,7 +33,7 @@ const TeamTab = ({ league, participant, wallets, position }: { league: any, part
     updateData()
 console.log(results)
       
-  },[results])
+  })
   return (
     <>
         <div className={`${L.container} mb-1`}>
