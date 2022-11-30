@@ -175,14 +175,14 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
     
                 <div className={`${d.singleRowHeadIn}`}>
                   <img src="https://i.redd.it/rtqwmwm3tdy41.png" className="w-12 h-12" /> 
-                  <div>
+                  <div className={`${d.coltitles}`}>
                     <h1>{player.name}</h1>
                       <span>{player.team}</span>
                     <p>{player.role}</p>
                   </div>
                 </div>
                 <div className={`${d.singleRowHeadb}`}>
-                  <p>Total:{Math.ceil(player.points)}</p>
+                  <p>TOTAL: <span>{Math.ceil(player.points)}</span></p>
                 </div>
               </div>
               <div className={`${d.singleRoleRow}`} >
@@ -228,14 +228,14 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
     
                 <div className={`${d.singleRowHeadIn}`}>
                   <img src="https://i.redd.it/rtqwmwm3tdy41.png" className="w-12 h-12" /> 
-                  <div>
+                  <div className={`${d.coltitles}`}>
                     <h1>{team.name}</h1>
                       <span>{ league.region}</span>
                     <p>Team</p>
                   </div>
                 </div>
                 <div className={`${d.singleRowHeadb}`}>
-                  <p>{Math.ceil(team.points)}</p>
+                  <p>Total:{Math.ceil(team.points)}</p>
                 </div>
               </div>
               <div className={`${d.singleRoleRow}`} >
