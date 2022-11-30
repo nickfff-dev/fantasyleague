@@ -129,7 +129,8 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
  
   
   return (
-    <div className={`${d.root} z-20 absolute modal shadow-primary fixed top-10 left-0 right-0 shadow-md`}>
+    <div className={`${d.root} z-20 absolute modal shadow-black p-[1px] fixed top-10 left-0 right-0 shadow-md`}>
+      <div className="bg-gray-medium rounded-xl p-5">
       <div className={`${d.resultsHeader}`}>
         <p>{participant.username}</p>
         <p>{participant.fantasyname}</p>
@@ -279,7 +280,7 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
 
       </div>
 
-    </div>
+    </div></div>
   )
 
 }

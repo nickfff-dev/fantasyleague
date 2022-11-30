@@ -1,5 +1,5 @@
 .root{
-  @apply border p-8 border-primary rounded-xl bg-gray-medium max-w-[1250px] mt-0 mx-auto text-primary
+  @apply border  border-primary rounded-xl bg-gradient-to-r from-primary via-[#f43d00]  to-secondary max-w-[1250px] mt-0 mx-auto text-primary 
 }
 
 .resultsHeader{

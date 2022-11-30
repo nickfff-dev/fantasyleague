@@ -6,7 +6,7 @@ import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
-import { Leagueview } from "@components";
+
 
 
 const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -16,12 +16,7 @@ const AllOpenLeagues = ({ leagues }: InferGetServerSidePropsType<typeof getServe
     <Grid>
           <div className={s.root} style={{color: "#ffd204"}}>
       <h1>Open Leagues</h1>
-      {
-        leagues.map((league:League) => (
-          <Leagueview key={league.id} league={league} />
-        ))
-      }
-
+      
     </div>
 </Grid>
   )
