@@ -6,7 +6,10 @@ import ResultDetail from '@components/PlayerResult/ResultDetail';
 
 const TeamTab = ({ league, participant, wallets, position }: { league: any, participant: any, wallets: any, position: any }) => { 
  const [showModal, setShowModal] = useState(false)
- const [results, setResults] = useState<any>([])
+  const [results, setResults] = useState<any>([])
+  const closeModal = () => {
+    setShowModal(false)
+  }
   const getResults =  () => {
     try {     const mavitu =  fetch(`http://localhost:3000/api/populate-fantasy/${league.name}/`, {
       method: 'POST',
@@ -30,10 +33,12 @@ const TeamTab = ({ league, participant, wallets, position }: { league: any, part
   }
 
   useEffect(() => {
-    updateData()
+    
+      updateData()
 console.log(results)
+
       
-  })
+  },[])
   return (
     <>
         <div className={`${L.container} mb-1`}>
@@ -44,7 +49,7 @@ console.log(results)
           }} className="outline outline-[#ff921b] px-3 text-sm py-0.5 rounded-xl uppercase" >View</button></div></div>
       
       {
-        showModal ? (<ResultDetail league={league} participant={participant} results={ results} />) : null
+        showModal ? (<ResultDetail league={league} participant={participant} results={results} closeModal={ closeModal} />) : null
       }
     </>
   

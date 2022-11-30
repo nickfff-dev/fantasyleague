@@ -6,7 +6,7 @@ import {useEffect, useState} from 'react';
 import { cursorTo } from "readline";
 import { calcParticipationPts } from "@lib/calculate";
 
-const ResultDetail = ({ results, participant, league }: { results: any, participant: any, league: any }) => {
+const ResultDetail = ({ results, participant, league, closeModal }: { results: any, participant: any, league: any, closeModal:any }) => {
   const [show, setShow] = useState(false)
   const showDropwdwn = () => {
     setShow(!show)
@@ -129,13 +129,13 @@ const ResultDetail = ({ results, participant, league }: { results: any, particip
  
   
   return (
-    <div className={`${d.root} z-20 absolute top-0`}>
+    <div className={`${d.root} z-20 absolute modal shadow-primary fixed top-10 left-0 right-0 shadow-md`}>
       <div className={`${d.resultsHeader}`}>
-        <p>owner name</p>
-        <p>fantasy name</p>
+        <p>{participant.username}</p>
+        <p>{participant.fantasyname}</p>
         {/* create a dropdown for toggling week */}
          
-        
+
          
         <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="text-white   font-medium rounded-lg text-sm  text-center inline-flex items-center" type="button">Week : { activeWeek}<svg className="ml-2 w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
 
@@ -157,7 +157,11 @@ const ResultDetail = ({ results, participant, league }: { results: any, particip
  
 </div>
 
-        
+        <button className="absolute top-3 right-2.5 ml-auto inline-flex items-center" onClick={closeModal}
+><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+</button>
         
       </div>
 
@@ -178,7 +182,7 @@ const ResultDetail = ({ results, participant, league }: { results: any, particip
                   </div>
                 </div>
                 <div className={`${d.singleRowHeadb}`}>
-                  <p>{Math.ceil(player.points)}</p>
+                  <p>Total:{Math.ceil(player.points)}</p>
                 </div>
               </div>
               <div className={`${d.singleRoleRow}`} >
