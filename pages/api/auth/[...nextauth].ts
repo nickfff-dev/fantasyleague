@@ -7,6 +7,9 @@ import prisma from '@lib/prisma';
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
+  pages: {
+    signIn: '/auth/signin',
+  },
   providers: [
     TwitchProvider({
       clientId: process.env.TWITCH_CLIENT_ID as string,

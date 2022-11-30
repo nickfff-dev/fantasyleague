@@ -7,7 +7,7 @@ import cargo from '@lib/cargo';
 import{calculateLeagueDuration} from "@lib/calculate"
 import dayjs from 'dayjs';
 
-import { getCurrentGames, getPrivateLeagueTeamsMerged, getPrivateLeagueTeams, getPrivateLeaguePlayersMerged, getPrivateLeaguePlayers,getPrivateLeagueResults,getLeagueFixture, getLeagueFixtureMerged } from '@lib/cargoQueries';
+import {  getPrivateLeagueTeams,  getPrivateLeaguePlayers,getLeagueFixture, } from '@lib/cargoQueries';
 
 
 
@@ -47,16 +47,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
        }).then(() => {
         
          
-         if (league.region === "LEC/LCS") {
-           
-           getPrivateLeagueTeamsMerged(league.name, league.startDate, league.endDate, league.region.split("/")[0], league.region.split("/")[1])
-           getPrivateLeaguePlayersMerged(league.name, league.startDate, league.endDate, league.region.split("/")[0], league.region.split("/")[1])
-           getLeagueFixtureMerged(league.name, league.startDate, league.endDate, league.region.split("/")[0], league.region.split("/")[1])
-         } else {
+     
           getPrivateLeaguePlayers(league.name, league.startDate, league.endDate, league.region)
           getPrivateLeagueTeams(league.name, league.startDate, league.endDate, league.region)
          getLeagueFixture(league.name, league.startDate, league.endDate, league.region)
-      }  
+      
  
       })
       res.status(200).send(`${league.name}`)

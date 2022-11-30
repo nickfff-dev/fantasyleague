@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@lib/prisma';
 import { Fixture, Teams, League, Players, Participant, TeamResult, PrismaClient, Prisma, PlayerResult } from "@prisma/client"
 import dayjs from 'dayjs';
-import { getPrivateLeagueResults, getPrivateLeagueMatches, getPrivateLeaguePlayers, getPrivateLeagueResultsMerged, getPrivateLeagueMatchesMerged } from "@lib/cargoQueries";
+import { getPrivateLeagueResults, getPrivateLeagueMatches, getPrivateLeaguePlayers } from "@lib/cargoQueries";
 import { calculatePlayerScore, calculateTeamScore } from "@lib/calculate";
 
 
@@ -39,8 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
   if (league?.populateRosters === true) {
-    const playerdata = league.region === "LEC/LCS" ? await getPrivateLeagueResultsMerged(league?.startDate as string, league?.endDate as string, league.region.split("/")[0], league.region.split("/")[1]) : await getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string)
-    const teamdata = league.region === "LEC/LCS" ? await getPrivateLeagueMatchesMerged(league?.startDate as string, league?.endDate as string, league.region.split("/")[0], league.region.split("/")[1]) : await getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string)
+    const playerdata =await getPrivateLeagueResults(league?.startDate as string, league?.endDate as string, league?.region as string)
+    const teamdata =  await getPrivateLeagueMatches(league?.startDate as string, league?.endDate as string, league?.region as string)
     var participantplayer: { name: any; game: any; matchId: any; role: any; team: any; date: string; kills: any; deaths: any; team1: any; team2: any; assists: any; creepScore: any; visionScore: any; teamTotalKills: any; participantId: number; points: number; }[] = []
     var participantteam: { name: string; game: string; date: string; teamKills: number, dragonKills: number, riftHeraldKills: number, turretKills: number; baronKills: number; team1: string; team2: string; inhibitorKills: number; didWin: boolean; participantId: number; points: number}[] = []
 playerdata?.map(async (team: any) => {

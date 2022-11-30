@@ -31,9 +31,8 @@ const CreateaLeague = ({ username, owner }:  InferGetServerSidePropsType<typeof 
   const [newLeaguedata, setNewLeaguedata] = useState({
     name: "",
     region: "",
-    owner:"",
+    owner:username,
     inviteOnly: "false",
-    inviteCode: "",
     draftTime: "",
     startDate: "",
     endDate: "",
@@ -63,7 +62,11 @@ const CreateaLeague = ({ username, owner }:  InferGetServerSidePropsType<typeof 
   const submitLeague = async () => { 
 
 const body = newLeaguedata
-
+    // check for empty fields
+    if (body.name === "" || body.region === "" || body.owner === "" || body.inviteOnly === "" ||  body.draftTime === "" || body.startDate === "" || body.endDate === "" || body.buyIn === "" ||   body.minPlayers === 0 || body.maxPlayers === 0) { 
+      alert("All fields are required")
+      return
+    }
   
     await fetch("/api/create-league", {
       method: 'POST',
@@ -107,19 +110,9 @@ const body = newLeaguedata
   <option value="LCK">LCK KOREA</option>
   <option value="LPL">LPL CHINA</option>
 <option value="LCS">LCS AMERICA</option>
-<option value="LEC/LCS">LCS & EUROPE</option>
 </select>
             
             </label><br/>
-
-            <label htmlFor="owner">Owner  &nbsp;  &nbsp; <input style={{color: "black"}} placeholder={username} type="text" name="owner" id="owner" defaultValue ={username}
-             
-              onChange={
-                (e) => { 
-                  setNewLeaguedata({ ...newLeaguedata, owner: username })
-                }
-             }
-            /></label><br/>
 
             
       

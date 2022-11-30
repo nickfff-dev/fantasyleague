@@ -1,5 +1,5 @@
 .root {
-  @apply rounded-full py-3 px-10 text-2xl font-bold uppercase;
+  @apply rounded-full py-1 px-6 text-lg font-bold uppercase;
 }
 
 .solid {
