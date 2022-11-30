@@ -137,10 +137,10 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
          
 
          
-        <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="text-white   font-medium rounded-lg text-sm  text-center inline-flex items-center" type="button">Week : { activeWeek}<svg className="ml-2 w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+        <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="text-white   font-medium rounded-lg text-sm  text-center inline-flex items-center" type="button">Week : <span className={`${d.dj}`}>{ activeWeek}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
 
-<div id="dropdownDivider" className={`${show ? "z-20" : "hidden"} absolute z-20 mx-auto w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
-    <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDividerButton">
+<div id="dropdownDivider" className={`${show ? "z-20" : "hidden"} absolute z-20 ml-[200px] mt-5 max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
+    <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
               {weeks.map((week: any, index: any) => {
                 return (
                   <li>
@@ -176,7 +176,7 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
                 <div className={`${d.singleRowHeadIn}`}>
                   <img src="https://i.redd.it/rtqwmwm3tdy41.png" className="w-12 h-12" /> 
                   <div className={`${d.coltitles}`}>
-                    <h1>{player.name}</h1>
+                    <h1>{`${player.name.split(" ")[0]}`}</h1>
                       <span>{player.team}</span>
                     <p>{player.role}</p>
                   </div>
@@ -185,7 +185,7 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
                   <p>TOTAL: <span>{Math.ceil(player.points)}</span></p>
                 </div>
               </div>
-              <div className={`${d.singleRoleRow}`} >
+              <div className={`${d.singleRoleRow1}`} >
                 <p>stat</p>
                 <p>score</p>
               </div>
@@ -229,16 +229,16 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
                 <div className={`${d.singleRowHeadIn}`}>
                   <img src="https://i.redd.it/rtqwmwm3tdy41.png" className="w-12 h-12" /> 
                   <div className={`${d.coltitles}`}>
-                    <h1>{team.name}</h1>
+                    <h1>{team.name.split(" ")[0]}</h1>
                       <span>{ league.region}</span>
                     <p>Team</p>
                   </div>
                 </div>
                 <div className={`${d.singleRowHeadb}`}>
-                  <p>Total:{Math.ceil(team.points)}</p>
+                <p>TOTAL: <span>{Math.ceil(team.points)}</span></p>
                 </div>
               </div>
-              <div className={`${d.singleRoleRow}`} >
+              <div className={`${d.singleRoleRow1} `} >
                 <p>stat</p>
                 <p>score</p>
               </div>

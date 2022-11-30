@@ -23,7 +23,9 @@
 }
 
 
-
+.root h1{
+  @apply bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent
+}
 .container  span {
   @apply text-white text-sm 
 }
@@ -83,10 +85,6 @@
 
 
 
-.root  .h1 {
-  @apply text-3xl font-bold uppercase bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent;
-}
-
 
 @media (max-width: 540px){
   .resultsRow1 span{
@@ -118,3 +116,8 @@
     @apply grid grid-cols-1
   }
 }
+
+
+
+
+
