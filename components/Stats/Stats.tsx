@@ -4,6 +4,14 @@ import { useState, useEffect } from 'react';
 
 
 const Stats = ({ statistics }: { statistics: any }) => {
+
+
+  // create a function for scroll to overflow-x of the .datarightcontainer Grid
+  const scrolltight = () => { 
+    const containe = document.querySelector(`${St.datarightcontainer}`);
+    containe?.scrollLeft ? containe.scrollLeft += 300 : null;
+    console.log("wow")
+  }
   const [show, setShow] = useState(false)
   const showDropwdwn = () => {
     setShow(!show)
@@ -79,10 +87,11 @@ setStats(tuma)
 
   
   useEffect(() => {
-    if (role !== "" || region !== "") {
+    if ( region !== "" || role !== "") {
       runFilter()
     }
-  },[role, region])
+  }, [ region, role])
+  
 
 
   return (<div className={`${St.root}`}>
@@ -192,7 +201,7 @@ setStats(tuma)
           stats.map((stat: any, index:number) => { 
             return (
               <div key={index} className={`${St.dataleft}`} >
-                <span>{stat.key}</span>
+                <span>{stat.key.split(" ")[0]}</span>
                 <span>{stat?.value[0]?.region}</span>
                 <span>{stat.value[0].team}</span>
                 <span>{stat.value[0].role}</span>
@@ -204,6 +213,10 @@ setStats(tuma)
 
       </div>
       <div className={`${St.datarightcontainer}`}>
+        <button  className="" onClick={scrolltight} >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full z-10  fixed border  right-[50px]">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+</svg></button>
+
         <div className={`${St.dataright}`}>
 
         <span>GAME1</span>

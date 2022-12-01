@@ -5,11 +5,11 @@
 
 
 .datafilters{
-  @apply grid grid-cols-2 gap-4 justify-items-start content-center 
+  @apply grid grid-cols-2 gap-4 justify-items-start content-center max-w-[1200px] w-full 
 }
 
 .datafiltersleft{
-  @apply grid grid-cols-2 gap-4
+  @apply grid grid-cols-2 gap-5
 
 }
 
@@ -19,27 +19,31 @@
 
 
 .data{
-  @apply grid grid-cols-2 gap-0 justify-items-start content-start mt-10 bg-gray-light p-6  rounded-xl   ;
+  @apply grid grid-cols-2 gap-px justify-items-center content-center pt-5 mt-10 bg-gray-light px-12   rounded-xl   ;
 }
 
 
 .dataleftcontainer{
-  @apply grid grid-cols-1 gap-4 justify-items-start content-center ;
-  grid-template-rows: max-content;
+  @apply grid grid-cols-1
 }
 
 
 .datarightcontainer{
-  @apply grid grid-cols-1 justify-items-start gap-4 content-center  overflow-x-auto overflow-y-hidden ;
-  grid-template-rows:max-content;
+  @apply  grid grid-cols-1 overflow-y-hidden overflow-x-scroll;
+
+}
+.datarightcontainer::-webkit-scrollbar{
+  @apply hidden 
 }
 .dataleft{
-  @apply grid grid-cols-5   gap-4 justify-items-center content-center w-full text-[15px] ;
+  @apply grid grid-cols-5   gap-4 justify-items-center content-start w-full text-[15px] ;
+  grid-template-rows: 50px;
 }
 
 
 .dataright{
   @apply grid grid-flow-col auto-cols-[50px]  gap-4 justify-items-center content-center w-full  text-[15px]; 
+  grid-template-rows: 50px;
  
 
 }
