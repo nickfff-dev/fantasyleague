@@ -1,11 +1,11 @@
 
 .root{
-  @apply bg-gray-dark m-5  text-primary grid grid-cols-1 justify-items-start content-center
+  @apply bg-gray-dark m-12  text-primary grid grid-cols-1 justify-items-start content-center
 }
 
 
 .datafilters{
-  @apply grid grid-cols-2 gap-4 justify-items-start content-center px-12
+  @apply grid grid-cols-2 gap-4 justify-items-start content-center 
 }
 
 .datafiltersleft{
@@ -19,31 +19,32 @@
 
 
 .data{
-  @apply grid grid-cols-2 gap-4 justify-items-start content-start mt-10;
+  @apply grid grid-cols-2 gap-0 justify-items-start content-start mt-10 bg-gray-light p-6  rounded-xl   ;
 }
 
 
 .dataleftcontainer{
-  @apply grid grid-cols-1 gap-4 justify-items-start content-center;
+  @apply grid grid-cols-1 gap-4 justify-items-start content-center ;
   grid-template-rows: max-content;
 }
 
 
 .datarightcontainer{
-  @apply grid grid-cols-1  justify-items-start gap-4 content-center  overflow-x-auto overflow-y-hidden;
+  @apply grid grid-cols-1 justify-items-start gap-4 content-center  overflow-x-auto overflow-y-hidden ;
   grid-template-rows:max-content;
 }
 .dataleft{
-  @apply grid grid-cols-5  gap-4 justify-items-center content-center w-full text-[15px] ;
+  @apply grid grid-cols-5   gap-4 justify-items-center content-center w-full text-[15px] ;
 }
 
 
 .dataright{
-  @apply grid grid-flow-col auto-cols-[50px]  gap-4 justify-items-center content-center w-full  text-[15px]
+  @apply grid grid-flow-col auto-cols-[50px]  gap-4 justify-items-center content-center w-full  text-[15px]; 
+ 
 
 }
 
-
-.dataright span{
-  @apply pl-6 text-sm
+.datafiltersright span{
+  @apply uppercase
 }
+

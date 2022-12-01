@@ -3,10 +3,10 @@ import { GetServerSideProps } from 'next'
 import Stats from "@components/Stats/Stats";
 import { InferGetServerSidePropsType } from 'next'
 
-const StatsPage = ({players}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const StatsPage = ({statistics}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (<>
   
-  <Stats players={players}/>
+  <Stats statistics={statistics}/>
   
   </>)
 }
@@ -15,12 +15,15 @@ const StatsPage = ({players}: InferGetServerSidePropsType<typeof getServerSidePr
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const players = await prisma.playerResult.findMany({
- 
+  const statistics = await prisma.league.findMany({
+    include: {
+      PlayerResult: true,
+      TeamResult: true
+   }
   })
   return {
     props: {
-      players
+      statistics
     }
   }
  }
