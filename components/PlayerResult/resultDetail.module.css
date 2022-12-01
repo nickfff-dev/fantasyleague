@@ -29,7 +29,7 @@
 
 .singleRole{
   @apply grid grid-cols-1 gap-2 justify-items-center ;
-  grid-template-rows: repeat(9, minmax(0, 40px ));
+  grid-template-rows: repeat(9, minmax(0 , 40px));
 }
 
 

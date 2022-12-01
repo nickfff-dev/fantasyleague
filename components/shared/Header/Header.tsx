@@ -68,7 +68,7 @@ const Header = ({
           </div>
           <div className={`${isOpen ? 'block' : 'tablet:hidden mobile:hidden  '} ${s.kula} items-center justify-between  w-full md:flex w-auto md:w-auto md:block order-1 mobile:order-1`} id="navbar-sticky">
           <ul className="flex p-4 mt-4 space-x-5 flex-row mobile:flex-col mobile:space-x-0 tablet:space-x-0 tablet:flex-col laptop:space-x-8 mt-0 "><Link href='/user/profile'> My account </Link>
-          <li > <Link href='/user/wallet'> wallet </Link></li>
+          <li > <Link href='/stats'> Stats </Link></li>
           <li>  <Link href='/alleagues'> leagues </Link></li>
           <li>  <Link href='/create-league'> create-league </Link></li>
             </ul>
