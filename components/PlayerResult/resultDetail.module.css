@@ -10,7 +10,8 @@
   @apply grid grid-cols-6 justify-items-center  content-center
   
 }
-.singleRoleRow1{@apply grid grid-cols-2 justify-items-center   w-[160px]  px-2 text-sm  content-center text-white}
+.singleRoleRow1{@apply grid grid-cols-2 justify-items-center   w-[160px]  text-sm  content-center text-white 
+}
 .singleRoleRow{
   @apply grid grid-cols-2 justify-items-center bg-gray-light rounded-full  w-[160px]  text-sm  content-center text-white 
 }

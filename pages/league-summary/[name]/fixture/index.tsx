@@ -14,6 +14,7 @@ const Fixtureview = ({ fixture, results }: { fixture: any, results: any }) => {
 
   return (
     <Grid>
+      
       <div style={{color:"white"}}>
       <h1>Fixture</h1>
       {

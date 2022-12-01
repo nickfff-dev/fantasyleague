@@ -239,7 +239,7 @@ const ResultDetail = ({ results, participant, league, closeModal }: { results: a
                 <p>TOTAL: <span>{Math.ceil(team.points)}</span></p>
                 </div>
               </div>
-              <div className={`${d.singleRoleRow1} `} >
+      <div className={`${d.singleRoleRow1}`} >
                 <p>stat</p>
                 <p>score</p>
               </div>

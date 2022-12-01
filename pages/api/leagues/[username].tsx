@@ -16,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         include: {
       
           members: true,
+          fixtures: true
         }
       }).then((data) => res.send(JSON.stringify(data)))
     } catch (e) {

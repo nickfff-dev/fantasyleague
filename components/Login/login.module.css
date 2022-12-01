@@ -6,7 +6,7 @@
   @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent text-6xl font-bold font-xix tracking-wide text-transparent text-center
 }
 .loginContainer{
-  @apply rounded-[20px] bg-gradient-to-r from-primary  to-secondary p-[6px]  h-[650px]  max-w-[1100px] w-full mx-auto
+  @apply rounded-[20px] bg-gradient-to-r from-primary  to-secondary p-[6px]  h-[650px]  max-w-[800px] w-full mx-auto
 }
 
 .loginContainerInner{

@@ -5,7 +5,7 @@ export default function SignIn({ providers } : {providers: any}) {
     <div className={`${S.root}`}>
       <div className={`${S.loginContainer}`}>
         <div className={`${S.loginContainerInner}`}>
-          <h1>Login</h1>
+          <h1>Log in</h1>
           <div className={`${S.loginCardOuter}`}>
           <div className={`${S.loginCardInner}`}>
       {Object.values(providers).map((provider:any) => (
