@@ -222,7 +222,7 @@ setStats(tuma)
         <span>
           <button id="dropdownDividerButton"  onClick={() => {
             showDropwdwn("dropdownDivider4")
-          }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2 capitalize`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider4" className={`${show4 ? "z-20" : "hidden"} absolute z-20   w-22  text-center max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
               <li> <button onClick={() => {  setRole("Top"); }}
@@ -265,7 +265,7 @@ setStats(tuma)
     </div>
     <div className={`${St.data}`}>
       <div className={`${St.dataleftcontainer}`}>
-        <div className={`${St.dataleft}`}>
+        <div className={`${St.dataleft} text-white font-bold text-sm`}>
       <span>NAME</span>
         <span>REGION</span>
         <span>TEAM</span>
@@ -277,12 +277,12 @@ setStats(tuma)
         {
           stats.map((stat: any, index:number) => { 
             return (
-              <div key={index} className={`${St.dataleft}`} >
+              <div key={index} className={`${St.dataleft} text-white text-lg`} >
                 <span>{stat.key.split(" ")[0]}</span>
                 <span>{stat?.value[0]?.region}</span>
                 <span>{stat.value[0].team}</span>
                 <span>{stat.value[0].role}</span>
-                <span>50,000</span>
+                <span>$50,000</span>
               </div>
             )
           })
@@ -294,7 +294,7 @@ setStats(tuma)
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
 </svg></button>
 
-        <div  className={`${St.dataright}`}>
+        <div  className={`${St.dataright} text-white text-sm font-bold font-dubai`}>
 
         <span>GAME1</span>
         <span>GAME2</span>
@@ -324,7 +324,7 @@ setStats(tuma)
         {
           stats.map((stat: any, index: number) => { 
             return (
-              <div key={index} className={`${St.dataright}`}>
+              <div key={index} className={`${St.dataright} text-white`}>
                 {
                   stat.value.map((entry: any) => {
                     return(<span>{ entry.points}</span>)

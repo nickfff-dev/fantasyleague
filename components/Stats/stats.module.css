@@ -20,7 +20,7 @@
 .searchbar{
   @apply text-left rounded-full bg-gray-light border px-2 border-gray-light}
 .data{
-  @apply grid grid-cols-2 gap-px justify-items-start content-center pt-5 mt-10 bg-gray-light px-12   rounded-xl   ;
+  @apply grid grid-cols-2 gap-px justify-items-start content-center pt-5 mt-10 bg-gray-medium px-12   rounded-xl   ;
 }
 
 
