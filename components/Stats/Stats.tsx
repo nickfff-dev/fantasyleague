@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
  import St from "./stats.module.css";
 import {calcParticipationPts} from "lib/calculate";
-
+import DataView from "./DataViewPlayers";
+import DataViewTeams from "./DataViewTeams";
 const Stats = ({ statistics }: { statistics: any }) => {
 
   useEffect(() => {
@@ -42,7 +43,39 @@ const Stats = ({ statistics }: { statistics: any }) => {
     }, {});
   };
 
+  const filterteamdata = () => {
+    var teamstats: { leaguname : any, name: any; towers:any, inhibitors:any, dragons:any, rift:any, baron:any, totalKill:any, region: any;  win: any; split: any; points: any[]; }[] = []
+    statistics.map((league: any) => {
+    
+        league.TeamResult.map((result: any) => {
+       
+            teamstats.push({
+              leaguname:league.name,
+              name: result.name,
+              region: league.region,
+              towers: result.turretKills,
+              inhibitors: result.inhibitorKills,
+              dragons: result.dragonKills,
+              rift: result.riftHeraldKills,
+              baron: result.baronKills,
+              split: result.game,
+              points: result.points,
+              totalKill: result.teamKills,
+              win: result.didWin
+         
+            })
+            
+          
+          
+        })
+      
+      
+    })
 
+ 
+   
+    return teamstats
+  }
 
 
 
@@ -79,17 +112,36 @@ const Stats = ({ statistics }: { statistics: any }) => {
    
     return playerstats
   }
+ 
+  const assignTeamData = () => {
+    const teamdata = filterteamdata()
+    const groupdteamdata = Object.entries(groupBy(teamdata, "name")).map(([key, value]) => ({ key, value }))
+    return groupdteamdata
+  }
 
+  const runFilterTeams = () => {
+    const unfilt = filterteamdata()
+    const empunfilt: any[] = []
+    if (region !== "" && season !== "") {
+      unfilt.map((team: any) => { 
+        if (team.region === region) {
+          empunfilt.push(team)
+        }
+      })
+    }
+
+    const outcome = Object.entries(groupBy(empunfilt, "name")).map(([key, value]) => ({ key, value }))
+     setTeamStats(outcome)
+  }
 
   
   const assignData = () => {
     const mres = filterdata()
     const tuma = Object.entries(groupBy(mres, "name")).map(([key, value]) => ({ key, value }))
-    console.log(tuma)
     return tuma
   }
   const [stats, setStats] = useState(assignData())
-
+  const [teamStats, setTeamStats] = useState(assignTeamData())
   const runFilter = (region:string, role:string) => {
     const unfilt = filterdata()
     const empunfilt: any[] =[]
@@ -128,7 +180,12 @@ setStats(tuma)
     }
   }, [ region, role])
   
+  useEffect(() => {
+     if(view === "Teams" && region !== "" && season !== "") {
+       runFilterTeams()
+     }
 
+   }, [view , region, season])
 
   return (<div className={`${St.root}`}>
     <div className={`${St.datafilters}`}>
@@ -274,101 +331,9 @@ setStats(tuma)
       <input type="text" placeholder="Search Here..." className={`${St.searchbar}`} />
       </div>
     </div>
-    <div className={`${St.data}`}>
-      <div className={`${St.dataleftcontainer}`}>
-        <div className={`${St.dataleft} text-white font-bold text-base`}>
-      <span>NAME</span>
-        <span>REGION</span>
-        <span>TEAM</span>
-        <span>ROLE</span>
-        <span>PRICE</span>
-      
-        </div>
-         
-        {
-          stats.map((stat: any, index:number) => { 
-            return (
-              <div key={index} className={`${St.dataleft} text-white`} >
-                <span>{stat.key.split(" ")[0]}</span>
-                <span>{stat?.value[0]?.region}</span>
-                <span>{stat.value[0].team}</span>
-                <span>{stat.value[0].role}</span>
-                <span>$50,000</span>
-              </div>
-            )
-          })
-        }
-
-      </div>
-      {
-        mode === "scores" ? (      <div id="games" className={`${St.datarightcontainer} relative`}>
-        <button id="scroller" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-</svg></button>
-
-        <div  className={`${St.dataright} text-white text-base font-bold font-dubai`}>
-
-            {
-              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map((item: any, index: number) => {
-                return (
-                  <span key={index}>GAME{item }</span>
-                )
-              })
-      
-      
-            }
-        </div>
-        
-        {
-          stats.map((stat: any, index: number) => { 
-            return (
-              <div key={index} className={`${St.dataright} text-white`}>
-                {
-                  stat.value.map((entry: any) => {
-                    return(<span>{ entry.points}</span>)
-                  })
-                }
-    </div>
-            )
-          })
-       }
-      </div>): (      <div id="games" className={`${St.datarightcontainer} relative`}>
-        <button id="scroller" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-</svg></button>
-
-        <div  className={`${St.dataright} text-white text-base font-bold font-dubai`}>
-
-        <span>KILLS</span>
-        <span>DEATHS</span>
-        <span>ASSISTS</span>
-        <span>CS</span>
-        <span>KILL%</span>
-        <span>VISION</span>
-       
-      
-      
-      
-        </div>
-        
-        {
-          stats.map((stat: any, index: number) => { 
-            return (
-              <div key={index} className={`${St.dataright} text-white`}>
-                {/* reduce kills deaths assists cs vs teamtotal from stat.value and render each in a span */}
-                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.kills, 0)}</span>
-                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.deaths, 0)}</span>
-                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.assists, 0)}</span>
-                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.cs, 0)}</span>
-                <span>{Math.ceil(stat.value.reduce((acc: any, curr: any) => acc + curr.teamTotal, 0)  )}</span>
-                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.vs, 0)}</span>
-    </div>
-            )
-          })
-       }
-      </div>)
+    {
+      view === "Players" ? <DataView stats={stats} mode={mode}/> : <DataViewTeams stats={teamStats} mode={mode}/>
 }
-    </div>
    
   </div>)
  }
