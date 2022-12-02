@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
  import St from "./stats.module.css";
-
-
+import {calcParticipationPts} from "lib/calculate";
 
 const Stats = ({ statistics }: { statistics: any }) => {
 
@@ -15,7 +14,7 @@ const Stats = ({ statistics }: { statistics: any }) => {
   const [show2, setShow2] = useState(false)
   const [show3, setShow3] = useState(false)
   const [show4, setShow4] = useState(false)
-
+  const [mode,setMode] = useState("scores")
   const showDropwdwn = (id: any) => {
     if (id === "dropdownDivider1") {
       setShow1(!show1)
@@ -48,7 +47,7 @@ const Stats = ({ statistics }: { statistics: any }) => {
 
 
   const filterdata = () => {
-    var playerstats: { leaguname : any, name: any; region: any; team: any; role: any; split: any; points: any[]; }[] = []
+    var playerstats: { leaguname : any, name: any; kills:any, deaths:any, assists:any, cs:any, vs:any, teamTotal:any, region: any; team: any; role: any; split: any; points: any[]; }[] = []
     statistics.map((league: any) => {
     
         league.PlayerResult.map((result: any) => {
@@ -60,6 +59,12 @@ const Stats = ({ statistics }: { statistics: any }) => {
               team: result.team,
               role: result.role,
               split: result.game,
+              kills: result.kills,
+              deaths: result.deaths,
+              assists: result.assists,
+              cs: result.creepScore,
+              vs: result.visionScore,
+              teamTotal:  calcParticipationPts(result.kills, result.assists,result.teamTotalKills),
               points: result.points
             })
             
@@ -70,7 +75,7 @@ const Stats = ({ statistics }: { statistics: any }) => {
       
     })
 
-    
+ 
    
     return playerstats
   }
@@ -80,9 +85,11 @@ const Stats = ({ statistics }: { statistics: any }) => {
   const assignData = () => {
     const mres = filterdata()
     const tuma = Object.entries(groupBy(mres, "name")).map(([key, value]) => ({ key, value }))
+    console.log(tuma)
     return tuma
   }
   const [stats, setStats] = useState(assignData())
+
   const runFilter = (region:string, role:string) => {
     const unfilt = filterdata()
     const empunfilt: any[] =[]
@@ -126,8 +133,12 @@ setStats(tuma)
   return (<div className={`${St.root}`}>
     <div className={`${St.datafilters}`}>
       <div className={`${St.datafiltersleft}`}>
-        <button className={`${St.scorefilter}`}><span>SCORE</span></button>
-        <button className={`${St.statsfilter}`}><span>STATS</span></button>
+        <button onClick={() => {
+          setMode("scores")
+        }} className={`${St.scorefilter}`}><span>SCORE</span></button>
+        <button onClick={() => {
+          setMode("stats")
+        }} className={`${St.statsfilter}`}><span>STATS</span></button>
       </div>
       <div className={`${St.datafiltersright}`}>
         <span>
@@ -225,7 +236,7 @@ setStats(tuma)
           }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2 capitalize`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider4" className={`${show4 ? "z-20" : "hidden"} absolute z-20   w-22  text-center max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
-              <li> <button onClick={() => {  setRole("Top"); }}
+              <li> <button onClick={() => {  setRole("Top");setShow4(false) }}
                   className="inline py-2 px-4 ">Top</button>
                 </li>
             <li>
@@ -265,7 +276,7 @@ setStats(tuma)
     </div>
     <div className={`${St.data}`}>
       <div className={`${St.dataleftcontainer}`}>
-        <div className={`${St.dataleft} text-white font-bold text-sm`}>
+        <div className={`${St.dataleft} text-white font-bold text-base`}>
       <span>NAME</span>
         <span>REGION</span>
         <span>TEAM</span>
@@ -277,7 +288,7 @@ setStats(tuma)
         {
           stats.map((stat: any, index:number) => { 
             return (
-              <div key={index} className={`${St.dataleft} text-white text-lg`} >
+              <div key={index} className={`${St.dataleft} text-white`} >
                 <span>{stat.key.split(" ")[0]}</span>
                 <span>{stat?.value[0]?.region}</span>
                 <span>{stat.value[0].team}</span>
@@ -289,36 +300,23 @@ setStats(tuma)
         }
 
       </div>
-      <div id="games" className={`${St.datarightcontainer} relative`}>
+      {
+        mode === "scores" ? (      <div id="games" className={`${St.datarightcontainer} relative`}>
         <button id="scroller" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
 </svg></button>
 
-        <div  className={`${St.dataright} text-white text-sm font-bold font-dubai`}>
+        <div  className={`${St.dataright} text-white text-base font-bold font-dubai`}>
 
-        <span>GAME1</span>
-        <span>GAME2</span>
-        <span>GAME3</span>
-        <span>GAME4</span>
-        <span>GAME5</span>
-        <span>GAME6</span>
-        <span>GAME7</span>
-        <span>GAME8</span>
-        <span>GAME9</span>
-        <span>GAME10</span>
-        <span>GAME11</span>
-          <span>GAME12</span>
-          <span>GAME13</span>
-          <span>GAME14</span>
-          <span>GAME12</span>
-          <span>GAME13</span>
-          <span>GAME14</span>
-          <span>GAME15</span>
-          <span>GAME16</span>
-        <span>GAME17</span>
+            {
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map((item: any, index: number) => {
+                return (
+                  <span key={index}>GAME{item }</span>
+                )
+              })
       
       
-      
+            }
         </div>
         
         {
@@ -334,7 +332,42 @@ setStats(tuma)
             )
           })
        }
-      </div>
+      </div>): (      <div id="games" className={`${St.datarightcontainer} relative`}>
+        <button id="scroller" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+</svg></button>
+
+        <div  className={`${St.dataright} text-white text-base font-bold font-dubai`}>
+
+        <span>KILLS</span>
+        <span>DEATHS</span>
+        <span>ASSISTS</span>
+        <span>CS</span>
+        <span>KILL%</span>
+        <span>VISION</span>
+       
+      
+      
+      
+        </div>
+        
+        {
+          stats.map((stat: any, index: number) => { 
+            return (
+              <div key={index} className={`${St.dataright} text-white`}>
+                {/* reduce kills deaths assists cs vs teamtotal from stat.value and render each in a span */}
+                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.kills, 0)}</span>
+                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.deaths, 0)}</span>
+                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.assists, 0)}</span>
+                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.cs, 0)}</span>
+                <span>{Math.ceil(stat.value.reduce((acc: any, curr: any) => acc + curr.teamTotal, 0)  )}</span>
+                <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.vs, 0)}</span>
+    </div>
+            )
+          })
+       }
+      </div>)
+}
     </div>
    
   </div>)
