@@ -17,7 +17,8 @@
   @apply grid grid-flow-col auto-cols-max justify-items-start gap-2
 }
 
-
+.searchbar{
+  @apply text-left rounded-full bg-gray-light border px-2 border-gray-light}
 .data{
   @apply grid grid-cols-2 gap-px justify-items-start content-center pt-5 mt-10 bg-gray-light px-12   rounded-xl   ;
 }

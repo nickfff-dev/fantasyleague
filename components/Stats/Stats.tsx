@@ -215,7 +215,7 @@ setStats(tuma)
             
     </ul>
 </div></span>
-      <input type="text" placeholder="Search" />
+      <input type="text" placeholder="Search Here..." className={`${St.searchbar}`} />
       </div>
     </div>
     <div className={`${St.data}`}>
