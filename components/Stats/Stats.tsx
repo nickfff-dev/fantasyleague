@@ -5,13 +5,11 @@ import { useState, useEffect } from 'react';
 
 const Stats = ({ statistics }: { statistics: any }) => {
 
-
-  // create a function for scroll to overflow-x of the .datarightcontainer Grid
-  const scrolltight = () => { 
-    const containe = document.querySelector(`${St.datarightcontainer}`);
-    containe?.scrollLeft ? containe.scrollLeft += 300 : null;
-    console.log("wow")
-  }
+  useEffect(() => {
+    document.getElementById("finya")?.addEventListener("click", () => {
+     document.getElementById("tesa")?.scrollBy(10,500)
+   })
+ })
   const [show, setShow] = useState(false)
   const showDropwdwn = () => {
     setShow(!show)
@@ -212,12 +210,12 @@ setStats(tuma)
         }
 
       </div>
-      <div className={`${St.datarightcontainer}`}>
-        <button  className="" onClick={scrolltight} >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full z-10  fixed border  right-[50px]">
+      <div id="tesa" className={`${St.datarightcontainer} relative`}>
+        <button id="finya" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
 </svg></button>
 
-        <div className={`${St.dataright}`}>
+        <div  className={`${St.dataright}`}>
 
         <span>GAME1</span>
         <span>GAME2</span>
