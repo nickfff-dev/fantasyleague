@@ -5,7 +5,7 @@
 
 
 .datafilters{
-  @apply grid grid-cols-2 gap-4 justify-items-start content-center max-w-[1200px] w-full 
+  @apply grid grid-cols-2 gap-4 justify-items-start content-center max-w-[1000px] w-full 
 }
 
 .datafiltersleft{
@@ -14,7 +14,7 @@
 }
 
 .datafiltersright{
-  @apply grid grid-flow-col auto-cols-max justify-items-start gap-5
+  @apply grid grid-flow-col auto-cols-max justify-items-start gap-2
 }
 
 
