@@ -9,7 +9,7 @@
 }
 
 .datafiltersleft{
-  @apply grid grid-cols-2 gap-5
+  @apply grid grid-flow-col auto-cols-max gap-5
 
 }
 
@@ -27,7 +27,18 @@
   @apply grid grid-cols-1
 }
 
-
+.scorefilter span{
+  @apply bg-gray-dark px-4 py-1
+}
+.statsfilter span{
+  @apply bg-gray-dark px-4 py-1
+}
+.scorefilter{
+  @apply bg-gradient-to-l from-primary via-[#f43d00]  to-secondary rounded-full outline
+}
+.statsfilter{
+  @apply bg-gradient-to-r from-primary via-[#f43d00]  to-secondary rounded-full outline
+}
 .datarightcontainer{
   @apply  grid grid-cols-1 overflow-y-hidden overflow-x-scroll;
 
@@ -40,6 +51,7 @@
   grid-template-rows: 50px;
 }
 
+.filtnam{@apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent}
 
 .dataright{
   @apply grid grid-flow-col auto-cols-[50px]  gap-4 justify-items-center content-center w-full  text-[15px]; 

@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 const Stats = ({ statistics }: { statistics: any }) => {
 
   useEffect(() => {
-    document.getElementById("finya")?.addEventListener("click", () => {
-     document.getElementById("tesa")?.scrollBy(10,500)
+    document.getElementById("scroller")?.addEventListener("click", () => {
+     document.getElementById("games")?.scrollBy(10,0)
    })
  })
   const [show, setShow] = useState(false)
@@ -66,14 +66,28 @@ const Stats = ({ statistics }: { statistics: any }) => {
     return tuma
   }
   const [stats, setStats] = useState(assignData())
-  const runFilter = () => {
+  const runFilter = (region:string, role:string) => {
     const unfilt = filterdata()
     const empunfilt: any[] =[]
-    unfilt.map((play: any) => {
-      if (play.region === region && play.role === role) {
-        empunfilt.push(play)
+    if (region !== "" && role !== "") {
+      unfilt.map((play: any) => {
+        if (play.region === region && play.role === role) {
+          empunfilt.push(play)
+      }
+      })
+    } else if (region !== "" && role === "") {
+      unfilt.map((play: any) => {
+        if (play.region === region) {
+          empunfilt.push(play)
+      }
+      })
+    } else if (region === "" && role !== "") {
+      unfilt.map((play: any) => {
+        if (play.role === role) {
+          empunfilt.push(play)
+      }
+      })
     }
-    })
     
     const tuma = Object.entries(groupBy(empunfilt, "name")).map(([key, value]) => ({ key, value }))
 
@@ -86,7 +100,7 @@ setStats(tuma)
   
   useEffect(() => {
     if ( region !== "" || role !== "") {
-      runFilter()
+      runFilter(region, role)
     }
   }, [ region, role])
   
@@ -95,12 +109,12 @@ setStats(tuma)
   return (<div className={`${St.root}`}>
     <div className={`${St.datafilters}`}>
       <div className={`${St.datafiltersleft}`}>
-        <button>SCORE</button>
-        <button>STATS</button>
+        <button className={`${St.scorefilter}`}><span>SCORE</span></button>
+        <button className={`${St.statsfilter}`}><span>STATS</span></button>
       </div>
       <div className={`${St.datafiltersright}`}>
         <span>
-          <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center uppercase" type="button">View : <span >{view}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="   font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">View : <span className={`${St.filtnam} pl-2`}>{view}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider" className={`${show ? "z-20" : "hidden"} absolute z-20  mt-2 max-w-44 bg-primary rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
               <li> <button onClick={() => { setView("Players"); setShow(false)}}
@@ -119,7 +133,7 @@ setStats(tuma)
         <span>SPLIT:{season}</span>
 
         <span>
-          <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider2" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center uppercase" type="button">Region : <span >{region}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider2" className="font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">Region : <span className={`${St.filtnam} pl-2`}>{region}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider2" className={`${show ? "z-20" : "hidden"} absolute z-20  mt-2 max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
 
@@ -147,7 +161,7 @@ setStats(tuma)
     </ul>
 </div></span>
         <span>
-          <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center uppercase" type="button">Role : <span >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <button id="dropdownDividerButton" onClick={showDropwdwn} data-dropdown-toggle="dropdownDivider" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider" className={`${show ? "z-20" : "hidden"} absolute z-20  mt-2 max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
               <li> <button onClick={() => {  setRole("Top");; setShow(false); }}
@@ -210,8 +224,8 @@ setStats(tuma)
         }
 
       </div>
-      <div id="tesa" className={`${St.datarightcontainer} relative`}>
-        <button id="finya" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
+      <div id="games" className={`${St.datarightcontainer} relative`}>
+        <button id="scroller" >     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-8 h-5 rounded-full   fixed border  right-[50px]">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
 </svg></button>
 
@@ -233,7 +247,10 @@ setStats(tuma)
           <span>GAME14</span>
           <span>GAME12</span>
           <span>GAME13</span>
-        <span>GAME14</span>
+          <span>GAME14</span>
+          <span>GAME15</span>
+          <span>GAME16</span>
+        <span>GAME17</span>
       
       
       
