@@ -1,8 +1,11 @@
 import St from "./stats.module.css";
+import ViewDrop from "./ViewDrop";
+import { useState, useEffect } from 'react';
 
-
-
-const DataViewTeams = ({ stats, mode }: { stats: any, mode:any }) => {
+const DataViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
+  const filterByGame = (game: any, key:any) => { 
+    return stats.filter((item: any) => item[key] === game)
+  }
   return (
     <div className={`${St.data}`}>
     <div className={`${St.dataleftcontainer}`}>
@@ -66,12 +69,14 @@ const DataViewTeams = ({ stats, mode }: { stats: any, mode:any }) => {
 
       <div  className={`${St.dataright} text-white font-bold font-dubai`}>
 
-      <span className=" text-[10px]">TOWERS</span>
-      <span className=" text-[10px]">INHIBITORS</span>
-      <span className=" text-[10px]">DRAGONS</span>
-      <span className=" text-[10px]">RIFTHERALDS</span>
-      <span className=" text-[10px]">BARONS</span>
-              <span className=" text-[10px]">TOTALKILLS</span>
+              <span className=" text-[11px]">GAME</span>
+              <span className=" text-[11px]">TOWERS</span>
+      <span className=" text-[11px]">INHIBITORS</span>
+      <span className=" text-[11px]">DRAGONS</span>
+      <span className=" text-[11px]">RIFTHERALDS</span>
+      <span className=" text-[11px]">BARONS</span>
+              <span className=" text-[11px]">TOTALKILLS</span>
+              
               
               
     
@@ -79,18 +84,15 @@ const DataViewTeams = ({ stats, mode }: { stats: any, mode:any }) => {
       </div>
       
       {
-        stats.map((stat: any, index: number) => { 
+              stats.map((stat: any, index: number) => { 
+          let filtme  = stat.value
           return (
-            <div key={index} className={`${St.dataright} text-white`}>
-              {/* reduce kills deaths assists cs vs teamtotal from stat.value and render each in a span */}
-              <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.towers, 0)}</span>
-              <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.inhibitors, 0)}</span>
-              <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.dragons, 0)}</span>
-              <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.rift, 0)}</span>
-              <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.baron, 0)}</span>
-              <span>{stat.value.reduce((acc: any, curr: any) => acc + curr.totalKill, 0)}</span>
+
+
+              <ViewDrop data={filtme}  />
+              
              
-  </div>
+  
           )
         })
      }

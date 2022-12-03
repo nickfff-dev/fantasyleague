@@ -131,6 +131,7 @@ const Stats = ({ statistics }: { statistics: any }) => {
     }
 
     const outcome = Object.entries(groupBy(empunfilt, "name")).map(([key, value]) => ({ key, value }))
+    console.log(outcome)
      setTeamStats(outcome)
   }
 
@@ -287,47 +288,49 @@ setStats(tuma)
             
     </ul>
 </div></span>
-        <span>
-          <button id="dropdownDividerButton"  onClick={() => {
-            showDropwdwn("dropdownDivider4")
-          }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2 capitalize`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
-          <div id="dropdownDivider4" className={`${show4 ? "z-20" : "hidden"} absolute z-20   w-22  text-center max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
-          <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
-              <li> <button onClick={() => {  setRole("Top");setShow4(false) }}
-                  className="inline py-2 px-4 ">Top</button>
+        {
+          view === "Players" ? (        <span>
+            <button id="dropdownDividerButton"  onClick={() => {
+              showDropwdwn("dropdownDivider4")
+            }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2 capitalize`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            <div id="dropdownDivider4" className={`${show4 ? "z-20" : "hidden"} absolute z-20   w-22  text-center max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
+            <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
+                <li> <button onClick={() => {  setRole("Top");setShow4(false) }}
+                    className="inline py-2 px-4 ">Top</button>
+                  </li>
+              <li>
+                  <button onClick={() => {
+                    setRole("Mid");
+                    setShow4(false)
+  
+                  }}
+                    className="inline py-2 px-4 ">Mid</button>
+                </li> 
+                <li>
+                  <button onClick={() => {
+                    setRole("Jungle");
+                    setShow4(false)
+                    }}
+                    className="inline py-2 px-4 ">Jungle</button>
                 </li>
-            <li>
-                <button onClick={() => {
-                  setRole("Mid");
-                  setShow4(false)
-
-                }}
-                  className="inline py-2 px-4 ">Mid</button>
-              </li> 
-              <li>
-                <button onClick={() => {
-                  setRole("Jungle");
-                  setShow4(false)
-                  }}
-                  className="inline py-2 px-4 ">Jungle</button>
-              </li>
-              <li>
-                <button onClick={() => {
-                  setRole("Support"); 
-                  setShow4(false)
-                  }}
-                  className="inline py-2 px-4 ">Support</button>
-              </li>
-              <li>
-                <button onClick={() => {
-                  setRole("Bot");
-                  setShow4(false)
-                  }}
-                  className="inline py-2 px-4 ">Bot</button>
+                <li>
+                  <button onClick={() => {
+                    setRole("Support"); 
+                    setShow4(false)
+                    }}
+                    className="inline py-2 px-4 ">Support</button>
                 </li>
-            
-    </ul>
-</div></span>
+                <li>
+                  <button onClick={() => {
+                    setRole("Bot");
+                    setShow4(false)
+                    }}
+                    className="inline py-2 px-4 ">Bot</button>
+                  </li>
+              
+      </ul>
+  </div></span>) : null
+}
       <input type="text" placeholder="Search Here..." className={`${St.searchbar}`} />
       </div>
     </div>

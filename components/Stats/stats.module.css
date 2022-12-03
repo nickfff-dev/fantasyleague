@@ -5,7 +5,7 @@
 
 
 .datafilters{
-  @apply grid grid-cols-2 gap-4 justify-items-start content-center 
+  @apply grid grid-cols-2 gap-4 justify-items-start content-center max-w-[1200px] w-full
 }
 
 .datafiltersleft{
@@ -18,7 +18,7 @@
 }
 
 .searchbar{
-  @apply text-left rounded-full bg-gray-light border px-2 border-gray-light w-24 text-[10px]}
+  @apply text-left rounded-full bg-gray-light border px-2 border-gray-light w-32 text-[10px]}
 .data{
   @apply grid grid-cols-2 gap-px justify-items-start content-center pt-5 mt-10 bg-gray-medium px-12 w-full  rounded-xl   ;
 }
