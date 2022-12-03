@@ -8,7 +8,7 @@ import { useSession, signIn, getSession, signOut } from 'next-auth/react';
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import prisma from '@lib/prisma';
-
+import CreateLeague from "@components/Form/Creatorform";
 import { Grid } from '@components/ui';
 
 
@@ -84,7 +84,7 @@ const body = newLeaguedata
   }
 
   return (
-    <Grid>
+    <>
     <div className={s.container} style={{color: "#ffd204"}}>
         <h1>Create a League</h1>
        
@@ -187,8 +187,10 @@ const body = newLeaguedata
             leaguelink !="" ?  <a href={`/league-summary/${leaguelink}`}>click link to your new league </a> : null
        }
         </div>
+        
       </div>
-      </Grid>
+      <CreateLeague/>
+      </>
 )
   
 }
