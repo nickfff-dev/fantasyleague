@@ -1,14 +1,13 @@
 import prisma from "@lib/prisma";
 import { useEffect, useState } from 'react';
-import { Grid } from '@components/ui';
-import { Fixture, Teams, League, Players } from "@prisma/client"
-import s from "@components/HomePage/Insights/Seasons/Seasons.module.css";
+
+
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import { getSession } from 'next-auth/react'
-import Link from "next/link";
-import dayjs from "dayjs";
 
+import dayjs from "dayjs";
+import UserProfile from "@components/User/Profile.";
 
 
 const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getServerSideProps>) => { 
@@ -69,7 +68,9 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
 
 
   return (
- <div className="grid grid-flow-col gap-5  auto-cols-max text-white m-3 overflow-hidden">
+    <>
+      <UserProfile/>
+    {/* <div className="grid grid-flow-col gap-5  auto-cols-max text-white m-3 overflow-hidden">
       
       <div className={`${s.container} mt-5  `}>
      
@@ -121,7 +122,8 @@ const UserAccount = ({ owner, leagues }: InferGetServerSidePropsType<typeof getS
        
       
       
-    </div>
+    </div> */}
+    </>
   )
 }
 
