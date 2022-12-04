@@ -29,7 +29,7 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
     <div id="freed" className="grid [&>*:nth-child(odd):not(:first-child)]:bg-gray-medium [&>*:nth-child(even)]:bg-gray-light  grid-flow-rows auto-rows-[50px] space-y-2 content-center justify-items-center">
       
       
-      <div className="w-screen grid grid-cols-1 items-center my-auto">
+      <div className=" grid grid-cols-1 items-center justify-items-center content-center my-auto">
           {
             mode === "scores" ? (   <div className="flex flex-row">
             <button id="scroller" >
@@ -44,7 +44,7 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
             </button>
           </div>): null
      }
-        <div className="grid grid-flow-col auto-cols-[95px] text-center text-white font-bold">
+        <div className="grid grid-flow-col w-[62vw] auto-cols-[95px] text-center text-white font-bold">
         <span>NAME</span>
       <span>REGION</span>
      
@@ -53,7 +53,7 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
          
         
           {
-              mode === "scores" ? (  <div  className={`${Lt.team} grid text-center grid-flow-col justify-items-center content-center auto-cols-[70px]  overflow-x-scroll overflow-y-hidden w-[900px] `}>
+              mode === "scores" ? (  <div  className={`${Lt.team} grid text-center grid-flow-col justify-items-center content-center auto-cols-[70px] overflow-x-scroll overflow-y-hidden w-[550px] `}>
             
               <p>GAME1</p>
               <p>GAME2</p>
@@ -79,7 +79,7 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
               <p>GAME22</p>
               <p>GAME23</p>
   
-            </div>):(  <div  className={`${Lt.team} grid text-center grid-flow-col justify-items-center content-center auto-cols-[70px]  overflow-x-scroll overflow-y-hidden w-[900px] `}>
+            </div>):(  <div  className={`${Lt.team} grid text-center grid-flow-col justify-items-center content-center auto-cols-[70px] overflow-x-scroll  w-[550px] `}>
             
             <p className=" text-[11px]" >GAME</p>
       <p className=" text-[11px]">TOWERS</p>
@@ -94,7 +94,7 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
       </div>
         {stats.map((stat: any, index: number) => { 
           return (
-            <div className="w-screen grid grid-cols-1 items-center my-auto rounded-full text-white">
+            <div className=" grid grid-cols-2  items-center my-auto rounded-full text-white">
             <div className="grid grid-flow-col auto-cols-[95px] text-center">
             <p>{stat.key.split(" ")[0]}</p>
               <p>{stat?.value[0]?.region}</p>
@@ -103,7 +103,7 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
               <p >|</p>
               
                 {
-                  mode === "scores" ? (      <div  id= "games2" className={`${Lt.team}  grid grid-flow-col content-center justify-items-center  auto-cols-[70px] overflow-x-scroll overflow-y-hidden w-[900px]`}>
+                  mode === "scores" ? (      <div   className={`${Lt.team}  grid grid-flow-col content-center justify-items-center  auto-cols-[70px] overflow-x-scroll  w-[550px]`}>
                 
                   {
                     stat.value.map((entry: any) => {
