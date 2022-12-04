@@ -33,12 +33,12 @@ const StatsViewTeams = ({ stats, mode }: { stats: any, mode: any }) => {
           {
             mode === "scores" ? (   <div className="flex flex-row">
             <button id="scroller" >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-6 h-5 rounded-full   fixed border  top-70 right-[10px]">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-6 h-5 rounded-full   fixed border  top-70 right-[50px]">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
           </svg></button>
           
             <button id="scrollerback" >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-6 h-5 rounded-full rotate-180  fixed border  top-70 right-[50px]">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="#FF9429" className="w-6 h-5 rounded-full rotate-180  fixed border  top-70 right-[80px]">
     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
   </svg>
             </button>
