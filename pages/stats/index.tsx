@@ -4,11 +4,11 @@ import Stats from "@components/Stats/Stats";
 import { InferGetServerSidePropsType } from 'next'
 
 const StatsPage = ({statistics}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return (<>
+  return (<div>
   
   <Stats statistics={statistics}/>
   
-  </>)
+  </div>)
 }
 
 

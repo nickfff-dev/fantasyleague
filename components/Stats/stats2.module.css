@@ -1,0 +1,23 @@
+.root{
+  @apply bg-gray-dark  grid grid-flow-row content-center 
+}
+
+
+
+.team::-webkit-scrollbar{
+  @apply hidden 
+}
+
+
+
+.searchbar{
+  @apply text-left rounded-full bg-gray-light border px-2 border-gray-light w-32 text-[10px]}
+  .filtnam{@apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent}
+
+  .scorefilter{
+    @apply  rounded-full  outline outline-primary
+  }
+
+  .scorefilter span{
+    @apply  bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent
+  }

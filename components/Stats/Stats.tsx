@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
- import St from "./stats.module.css";
+import Lt from "./stats2.module.css"
 import {calcParticipationPts} from "lib/calculate";
-import DataView from "./DataViewPlayers";
-import DataViewTeams from "./DataViewTeams";
+import StatsViewPlayers from "./StatsViewPlayers";
+import StatsViewTeams from "./StatsViewTeams";
 const Stats = ({ statistics }: { statistics: any }) => {
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const Stats = ({ statistics }: { statistics: any }) => {
               assists: result.assists,
               cs: result.creepScore,
               vs: result.visionScore,
-              teamTotal:  calcParticipationPts(result.kills, result.assists,result.teamTotalKills),
+              teamTotal:  Math.ceil(calcParticipationPts(result.kills, result.assists,result.teamTotalKills)),
               points: result.points
             })
             
@@ -188,31 +188,32 @@ setStats(tuma)
 
    }, [view , region, season])
 
-  return (<div className={`${St.root}`}>
-    <div className={`${St.datafilters}`}>
-      <div className={`${St.datafiltersleft}`}>
-        <button onClick={() => {
+  return (<div className="overflow-x-hidden m-5" >
+     <div className="grid grid-flow-col w-full auto-cols-auto space-x-5 mt-3 ml-3 gap-5">
+      <div className="grid grid-cols-2  space-x-3 ">
+        <button  className={`${Lt.scorefilter}`} onClick={() => {
           setMode("scores")
-        }} className={`${St.scorefilter}`}><span>SCORE</span></button>
-        <button onClick={() => {
+        }}><span>SCORE</span></button>
+        <button className={`${Lt.scorefilter}`} onClick={() => {
           setMode("stats")
-        }} className={`${St.statsfilter}`}><span>STATS</span></button>
+        }}><span>STATS</span></button>
       </div>
-      <div className={`${St.datafiltersright}`}>
+      <div className="grid grid-flow-col auto-cols-auto space-x-2" >
         <span>
           <button id="dropdownDividerButton" onClick={() => {
             showDropwdwn("dropdownDivider1")
-          }} data-dropdown-toggle="dropdownDivider1" className="   font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">View : <span className={`${St.filtnam} pl-2`}>{view}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          }}
+            data-dropdown-toggle="dropdownDivider1" className="   font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">View : <span className={`${Lt.filtnam} pl-2 capitalize`}>{view}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider1" className={`${show1 ? "z-20" : "hidden"} absolute z-20 w-32 ml-2 text-center bg-white max-w-40  rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
-              <li> <button onClick={() => {
+              <li> <button  onClick={() => {
                 setView("Players"); 
                 setShow1(false)
                }}
                   className="inline py-2 px-4 uppercase">players</button>
                 </li>
             <li>
-                <button onClick={() => {
+                <button  onClick={() => {
                   setView("Teams");
                   setShow1(false)
                   
@@ -225,14 +226,14 @@ setStats(tuma)
         
 
         <span>
-          <button id="dropdownDividerButton"  onClick={() => {
+          <button id="dropdownDividerButton" onClick={() => {
             showDropwdwn("dropdownDivider2")
-          }} data-dropdown-toggle="dropdownDivider2" className="font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">SPLIT : <span className={`${St.filtnam} pl-2`}>2022{season}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          }} data-dropdown-toggle="dropdownDivider2" className="font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">SPLIT : <span className={`${Lt.filtnam} pl-2 capitalize`} >2022 { season}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider2" className={`${show2 ? "z-20" : "hidden"} absolute z-20 ml-20 w-40 mt-2 text-center max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
 
             <li>
-                <button onClick={() => {
+                <button   onClick={() => {
                   setSeason(" SUMMER SEASON");
                   setShow2(false)
                 }}
@@ -251,9 +252,9 @@ setStats(tuma)
 </div></span>
 
         <span>
-          <button id="dropdownDividerButton"  onClick={() => {
+          <button id="dropdownDividerButton" onClick={() => {
             showDropwdwn("dropdownDivider3")
-          }} data-dropdown-toggle="dropdownDivider3" className="font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">Region : <span className={`${St.filtnam} pl-2`}>{region}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          }} data-dropdown-toggle="dropdownDivider3" className="font-medium rounded-lg text-sm  text-center text-white text-lg inline-flex items-center font-bold uppercase" type="button">Region : <span className={`${Lt.filtnam} pl-2 capitalize`} >{ region}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div id="dropdownDivider3" className={`${show3 ? "z-20" : "hidden"} absolute z-20    w-24 max-w-24 text-center bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
           <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
 
@@ -272,14 +273,14 @@ setStats(tuma)
                   className="inline py-2 px-4 ">LEC</button>
               </li>
               <li>
-                <button onClick={() => {
+                <button  onClick={() => {
                   setRegion("LCK");
                   setShow3(false)
                 }}
                   className="inline py-2 px-4 ">LCK</button>
               </li>
               <li>
-                <button onClick={() => {
+                <button  onClick={() => {
                   setRegion("LPL");
                   setShow3(false)
                     }}
@@ -288,14 +289,14 @@ setStats(tuma)
             
     </ul>
 </div></span>
-        {
-          view === "Players" ? (        <span>
-            <button id="dropdownDividerButton"  onClick={() => {
+        
+              <span>
+            <button id="dropdownDividerButton" onClick={() => {
               showDropwdwn("dropdownDivider4")
-            }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${St.filtnam} pl-2 capitalize`} >{role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          }} data-dropdown-toggle="dropdownDivider4" className="   font-medium rounded-lg text-sm  text-center inline-flex items-center text-white text-lg font-bold uppercase" type="button">Role : <span className={`${Lt.filtnam} pl-2 capitalize`} >{ role}</span><svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
             <div id="dropdownDivider4" className={`${show4 ? "z-20" : "hidden"} absolute z-20   w-22  text-center max-w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600`}>
             <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownDividerButton">
-                <li> <button onClick={() => {  setRole("Top");setShow4(false) }}
+                <li> <button onClick={() => {  setRole("Top");setShow4(false) }} 
                     className="inline py-2 px-4 ">Top</button>
                   </li>
               <li>
@@ -311,10 +312,11 @@ setStats(tuma)
                     setRole("Jungle");
                     setShow4(false)
                     }}
+                    
                     className="inline py-2 px-4 ">Jungle</button>
                 </li>
                 <li>
-                  <button onClick={() => {
+                  <button  onClick={() => {
                     setRole("Support"); 
                     setShow4(false)
                     }}
@@ -329,13 +331,11 @@ setStats(tuma)
                   </li>
               
       </ul>
-  </div></span>) : null
-}
-      <input type="text" placeholder="Search Here..." className={`${St.searchbar}`} />
-      </div>
-    </div>
+  </div></span>
+      <input type="text" placeholder="Search Here..."  className={`${Lt.searchbar}`} />
+      </div></div>
     {
-      view === "Players" ? <DataView stats={stats} mode={mode}/> : <DataViewTeams stats={teamStats} mode={mode}/>
+      view === "Players" ? < StatsViewPlayers stats={stats} mode={mode}/> : <StatsViewTeams stats={teamStats} mode={mode}/>
 }
    
   </div>)

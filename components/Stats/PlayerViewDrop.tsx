@@ -1,6 +1,8 @@
+
+
 import { useState, useEffect } from 'react';
 import Lt from "./stats2.module.css"
-const ViewDrop = ({data, }: {data:any}) => { 
+const PlayerViewDrop = ({data, }: {data:any}) => { 
   const [show1, setShow1] = useState(false)
   const [split,setSplit] = useState(data[0].split)
 
@@ -39,7 +41,7 @@ const ViewDrop = ({data, }: {data:any}) => {
         data.filter((item: any) => item.split === split).slice(0,1).map((entry: any) => {  
           return (
             
-            <span>{entry.towers}</span>
+            <span>{entry.kills}</span>
             
             
           
@@ -50,7 +52,7 @@ const ViewDrop = ({data, }: {data:any}) => {
         data.filter((item: any) => item.split === split).slice(0,1).map((entry: any) => {  
           return (
             
-            <span>{entry.inhibitors}</span>
+            <span>{entry.deaths}</span>
             
             
           
@@ -61,7 +63,7 @@ const ViewDrop = ({data, }: {data:any}) => {
         data.filter((item: any) => item.split === split).slice(0,1).map((entry: any) => {  
           return (
             
-            <span>{entry.dragons}</span>
+            <span>{entry.assists}</span>
             
             
           
@@ -72,7 +74,7 @@ const ViewDrop = ({data, }: {data:any}) => {
         data.filter((item: any) => item.split === split).slice(0,1).map((entry: any) => {  
           return (
             
-            <span>{entry.rift}</span>
+            <span>{entry.cs}</span>
             
             
           
@@ -83,7 +85,7 @@ const ViewDrop = ({data, }: {data:any}) => {
         data.filter((item: any) => item.split === split).slice(0,1).map((entry: any) => {  
           return (
             
-            <span>{entry.baron}</span>
+            <span>{entry.teamTotal}</span>
             
             
           
@@ -94,7 +96,7 @@ const ViewDrop = ({data, }: {data:any}) => {
         data.filter((item: any) => item.split === split).slice(0,1).map((entry: any) => {  
           return (
             
-            <span>{entry.totalKill}</span>
+            <span>{entry.vs}</span>
             
             
           
@@ -105,4 +107,4 @@ const ViewDrop = ({data, }: {data:any}) => {
   )
 }
 
-export default ViewDrop
+export default PlayerViewDrop
