@@ -56,7 +56,7 @@ const CreateLeague = ({username}:{username:any}) => {
 
     <div className="min-h-screen p-3 space-x-5 bg-gray-dark flex items-start justify-center">
 
-      <div className="container max-w-[800px]">
+      <div className="container max-w-[600px]">
      
         <div>
           
