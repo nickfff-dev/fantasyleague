@@ -189,8 +189,8 @@ const Stats = ({ statistics }: { statistics: any }) => {
   }, [view, region, season])
 
   return (<div className="overflow-x-hidden m-5" >
-    <div className="grid grid-cols-9 w-full auto-cols-auto space-x-5 mt-3 ml-3 gap-5">
-      <div className="grid grid-flow-col grid-cols-2 col-span-2  space-x-3 ">
+    <div className="grid grid-cols-9  auto-cols-auto space-x-5 mt-3 ml-3 space-x-12">
+      <div className="grid grid-flow-col grid-cols-2 col-span-2  space-x-3 "> 
         <button className={`${Lt.scorefilter}`} onClick={() => {
           setMode("scores")
         }}><span>SCORE</span></button>
@@ -198,8 +198,10 @@ const Stats = ({ statistics }: { statistics: any }) => {
           setMode("stats")
         }}><span>STATS</span></button>
       </div>
-      <div className="col-span-1"></div>
-      <div className="col-span-6 grid grid-flow-col auto-cols-auto space-x-2" >
+      <div className="col-span-1">
+        
+      </div>
+      <div className="col-span-6 grid grid-flow-col items-center justify-items-center" >
         <span>
           <button id="dropdownDividerButton" onClick={() => {
             showDropwdwn("dropdownDivider1")

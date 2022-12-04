@@ -9,9 +9,8 @@
 }
 
 
-
 .searchbar{
-  @apply text-left rounded-full bg-gray-light border px-2 border-gray-light w-32 text-[10px]}
+  @apply text-left rounded-full bg-gray-light border px-2 border-gray-light h-6 w-32 text-[10px]}
 
 
   .filtnam{@apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent}
