@@ -1,154 +1,258 @@
-
-
-const CreateLeague = () => { 
-  return (<>
+import { League as Mchezo,Fixture, Teams,  Players } from "@prisma/client"
+import { useEffect, useState } from "react";
+import prisma from '@lib/prisma';
+import dayjs from "dayjs";
+import Ct from "./creater.module.css"
+const CreateLeague = ({username}:{username:any}) => {
   
+
+  const[leaguelink, setLeagueLink] = useState("")
+ 
+  const [league, setLeague] = useState<Mchezo>();
+  const [newLeaguedata, setNewLeaguedata] = useState({
+    name: "",
+    region: "",
+    owner:username,
+    inviteOnly: "false",
+    draftTime: "",
+    startDate: "",
+    endDate: "",
+    buyIn: "false",
+    buyInFee: 0,
+    duration: 0,
+    houseFee: 0,
+    minPlayers: 0,
+    maxPlayers: 0,
+   
   
 
-    <div className="min-h-screen bg-loginb bg-cover bg-center p-0 sm:p-12">
-      <div className="bg-gradient-to-r p-12 from-gray-dark via-[#f43d00]/25  to-secondary/25 bg-cover" >
-  <div className="mx-auto max-w-lg px-6  py-12 bg-gray-dark border-0 shadow-lg sm:rounded-3xl">
-    <h1 className="text-2xl font-bold mb-8 bg-gradient-to-r from-primary via-[#f43d00]  to-secondary bg-clip-text font-bold text-transparent">Create League</h1>
-    <form id="form">
-      <div className="relative z-0 w-full mb-5">
-        <input
-          type="text"
-          name="name"
-          placeholder=" "
-          required
-          className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-        />
-        <label htmlFor="name" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Fantasy League Name</label>
-        <span className="text-sm text-red-600 hidden" id="error">Name is required</span>
-      </div>
+  })
+  const submitLeague = async () => { 
 
-      <div className="relative z-0 w-full mb-5">
-        <input
-          type="email"
-          name="email"
-          placeholder=" "
-          className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-        />
-        <label htmlFor="email" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Enter email address</label>
-        <span className="text-sm text-red-600 hidden" id="error">Email address is required</span>
-      </div>
+    const body = newLeaguedata
+        // check for empty fields
+        if (body.name === "" || body.region === "" || body.owner === "" || body.inviteOnly === "" ||  body.draftTime === "" || body.startDate === "" || body.endDate === "" || body.buyIn === "" ||   body.minPlayers === 0 || body.maxPlayers === 0) { 
+          alert("All fields are required")
+          return
+        }
+      
+        await fetch("/api/create-league", {
+          method: 'POST',
+          body: JSON.stringify(body)
+        }).then((res) => {
+          res.text().then((text) => {
+            setLeagueLink(text)
+            alert("League Created Successfully")
+          })
+        }).catch((err: any) => { 
+          console.error(err.message);
+        })
+ 
+    
+      }
+  return (<div className={`${Ct.root}`}>
 
-      <div className="relative z-0 w-full mb-5">
-        <input
-          type="password"
-          name="password"
-          placeholder=" "
-          className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-        />
-        <label htmlFor="password" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Enter password</label>
-        <span className="text-sm text-red-600 hidden" id="error">Password is required</span>
-      </div>
 
-      <fieldset className="relative z-0 w-full p-px mb-5">
-        <legend className="absolute text-white transform scale-75 -top-3 origin-0">Choose an option</legend>
-        <div className="block pt-3 pb-2 space-x-4">
-          <label>
-            <input
-              type="radio"
-              name="radio"
-              value="1"
-              className="mr-2 text-white border-2 border-gray-300 focus:border-gray-300 focus:ring-black"
-            />
-            Option 1
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="radio"
-              value="2"
-              className="mr-2 text-white border-2 border-gray-300 focus:border-gray-300 focus:ring-black"
-            />
-            Option 2
-          </label>
-        </div>
-        <span className="text-sm text-red-600 hidden" id="error">Option has to be selected</span>
-      </fieldset>
 
-      <div className="relative z-0 w-full mb-5">
-        <select
-          name="select"
-          value=""
+    <div className="min-h-screen p-3 space-x-5 bg-gray-dark flex items-start justify-center">
+
+      <div className="container max-w-[800px]">
+     
+        <div>
           
-          className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none z-1 focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-        >
-          <option value="" selected disabled hidden></option>
-          <option value="1">Option 1</option>
-          <option value="2">Option 2</option>
-          <option value="3">Option 3</option>
-          <option value="4">Option 4</option>
-          <option value="5">Option 5</option>
-        </select>
-        <label htmlFor="select" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Select an option</label>
-        <span className="text-sm text-red-600 hidden" id="error">Option has to be selected</span>
-      </div>
+         
 
-      <div className="flex flex-row space-x-4">
-        <div className="relative z-0 w-full mb-5">
-          <input
-            type="text"
-            name="date"
-            placeholder=" "
-           
-            className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-          />
-          <label htmlFor="date" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Date</label>
-          <span className="text-sm text-red-600 hidden" id="error">Date is required</span>
+
+          <div className="rounded-xl bg-gradient-to-r from-primary to-secondary shadow-lg p-1   md:p-8 mb-6">
+            <div className="bg-gray-medium p-4 px-4 rounded-xl ">
+              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                <div className="text-white mb-6">
+                  <p className="font-medium text-lg bg-gradient-to-r from-primary via-[#f43d00] to-secondary bg-clip-text font-bold text-transparent">Fantasy League Details</p>
+                  <p className="bg-gradient-to-r from-primary via-[#f43d00] to-secondary bg-clip-text font-bold text-transparent">Please fill out all the fields.</p>
+                </div>
+
+                <div className="lg:col-span-2">
+                  <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                    <div className="md:col-span-5 text-white mb-6">
+                      <label className="uppercase" htmlFor="league_name ">League Name</label>
+                      <input  onChange={
+              (e) => { 
+                setNewLeaguedata({ ...newLeaguedata, name: e.target.value })
+                console.log(newLeaguedata)
+              }
+            }type="text" name="name" id="league_name" className="h-10  text-gray-300 font-bold  mt-1  px-4 w-full bg-gray-light rounded-full"  />
+                    </div>
+
+                    <label className="md:col-span-5 text-white uppercase mb-6" htmlFor="region">Choose a region:
+                      <select onChange={
+                (e) => {
+                  setNewLeaguedata({ ...newLeaguedata, region: e.target.value })
+                 
+                  console.log(newLeaguedata)
+                 
+                }
+            } className="h-10  mt-1 text-gray-400 font-bold rounded px-4 w-full  bg-gray-light rounded-full" name="region"  >
+                        <option value="LEC">LEC EUROPE</option>
+                        <option value="LCK">LCK KOREA</option>
+                        <option value="LPL">LPL CHINA</option>
+                        <option value="LCS">LCS AMERICA</option>
+                      </select>
+
+                    </label>
+
+                    <div className="md:col-span-3 mb-6">
+                      <label className="uppercase text-white" htmlFor="startDate">START DATE</label>
+                      <input onChange={
+              (e) => { 
+                const theval = e.target.value
+                setNewLeaguedata({ ...newLeaguedata, startDate: dayjs(theval).toDate().toISOString() })
+                console.log(newLeaguedata)
+              }
+            } type="date" name="startDate" id="startDate" className="h-10   text-gray-400 font-bold  mt-1 rounded px-4 w-full  bg-gray-light rounded-full"  placeholder="" />
+                    </div>
+                    <div className="md:col-span-3 mb-6">
+                      <label className="uppercase text-white" htmlFor="endDate">end date</label>
+                      <input onChange={(e) => {
+              const theval = e.target.value
+              setNewLeaguedata({ ...newLeaguedata, endDate: dayjs(theval).toDate().toISOString() })
+              console.log(newLeaguedata)
+            }} type="date" name="endDate" id="endDate" className="h-10   text-gray-400 font-bold  mt-1 rounded px-4 w-full  bg-gray-light rounded-full"  placeholder="" />
+                    </div>
+                    <div className="md:col-span-3 mb-6">
+                      <label className="uppercase text-white" htmlFor="draftDate">Draft date</label>
+                      <input onChange={
+              (e) => {
+                const theval = e.target.value
+                setNewLeaguedata({ ...newLeaguedata, draftTime: dayjs(theval).toDate().toISOString() })
+                console.log(newLeaguedata)
+              }
+            } type="date" name="draftDate" id="draftDate" className="h-10  text-gray-400 font-bold  mt-1 rounded px-4 w-full  bg-gray-light rounded-full"  placeholder="" />
+                    </div>
+
+                    <div className="md:col-span-2 mb-6">
+                      <label className="uppercase text-white" htmlFor="maxPlayers">Max members</label>
+                      <input onChange={
+              (e) => { 
+                const theval = e.target.value
+                setNewLeaguedata({ ...newLeaguedata, maxPlayers: Number(theval) })
+                console.log(newLeaguedata)
+              }
+            }  type="number" name="maxPlayers" id="maxPlayers" className="h-10  mt-1 rounded px-4 text-gray-400 w-full bg-gray-light rounded-full"  placeholder="" />
+                    </div>
+                    <div className="md:col-span-2 mb-6">
+                      <label className="uppercase text-white" htmlFor="minPlayers">Min members</label>
+                      <input onChange={
+              (e) => { 
+                const theval = e.target.value
+                setNewLeaguedata({ ...newLeaguedata, minPlayers: Number(theval) })
+                console.log(newLeaguedata)
+
+              }
+            } type="number" name="minPlayers" id="minPlayers" className="h-10  mt-1 rounded px-4 w-full text-gray-400  bg-gray-light rounded-full"  placeholder="" />
+                    </div>
+
+                    <div className="md:col-span-5 mb-6">
+                      <div className="inline-flex items-center">
+
+                        <div className="flex flex-col">
+                          <span className="uppercase text-white">This is A buy-in League?</span>
+                          <div className="flex flex-row">                        <input onChange={
+              (e) => {
+              
+                setNewLeaguedata({ ...newLeaguedata, buyIn: "true" })
+                console.log(newLeaguedata)
+               }
+            }  type="checkbox"  name="buyIn" id="buyIn" className="form-checkbox " />
+
+                            <label htmlFor="true" className="ml-2 uppercase text-white">True</label></div>
+                          <div className="flex flex-row"><input  onChange={
+              (e) => {
+              
+                setNewLeaguedata({ ...newLeaguedata, buyIn: "false" })
+                console.log(newLeaguedata)
+               }
+            }  type="checkbox" name="false" id="buyinTrue" className="form-checkbox " />
+                            <label htmlFor="false" className="ml-2 uppercase text-white">False</label>
+                          </div></div>
+                      </div>
+                    </div>
+                    <div className="md:col-span-2 mb-6">
+                      <label className="uppercase text-white" htmlFor="buyInfee">BuyInfee</label>
+                      <input  onChange={
+              (e) => {
+                const theval = e.target.value
+                setNewLeaguedata({ ...newLeaguedata, buyInFee: Number(theval) })
+                console.log(newLeaguedata)
+               }
+            } type="number" name="buyInfee" id="buyInfee" placeholder="$1,000,000.00" className="h-10  mt-1 text-gray-400  rounded px-4 w-full  bg-gray-light rounded-full"  />
+                    </div>
+                    <div className="md:col-span-5 mb-6">
+                      <div className="inline-flex items-center">
+
+                        <div className="flex flex-col">
+                          <span className="uppercase text-white">This League is Invite oNLY?</span>
+                          <div className="flex flex-row">                        <input  onChange={
+              (e) => { 
+                
+                setNewLeaguedata({ ...newLeaguedata, inviteOnly: "true" })
+                console.log(newLeaguedata)
+              }
+            }type="checkbox" name="inviteOnlytrue" id="inviteOnly" className="form-checkbox" />
+
+                            <label htmlFor="invitetrue" className="ml-2 uppercase text-white">True</label></div>
+                          <div className="flex flex-row"><input onChange={
+              (e) => { 
+                
+                setNewLeaguedata({ ...newLeaguedata, inviteOnly: "false" })
+                console.log(newLeaguedata)
+              }
+            } type="checkbox" name="inviteOnlyfalse" id="billing_same" className="form-checkbox" />
+                            <label htmlFor="invitefalse" className="ml-2 uppercase text-white">False</label>
+                          </div></div>
+                      </div>
+                    </div>
+
+
+
+
+                    <div className="md:col-span-5 text-left">
+                      <div className="inline-flex items-end">
+                        <button onClick={submitLeague} className="bg-gray-light hover:bg-gradient-to-r from-primary to-secondary hover:text-gray-dark text-white text-lg font-bold py-2 px-6 focus:outline rounded-full"><span>Submit</span></button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="relative z-0 w-full">
-          <input
-            type="text"
-            name="time"
-            placeholder=" "
-            
-            className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-          />
-          <label htmlFor="time" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Time</label>
-          <span className="text-sm text-red-600 hidden" id="error">Time is required</span>
+
+
+      </div>
+      <div className="flex flex-col w-1/4 space-y-5 p-6"> <h2 className="font-semibold mb-6 text-3xl font-xix  bg-gradient-to-r from-primary via-[#f43d00] to-secondary bg-clip-text font-bold text-transparent">Create Fantasy League</h2> <div >
+      
+      <div className="flex flex-col space-y-5" >
+        <div >
+          <h1 className="text-primary">Rules</h1>
+          <p className="text-gray-400">
+            Find an in-depth list here of how all the points are calculated and how any exception to normal game circumstances are
+            handled.
+          </p>
+        </div>
+
+        <div>
+          <h1 className="text-primary">FAQ</h1>
+          <p className="text-gray-400">
+            Find an in-depth list here of how all the points are calculated and how any exception to normal game circumstances are
+            handled.
+          </p>
         </div>
       </div>
+    </div> </div>
+    </div>
 
-      <div className="relative z-0 w-full mb-5">
-        <input
-          type="number"
-          name="money"
-          placeholder=" "
-          className="pt-3 pb-2 pl-5 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-        />
-        <div className="absolute top-0 left-0 mt-3 ml-1 text-gray-400">$</div>
-        <label htmlFor="money" className="absolute duration-300 top-3 left-5 -z-1 origin-0 text-white">Amount</label>
-        <span className="text-sm text-red-600 hidden" id="error">Amount is required</span>
-      </div>
-
-      <div className="relative z-0 w-full mb-5">
-        <input
-          type="text"
-          name="duration"
-          placeholder=" "
-          className="pt-3 pb-2 pr-12 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
-        />
-        <div className="absolute top-0 right-0 mt-3 mr-4 text-gray-400">min</div>
-        <label htmlFor="duration" className="absolute duration-300 top-3 -z-1 origin-0 text-white">Duration</label>
-        <span className="text-sm text-red-600 hidden" id="error">Duration is required</span>
-      </div>
-
-      <button
-        id="button"
-        type="button"
-        className="w-full px-6 py-3 mt-3 text-lg text-white transition-all duration-150 ease-linear rounded-lg shadow outline-none bg-pink-500 hover:bg-pink-600 hover:shadow-lg focus:outline-none"
-      >
-        Toggle Error
-      </button>
-    </form>
-        </div>
-        </div>
-</div>
-
-</>)
+  </div>)
 }
 
 

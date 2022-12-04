@@ -85,7 +85,7 @@ const body = newLeaguedata
 
   return (
     <>
-    <div className={s.container} style={{color: "#ffd204"}}>
+    {/* <div className={s.container} style={{color: "#ffd204"}}>
         <h1>Create a League</h1>
        
        
@@ -188,8 +188,8 @@ const body = newLeaguedata
        }
         </div>
         
-      </div>
-      <CreateLeague/>
+      </div> */}
+      <CreateLeague username={username}/>
       </>
 )
   

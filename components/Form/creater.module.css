@@ -1,0 +1,10 @@
+.root{
+@apply p-0
+}
+
+
+.root ::-webkit-calendar-picker-indicator{
+ @apply invert
+}
+
+
